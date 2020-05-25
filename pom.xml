@@ -8,7 +8,7 @@
     <artifactId>ebatis2</artifactId>
     <version>7.5.1.1-SNAPSHOT</version>
     <modules>
-        <module>ebatis-core</module>
+        <module>ebatis</module>
         <module>ebatis-spring</module>
     </modules>
     <packaging>pom</packaging>
