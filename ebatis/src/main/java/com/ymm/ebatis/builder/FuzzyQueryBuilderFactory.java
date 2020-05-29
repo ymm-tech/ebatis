@@ -17,14 +17,14 @@ public class FuzzyQueryBuilderFactory extends AbstractQueryBuilderFactory<FuzzyQ
     }
 
     @Override
-    protected void setOptionalMeta(FuzzyQueryBuilder builder, Fuzzy fuzzy) {
+    protected void setAnnotationMeta(FuzzyQueryBuilder builder, Fuzzy fuzzy) {
         builder.fuzziness(Fuzziness.build(fuzzy.fuzziness()))
                 .maxExpansions(fuzzy.maxExpansions())
                 .prefixLength(fuzzy.prefixLength());
     }
 
     @Override
-    protected FuzzyQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        return QueryBuilders.fuzzyQuery(conditionMeta.getName(), condition);
+    protected FuzzyQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return QueryBuilders.fuzzyQuery(meta.getName(), condition);
     }
 }

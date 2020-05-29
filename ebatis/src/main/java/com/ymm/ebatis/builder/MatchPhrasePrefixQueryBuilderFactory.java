@@ -17,7 +17,7 @@ public class MatchPhrasePrefixQueryBuilderFactory extends AbstractQueryBuilderFa
     }
 
     @Override
-    protected void setOptionalMeta(MatchPhrasePrefixQueryBuilder builder, MatchPhrasePrefix matchPhrasePrefix) {
+    protected void setAnnotationMeta(MatchPhrasePrefixQueryBuilder builder, MatchPhrasePrefix matchPhrasePrefix) {
         builder.maxExpansions(matchPhrasePrefix.maxExpansions())
                 .slop(matchPhrasePrefix.slop());
 
@@ -27,7 +27,7 @@ public class MatchPhrasePrefixQueryBuilderFactory extends AbstractQueryBuilderFa
     }
 
     @Override
-    protected MatchPhrasePrefixQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        return QueryBuilders.matchPhrasePrefixQuery(conditionMeta.getName(), condition);
+    protected MatchPhrasePrefixQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return QueryBuilders.matchPhrasePrefixQuery(meta.getName(), condition);
     }
 }

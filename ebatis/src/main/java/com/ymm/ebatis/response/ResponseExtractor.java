@@ -40,7 +40,7 @@ public interface ResponseExtractor<T> {
      *
      * @param ex 任意异常
      */
-    default void exceptionHandle(Exception ex) {
+    default void catchException(Exception ex) {
         // do nothing default
     }
 

@@ -1,10 +1,11 @@
 package com.ymm.ebatis.request;
 
 import com.ymm.ebatis.annotation.Update;
-import com.ymm.ebatis.common.DslUtils;
-import com.ymm.ebatis.core.domain.ScriptProvider;
-import com.ymm.ebatis.core.domain.VersionProvider;
 import com.ymm.ebatis.meta.MethodMeta;
+import com.ymm.ebatis.meta.ParameterMeta;
+import com.ymm.ebatis.provider.IdProvider;
+import com.ymm.ebatis.provider.ScriptProvider;
+import com.ymm.ebatis.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
@@ -15,14 +16,14 @@ import java.util.Optional;
  * @author 章多亮
  * @since 2019/12/17 19:23
  */
-public class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest> {
-    public static final UpdateRequestFactory INSTANCE = new UpdateRequestFactory();
+class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest> {
+    static final UpdateRequestFactory INSTANCE = new UpdateRequestFactory();
 
     private UpdateRequestFactory() {
     }
 
     @Override
-    protected void setOptionalMeta(UpdateRequest request, Update update) {
+    protected void setAnnotationMeta(UpdateRequest request, Update update) {
         request.routing(update.routing())
                 .fetchSource(update.fetchSource())
                 .detectNoop(update.detectNoop())
@@ -42,14 +43,20 @@ public class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateR
     @Override
     protected UpdateRequest doCreate(MethodMeta meta, Object[] args) {
         UpdateRequest request = new UpdateRequest();
+        request.index(meta.getIndex());
 
-        Object doc = args[0];
+        ParameterMeta parameterMeta = meta.getConditionParameter();
+        Object doc = parameterMeta.getValue(args);
 
-        if (DslUtils.isBasicClass(doc.getClass())) {
+        if (parameterMeta.isBasic()) {
             request.id(String.valueOf(doc));
         } else {
             if (doc instanceof VersionProvider) {
                 request.version(((VersionProvider) doc).getVersion());
+            }
+
+            if (doc instanceof IdProvider) {
+                request.id(((IdProvider) doc).getId());
             }
 
             // 脚本更新
@@ -57,11 +64,9 @@ public class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateR
                 request.script(((ScriptProvider) doc).getScript().toEsScript());
             } else {
                 // Partial Document 更新
-                IndexRequest indexRequest = IndexRequestFactory.INSTANCE.doCreate(meta, args);
+                IndexRequest indexRequest = RequestFactory.index().create(meta, args);
                 request.doc(indexRequest);
             }
-
-            setIdAndVersion(doc, request::id, request::version);
         }
 
         return request;

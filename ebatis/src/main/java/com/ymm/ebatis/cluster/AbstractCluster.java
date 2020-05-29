@@ -14,7 +14,6 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -113,7 +112,7 @@ public abstract class AbstractCluster implements Cluster {
         return RestClient.builder(hosts)
                 .setHttpClientConfigCallback(builder -> builder.setConnectionReuseStrategy(DefaultClientConnectionReuseStrategy.INSTANCE)
                         .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-                        .setDefaultCredentialsProvider(Optional.of(credentials).map(Credentials::toCredentialsProvider).orElse(null)));
+                        .setDefaultCredentialsProvider(credentials == null ? null : credentials.toCredentialsProvider()));
     }
 
     /**

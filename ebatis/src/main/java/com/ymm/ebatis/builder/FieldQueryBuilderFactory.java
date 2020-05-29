@@ -12,7 +12,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 public class FieldQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Field> {
 
     @Override
-    protected QueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
+    protected QueryBuilder doCreate(ConditionMeta conditionMeta, Object condition) {
         return null;
     }
 }

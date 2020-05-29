@@ -10,6 +10,6 @@ import org.junit.Test;
 public class SearchTest {
     @Test
     public void search() {
-        MethodExecutor executor = RequestType.SEARCH.getExecutor();
+        RequestExecutor executor = RequestType.SEARCH.getRequestExecutor();
     }
 }

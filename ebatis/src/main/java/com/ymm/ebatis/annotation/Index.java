@@ -53,5 +53,5 @@ public @interface Index {
 
     WriteRequest.RefreshPolicy refreshPolicy() default WriteRequest.RefreshPolicy.NONE;
 
-    int waitForActiveShards() default AnnotationConstants.ACTIVE_SHARD_COUNT_DEFAULT;
+    String waitForActiveShards() default "1";
 }

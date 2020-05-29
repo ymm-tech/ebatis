@@ -17,14 +17,14 @@ public class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<
     }
 
     @Override
-    protected void setOptionalMeta(GeoDistanceQueryBuilder builder, GeoDistance annotation) {
+    protected void setAnnotationMeta(GeoDistanceQueryBuilder builder, GeoDistance annotation) {
         builder.setValidationMethod(annotation.validationMethod());
         builder.ignoreUnmapped(annotation.ignoreUnmapped());
     }
 
     @Override
-    protected GeoDistanceQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        GeoDistanceQueryBuilder builder = QueryBuilders.geoDistanceQuery(conditionMeta.getName());
+    protected GeoDistanceQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        GeoDistanceQueryBuilder builder = QueryBuilders.geoDistanceQuery(meta.getName());
 
         if (condition instanceof GeoDistanceRange) {
             GeoDistanceRange distanceRange = (GeoDistanceRange) condition;
@@ -32,7 +32,7 @@ public class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<
         } else if (condition instanceof String) {
             builder.distance(String.valueOf(condition));
         } else if (condition instanceof Double) {
-            conditionMeta.getAttributeAnnotation(GeoDistance.class)
+            meta.findAttributeAnnotation(GeoDistance.class)
                     .ifPresent(geoDistance -> builder.distance((Double) condition, geoDistance.unit()));
         }
 

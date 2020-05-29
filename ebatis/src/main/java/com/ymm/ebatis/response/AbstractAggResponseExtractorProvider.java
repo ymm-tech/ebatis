@@ -54,6 +54,7 @@ public abstract class AbstractAggResponseExtractorProvider extends AbstractRespo
         }
     }
 
+
     @Override
     protected ResponseExtractor<?> getResponseExtractor(ResolvableType resolvedResultType) {
         Class<?> resultClass = resolvedResultType.resolve();
@@ -79,10 +80,10 @@ public abstract class AbstractAggResponseExtractorProvider extends AbstractRespo
     }
 
     @Override
-    public ResponseExtractor<?> getResponseExtractor(MethodMeta method) {
-        Agg agg = method.getAnnotation(Agg.class);
+    public ResponseExtractor<?> getResponseExtractor(MethodMeta meta) {
+        Agg agg = meta.getAnnotation(Agg.class);
         AggType type = agg.type();
 
-        return RESPONSE_EXTRACTORS.get(type).apply(method);
+        return RESPONSE_EXTRACTORS.get(type).apply(meta);
     }
 }

@@ -1,23 +1,18 @@
 package com.ymm.ebatis.builder;
 
-import com.ymm.ebatis.annotation.Filter;
 import com.ymm.ebatis.annotation.AnnotationConstants;
+import com.ymm.ebatis.annotation.Filter;
 import com.ymm.ebatis.annotation.Must;
 import com.ymm.ebatis.annotation.MustNot;
-import com.ymm.ebatis.annotation.QueryType;
 import com.ymm.ebatis.annotation.Should;
-import com.ymm.ebatis.common.DslUtils;
-import com.ymm.ebatis.exception.QueryFieldNullException;
-import com.ymm.ebatis.meta.ConditionMeta;
-import com.ymm.ebatis.meta.FieldConditionMeta;
+import com.ymm.ebatis.meta.FieldMeta;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.springframework.core.annotation.AnnotationUtils;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,12 +31,7 @@ public enum QueryClauseType {
      */
     MUST(Must.class) {
         @Override
-        public QueryType getQueryType(Annotation annotation) {
-            return ((Must) annotation).queryType();
-        }
-
-        @Override
-        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldConditionMeta> fields, Object instance) {
+        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance) {
             combineQueryBuilder(builder::must, fields, instance);
         }
     },
@@ -50,12 +40,7 @@ public enum QueryClauseType {
      */
     MUST_NOT(MustNot.class) {
         @Override
-        public QueryType getQueryType(Annotation annotation) {
-            return ((MustNot) annotation).queryType();
-        }
-
-        @Override
-        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldConditionMeta> fields, Object instance) {
+        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance) {
             combineQueryBuilder(builder::mustNot, fields, instance);
         }
     },
@@ -64,15 +49,10 @@ public enum QueryClauseType {
      */
     SHOULD(Should.class) {
         @Override
-        public QueryType getQueryType(Annotation annotation) {
-            return ((Should) annotation).queryType();
-        }
-
-        @Override
-        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldConditionMeta> fields, Object instance) {
+        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance) {
             // 有多个Should条件，则只处理其中一个Should，处理多个没有意义，覆盖掉了，而且多个层级是可以分别设置自己的Should#minimumShouldMatch值的
-            for (ConditionMeta<? extends AnnotatedElement> field : fields) {
-                Should should = field.getAnnotationRequired(Should.class);
+            for (FieldMeta field : fields) {
+                Should should = field.getAnnotation(Should.class);
                 if (!Objects.equals(AnnotationConstants.NO_SET, should.minimumShouldMatch())) {
                     builder.minimumShouldMatch(should.minimumShouldMatch());
                     break;
@@ -87,12 +67,7 @@ public enum QueryClauseType {
      */
     FILTER(Filter.class) {
         @Override
-        public QueryType getQueryType(Annotation annotation) {
-            return ((Filter) annotation).queryType();
-        }
-
-        @Override
-        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldConditionMeta> fields, Object instance) {
+        public void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance) {
             combineQueryBuilder(builder::filter, fields, instance);
         }
     };
@@ -102,36 +77,37 @@ public enum QueryClauseType {
         QUERY_CLAUSE_TYPES = Stream.of(values()).collect(Collectors.toMap(QueryClauseType::getQueryClauseClass, t -> t));
     }
 
-    private final Map<Class<?>, Method> nestedAnnotationMethods;
     private final Class<? extends Annotation> queryClauseClass;
 
     QueryClauseType(Class<? extends Annotation> queryClauseClass) {
         this.queryClauseClass = queryClauseClass;
-        this.nestedAnnotationMethods = DslUtils.getNestedAnnotationMethods(queryClauseClass);
     }
 
     public static QueryClauseType valueOf(Class<? extends Annotation> queryClauseTypeClass) {
         return QUERY_CLAUSE_TYPES.get(queryClauseTypeClass);
     }
 
-    private static QueryBuilderElement createQueryElementBuilder(FieldConditionMeta field, Object instance) {
-        Object value = field.getValue(instance);
-        if (value == null) {
-            if (field.isExistsField()) {
-                return new QueryBuilderElement(field, null);
+    private static void combineQueryBuilder(QueryClauseCombiner combiner, List<FieldMeta> fields, Object instance) {
+        List<QueryBuilder> builders = new LinkedList<>();
+
+        for (FieldMeta meta : fields) {
+            Object value = meta.getValue(instance);
+
+            if (!meta.isBasic()) {
+                // 动态组合语句，特殊处理，就是个坑
+                if (meta.isArray()) {
+                    Arrays.stream((Object[]) value).map(v -> QueryBuilderFactory.auto().create(meta, value)).collect(Collectors.toCollection(() -> builders));
+                } else if (meta.isCollection()) {
+                    ((Collection<?>) value).stream().map(v -> QueryBuilderFactory.auto().create(meta, value)).collect(Collectors.toCollection(() -> builders));
+                }
             }
-            if (!field.isIgnoreNull()) {
-                throw new QueryFieldNullException("查询字段不能为空：" + field);
+
+            QueryBuilder builder = meta.getQueryBuilderFactory().create(meta, value);
+            if (builder != null) {
+                builders.add(builder);
             }
-            return null;
         }
-
-
-        return new QueryBuilderElement(field, value);
-    }
-
-    private static void combineQueryBuilder(Function<QueryBuilder, BoolQueryBuilder> combinator, List<FieldConditionMeta> fields, Object instance) {
-        fields.stream().map(field -> createQueryElementBuilder(field, instance)).filter(Objects::nonNull).forEach(element -> Arrays.stream(element.toQueryBuilder()).forEach(combinator::apply));
+        builders.forEach(combiner::combine);
     }
 
 
@@ -139,19 +115,15 @@ public enum QueryClauseType {
         return queryClauseClass;
     }
 
-    public Map<Class<?>, Method> getNestedAnnotationMethods() {
-        return nestedAnnotationMethods;
+    public abstract void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance);
+
+    @FunctionalInterface
+    private static interface QueryClauseCombiner extends Function<QueryBuilder, BoolQueryBuilder> {
+        @Override
+        default BoolQueryBuilder apply(QueryBuilder queryBuilder) {
+            return combine(queryBuilder);
+        }
+
+        BoolQueryBuilder combine(QueryBuilder queryBuilder);
     }
-
-    public <A extends Annotation> A getNestedAnnotation(Annotation annotation, Class<A> annotationClass) {
-        return AnnotationUtils.getAnnotation(annotation, annotationClass);
-    }
-
-    public Method getNestedAnnotationMethod(Class<?> aClass) {
-        return nestedAnnotationMethods.get(aClass);
-    }
-
-    public abstract QueryType getQueryType(Annotation annotation);
-
-    public abstract void addQueryBuilder(BoolQueryBuilder builder, List<FieldConditionMeta> fields, Object instance);
 }

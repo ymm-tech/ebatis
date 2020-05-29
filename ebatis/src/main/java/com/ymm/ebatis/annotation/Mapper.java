@@ -33,5 +33,12 @@ public @interface Mapper {
      *
      * @return 路由列表
      */
-    String[] routing() default {};
+    String routing() default "";
+
+    /**
+     * 集群名称
+     *
+     * @return 集群名称
+     */
+    String clusterRouter() default "clusterRouter";
 }

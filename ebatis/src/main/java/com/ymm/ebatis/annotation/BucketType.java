@@ -1,5 +1,9 @@
 package com.ymm.ebatis.annotation;
 
+import com.ymm.ebatis.meta.MethodMeta;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+
 /**
  * @author 章多亮
  * @since 2020/1/3 13:13
@@ -28,5 +32,14 @@ public enum BucketType {
     SAMPLER,
     SIGNIFICANT_TERMS,
     SIGNIFICANT_TEXT,
-    TERMS
+    TERMS {
+        @Override
+        public AggregationBuilder aggregate(MethodMeta meta, Bucket bucket) {
+            return AggregationBuilders.terms(bucket.name());
+        }
+    };
+
+    public AggregationBuilder aggregate(MethodMeta meta, Bucket bucket) {
+        throw new UnsupportedOperationException();
+    }
 }

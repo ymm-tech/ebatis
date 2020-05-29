@@ -9,13 +9,13 @@ import org.elasticsearch.index.query.GeoShapeQueryBuilder;
  * @since 2020/1/8 16:45
  */
 public class GeoShapeQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoShapeQueryBuilder, GeoShape> {
-    @Override
-    protected void setOptionalMeta(GeoShapeQueryBuilder builder, GeoShape annotation) {
-        super.setOptionalMeta(builder, annotation);
+    public static final GeoShapeQueryBuilderFactory INSTANCE = new GeoShapeQueryBuilderFactory();
+
+    private GeoShapeQueryBuilderFactory() {
     }
 
     @Override
-    protected GeoShapeQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
+    protected GeoShapeQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         return null;
     }
 }

@@ -6,4 +6,8 @@ package com.ymm.ebatis.exception;
  */
 public class MethodExecutorNotFoundException extends EbatisException {
     private static final long serialVersionUID = 5658881348230278389L;
+
+    public MethodExecutorNotFoundException(String message) {
+        super(message);
+    }
 }

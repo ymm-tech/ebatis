@@ -1,32 +1,30 @@
 package com.ymm.ebatis.request;
 
-import com.ymm.ebatis.annotation.Metric;
 import com.ymm.ebatis.annotation.Agg;
+import com.ymm.ebatis.annotation.Metric;
 import com.ymm.ebatis.common.DslUtils;
-import com.ymm.ebatis.core.domain.AggConditionProvider;
-import com.ymm.ebatis.core.domain.MissingProvider;
-import com.ymm.ebatis.core.domain.ScriptProvider;
 import com.ymm.ebatis.meta.MethodMeta;
+import com.ymm.ebatis.provider.AggConditionProvider;
+import com.ymm.ebatis.provider.MissingProvider;
+import com.ymm.ebatis.provider.ScriptProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.support.ValuesSourceAggregationBuilder;
 
-import java.util.Optional;
-
 /**
  * @author 章多亮
  * @since 2020/1/2 19:16
  */
-public class MetricAggRequestFactory extends AbstractAggRequestFactory {
-    public static final MetricAggRequestFactory INSTANCE = new MetricAggRequestFactory();
+class MetricAggRequestFactory extends AbstractAggRequestFactory {
+    static final MetricAggRequestFactory INSTANCE = new MetricAggRequestFactory();
 
     private MetricAggRequestFactory() {
     }
 
     @Override
-    protected void setOptionalMeta(SearchRequest request, Agg agg) {
+    protected void setAnnotationMeta(SearchRequest request, Agg agg) {
         request.routing(DslUtils.getRouting(agg.routing()));
         request.source().fetchSource(agg.fetchSource()).size(agg.size());
     }
@@ -37,7 +35,7 @@ public class MetricAggRequestFactory extends AbstractAggRequestFactory {
 
         SearchRequest request = createSearchRequest(meta, condition);
 
-        Agg agg = meta.getAnnotationRequired(Agg.class);
+        Agg agg = meta.getAnnotation(Agg.class);
         Metric metric = DslUtils.getFirstElementRequired(agg.metric());
 
         // 聚合
@@ -64,12 +62,6 @@ public class MetricAggRequestFactory extends AbstractAggRequestFactory {
 
         if (aggregation instanceof ValuesSourceAggregationBuilder) {
             ValuesSourceAggregationBuilder<?, ?> sourceAggregation = (ValuesSourceAggregationBuilder<?, ?>) aggregation;
-            // 如果是空的，
-            Optional.ofNullable(condition)
-                    .map(BeanDescriptor::of)
-                    .flatMap(BeanDescriptor::getMissing)
-                    .ifPresent(m -> sourceAggregation.missing(m.getValue(condition)));
-
             // 缺失字段处理
             if (condition instanceof MissingProvider) {
                 sourceAggregation.missing(((MissingProvider) condition).getMissing());
@@ -83,18 +75,9 @@ public class MetricAggRequestFactory extends AbstractAggRequestFactory {
                 sourceAggregation.script(((ScriptProvider) condition).getScript().toEsScript());
             } else {
                 // 如果条件是空的，则只能通过字段统计
-                sourceAggregation.field(getFieldName(metric));
+                sourceAggregation.field(metric.fieldName());
             }
         }
         return aggregation;
     }
-
-    private String getFieldName(Metric metric) {
-        String name = metric.fieldName();
-        if (StringUtils.isBlank(name)) {
-            throw new IllegalArgumentException("metric字段聚合运算，字段名称不能为空");
-        }
-        return name;
-    }
-
 }

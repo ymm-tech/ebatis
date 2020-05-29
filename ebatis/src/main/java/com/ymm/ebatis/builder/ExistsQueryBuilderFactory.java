@@ -19,11 +19,16 @@ public class ExistsQueryBuilderFactory extends AbstractQueryBuilderFactory<Query
     }
 
     @Override
-    protected QueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        Optional<Exists> annotation = conditionMeta.getAttributeAnnotation(Exists.class);
-        ExistsQueryBuilder existsQuery = QueryBuilders.existsQuery(conditionMeta.getName());
-        if (annotation.isPresent()) {
-            return annotation.get().value() ? existsQuery : QueryBuilders.boolQuery().mustNot(existsQuery);
+    protected boolean onlyHandleNoneNullable() {
+        return false;
+    }
+
+    @Override
+    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        Optional<Exists> exists = meta.findAttributeAnnotation(Exists.class);
+        ExistsQueryBuilder existsQuery = QueryBuilders.existsQuery(meta.getName());
+        if (exists.isPresent()) {
+            return exists.get().value() ? existsQuery : QueryBuilders.boolQuery().mustNot(existsQuery);
         } else {
             return existsQuery;
         }

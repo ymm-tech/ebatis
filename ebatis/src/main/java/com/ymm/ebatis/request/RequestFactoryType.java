@@ -1,14 +1,15 @@
 package com.ymm.ebatis.request;
 
+import com.ymm.ebatis.annotation.Agg;
 import com.ymm.ebatis.annotation.Bulk;
+import com.ymm.ebatis.annotation.Delete;
 import com.ymm.ebatis.annotation.DeleteByQuery;
 import com.ymm.ebatis.annotation.Index;
 import com.ymm.ebatis.annotation.MultiSearch;
 import com.ymm.ebatis.annotation.Search;
 import com.ymm.ebatis.annotation.Update;
 import com.ymm.ebatis.annotation.UpdateByQuery;
-import com.ymm.ebatis.annotation.Agg;
-import com.ymm.ebatis.annotation.Delete;
+import org.elasticsearch.action.ActionRequest;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -49,7 +50,7 @@ public enum RequestFactoryType {
     /**
      * 查询构建器
      */
-    QUERY(Search.class, SearchRequestFactory.INSTANCE),
+    SEARCH(Search.class, SearchRequestFactory.INSTANCE),
     MULTI_SEARCH(MultiSearch.class, MultiSearchRequestFactory.INSTANCE),
 
     AGG(Agg.class, AggRequestFactory.INSTANCE);
@@ -70,9 +71,9 @@ public enum RequestFactoryType {
     /**
      * 构建器
      */
-    private final RequestFactory requestFactory;
+    private final RequestFactory<?> requestFactory;
 
-    RequestFactoryType(Class<? extends Annotation> annotationClass, RequestFactory requestFactory) {
+    <A extends Annotation, T extends ActionRequest> RequestFactoryType(Class<A> annotationClass, RequestFactory<T> requestFactory) {
         this.annotationClass = annotationClass;
         this.requestFactory = requestFactory;
     }
@@ -116,7 +117,8 @@ public enum RequestFactoryType {
      *
      * @return 构建器
      */
-    public RequestFactory getRequestFactory() {
-        return requestFactory;
+    @SuppressWarnings("unchecked")
+    public <R extends ActionRequest> RequestFactory<R> getRequestFactory() {
+        return (RequestFactory<R>) requestFactory;
     }
 }
