@@ -16,7 +16,7 @@ public class TermQueryBuilderFactory extends AbstractQueryBuilderFactory<TermQue
     }
 
     @Override
-    protected TermQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        return QueryBuilders.termQuery(conditionMeta.getName(), condition);
+    protected TermQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return QueryBuilders.termQuery(meta.getName(), condition);
     }
 }

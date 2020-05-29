@@ -1,7 +1,8 @@
 package com.ymm.ebatis.spring.annotation;
 
+import com.ymm.ebatis.annotation.Mapper;
 import com.ymm.ebatis.spring.exception.ClusterNameNotFoundException;
-import com.ymm.ebatis.spring.proxy.EsMapperProxyFactory;
+import com.ymm.ebatis.spring.proxy.EsMapperProxyFactoryBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -22,17 +23,17 @@ public class EsMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScanne
         super(registry, false);
         this.globalClusterRouter = globalClusterRouter;
 
-        addIncludeFilter(new AnnotationTypeFilter(EsMapper.class));
+        addIncludeFilter(new AnnotationTypeFilter(Mapper.class));
     }
 
     @Override
     protected void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry) {
         AnnotatedBeanDefinition beanDefinition = (AnnotatedBeanDefinition) definitionHolder.getBeanDefinition();
         String beanClassName = beanDefinition.getBeanClassName();
-        String clusterRouter = AnnotationAttributes.fromMap(beanDefinition.getMetadata().getAnnotationAttributes(EsMapper.class.getName())).getString("clusterRouter");
+        String clusterRouter = AnnotationAttributes.fromMap(beanDefinition.getMetadata().getAnnotationAttributes(Mapper.class.getName())).getString("clusterRouter");
 
         // 实际的Bean对象是EsMapperProxyFactory，它是个FactoryBean，负责创建EsMapperProxy代理
-        beanDefinition.setBeanClassName(EsMapperProxyFactory.class.getName());
+        beanDefinition.setBeanClassName(EsMapperProxyFactoryBean.class.getName());
         ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
         constructorArgumentValues.addGenericArgumentValue(beanClassName);
         constructorArgumentValues.addGenericArgumentValue(new RuntimeBeanReference(getClusterRouterName(clusterRouter)));

@@ -3,9 +3,9 @@ package com.ymm.ebatis.builder;
 import com.ymm.ebatis.annotation.FunctionScore;
 import com.ymm.ebatis.domain.ScoreFunction;
 import com.ymm.ebatis.domain.ScoreFunctionMode;
-import com.ymm.ebatis.core.domain.ScoreFunctionProvider;
 import com.ymm.ebatis.exception.ConditionNotSupportException;
 import com.ymm.ebatis.meta.ConditionMeta;
+import com.ymm.ebatis.provider.ScoreFunctionProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -25,17 +25,17 @@ public class FunctionScoreQueryBuilderFactory extends AbstractQueryBuilderFactor
     }
 
     @Override
-    protected void setOptionalMeta(QueryBuilder builder, FunctionScore functionScore) {
+    protected void setAnnotationMeta(QueryBuilder builder, FunctionScore functionScore) {
         // do nothing
     }
 
     @Override
-    protected QueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
+    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
         if (!(condition instanceof ScoreFunctionProvider)) {
             throw new ConditionNotSupportException("条件必须实现: ScoreFunctionProvider");
         }
 
-        QueryBuilder queryBuilder = BoolQueryBuilderFactory.INSTANCE.create(conditionMeta, condition);
+        QueryBuilder queryBuilder = BoolQueryBuilderFactory.INSTANCE.create(meta, condition);
 
         ScoreFunctionProvider provider = (ScoreFunctionProvider) condition;
         //对于函数积分组合查询，如果没有提供ScoreFunction,则当作Bool查询

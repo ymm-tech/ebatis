@@ -1,10 +1,9 @@
 package com.ymm.ebatis.builder;
 
 import com.ymm.ebatis.annotation.MultiMatch;
-import com.ymm.ebatis.annotation.Search;
-import com.ymm.ebatis.common.AnnotationUtils;
-import com.ymm.ebatis.core.domain.MultiMatchFieldProvider;
+import com.ymm.ebatis.exception.EbatisException;
 import com.ymm.ebatis.meta.ConditionMeta;
+import com.ymm.ebatis.provider.MultiMatchFieldProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
@@ -21,7 +20,7 @@ public class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<M
     }
 
     @Override
-    protected void setOptionalMeta(MultiMatchQueryBuilder builder, MultiMatch multiMatch) {
+    protected void setAnnotationMeta(MultiMatchQueryBuilder builder, MultiMatch multiMatch) {
         Float cutoffFrequency = multiMatch.cutoffFrequency() < 0 || multiMatch.cutoffFrequency() > 1 ? null : multiMatch.cutoffFrequency();
 
         builder.autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
@@ -39,9 +38,8 @@ public class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<M
     }
 
     @Override
-    protected MultiMatchQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        Search search = conditionMeta.getParentAnnotationRequired(Search.class);
-        MultiMatch multiMatch = AnnotationUtils.getAnnotationRequired(search::multiMatch);
+    protected MultiMatchQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        MultiMatch multiMatch = meta.findAttributeAnnotation(MultiMatch.class).orElseThrow(EbatisException::new);
 
         String[] fields = multiMatch.fields();
 

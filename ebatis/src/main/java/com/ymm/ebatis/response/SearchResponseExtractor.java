@@ -1,6 +1,5 @@
 package com.ymm.ebatis.response;
 
-import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.search.SearchResponse;
 
 /**
@@ -9,9 +8,5 @@ import org.elasticsearch.action.search.SearchResponse;
  * @author duoliang.zhang
  */
 public interface SearchResponseExtractor<T> extends ConcreteResponseExtractor<T, SearchResponse> {
-    @Override
-    default boolean validate(ActionResponse response) {
-        return true;
-    }
 }
 

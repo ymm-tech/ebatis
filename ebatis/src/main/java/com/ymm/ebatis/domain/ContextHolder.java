@@ -57,18 +57,19 @@ public class ContextHolder {
     }
 
     public static String getString(String key) {
-        return getValue(key, String.class);
+        return getValue(key);
     }
 
     public static Boolean getBoolean(String key) {
-        return getValue(key, Boolean.class);
+        return getValue(key);
     }
 
     public static Integer getInteger(String key) {
-        return getValue(key, Integer.class);
+        return getValue(key);
     }
 
-    public static <T> T getValue(String key, Class<T> expectedType) {
+    @SuppressWarnings("unchecked")
+    public static <T> T getValue(String key) {
         return (T) getContext().getValue(key);
     }
 }

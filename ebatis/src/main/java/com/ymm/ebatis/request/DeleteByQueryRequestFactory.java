@@ -11,14 +11,14 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 /**
  * @author duoliang.zhang
  */
-public class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, DeleteByQueryRequest> {
-    public static final DeleteByQueryRequestFactory INSTANCE = new DeleteByQueryRequestFactory();
+class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, DeleteByQueryRequest> {
+    static final DeleteByQueryRequestFactory INSTANCE = new DeleteByQueryRequestFactory();
 
     private DeleteByQueryRequestFactory() {
     }
 
     @Override
-    protected void setOptionalMeta(DeleteByQueryRequest request, DeleteByQuery deleteByQuery) {
+    protected void setAnnotationMeta(DeleteByQueryRequest request, DeleteByQuery deleteByQuery) {
         request.setSlices(deleteByQuery.slices())
                 .setRefresh(deleteByQuery.refresh())
                 .setTimeout(TimeValue.parseTimeValue(deleteByQuery.timeout(), "查询删除超时"))
@@ -43,10 +43,12 @@ public class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteBy
 
     @Override
     protected DeleteByQueryRequest doCreate(MethodMeta meta, Object[] args) {
-        SearchRequest searchRequest = SearchRequestFactory.INSTANCE.create(meta, args);
+        SearchRequest searchRequest = RequestFactory.search().create(meta, args);
         SearchSourceBuilder source = searchRequest.source();
-        DeleteByQueryRequest request = new DeleteByQueryRequest();
+
+        DeleteByQueryRequest request = new DeleteByQueryRequest(meta.getIndices());
         request.getSearchRequest().source(source);
+
         searchRequest.source(source);
         return request;
     }

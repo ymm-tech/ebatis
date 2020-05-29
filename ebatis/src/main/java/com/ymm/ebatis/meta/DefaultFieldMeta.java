@@ -1,74 +1,73 @@
 package com.ymm.ebatis.meta;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ymm.ebatis.annotation.QueryType;
+import com.ymm.ebatis.builder.QueryBuilderFactory;
+import com.ymm.ebatis.common.AnnotationUtils;
+import com.ymm.ebatis.exception.ReadMethodInvokeException;
 import com.ymm.ebatis.exception.ReadMethodNotFoundException;
 import lombok.SneakyThrows;
-import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.ResolvableType;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * @author 章多亮
- * @since 2020/5/21 18:27
+ * @since 2020/5/27 19:16
  */
-@ToString
-class DefaultFieldMeta implements FieldMeta {
+public class DefaultFieldMeta extends AbstractConditionMeta implements FieldMeta {
     private final Field field;
-    private final Method readMethod;
-    private final String name;
 
-    DefaultFieldMeta(Field field) {
+    private final boolean basic;
+    private final boolean basicArrayOrCollection;
+    private final String name;
+    private final Method readMethod;
+    private final Class<? extends Annotation> queryClauseAnnotationClass;
+    private final Annotation queryClauseAnnotation;
+    private final QueryBuilderFactory queryBuilderFactory;
+
+    public DefaultFieldMeta(Field field) {
+        super(field.getType());
         this.field = field;
         this.readMethod = getReadMethod(field);
+
+        Class<?> type = getActualType(field);
+        this.basic = MetaUtils.isBasic(type);
+        this.basicArrayOrCollection = isArrayOrCollection() && basic;
         this.name = getName(field);
+
+        this.queryClauseAnnotationClass = QueryClauses.getQueryClauseClass(this);
+
+        Optional<? extends Annotation> annotation = findAnnotation(queryClauseAnnotationClass);
+        this.queryClauseAnnotation = annotation.orElse(null);
+
+        this.queryBuilderFactory = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO).getQueryBuilderFactory();
     }
 
-    private String getName(Field element) {
-        return fromAnnotation(element)
-                .orElseGet(field::getName);
-    }
-
-    private Optional<String> fromAnnotation(Field element) {
-        Optional<String> nameOptional = fromFieldAnnotation(element);
-        if (nameOptional.isPresent()) {
-            return nameOptional;
+    private Class<?> getActualType(Field field) {
+        Class<?> type;
+        if (isArray()) {
+            type = getType().getComponentType();
+        } else if (isCollection()) {
+            type = ResolvableType.forField(field).resolveGeneric(0);
+        } else {
+            type = getType();
         }
-
-        return fromJsonPropertyAnnotation(element);
+        return type;
     }
 
-    private Optional<String> fromJsonPropertyAnnotation(Field element) {
-        // 支持JSON的Field映射
-        JsonProperty jsonField = element.getAnnotation(JsonProperty.class);
-        if (jsonField != null) {
-            String n = jsonField.value();
-            if (StringUtils.isNotBlank(n)) {
-                return Optional.of(n);
-            }
-        }
-        return Optional.empty();
-    }
-
-    private Optional<String> fromFieldAnnotation(Field element) {
-        com.ymm.ebatis.annotation.Field annotation = element.getAnnotation(com.ymm.ebatis.annotation.Field.class);
-        if (annotation != null) {
-            String n = annotation.value();
-            if (StringUtils.isNotBlank(n)) {
-                return Optional.of(n);
-            }
-
-            n = annotation.name();
-            if (StringUtils.isNotBlank(n)) {
-                return Optional.of(n);
-            }
-        }
-        return Optional.empty();
+    @Override
+    public Field getElement() {
+        return field;
     }
 
     @SneakyThrows
@@ -84,18 +83,82 @@ class DefaultFieldMeta implements FieldMeta {
         throw new ReadMethodNotFoundException(field.toString());
     }
 
-    @Override
-    public Field getField() {
-        return field;
+    private String getName(Field field) {
+        String name; // NOSONAR
+
+        com.ymm.ebatis.annotation.Field fieldAnnotation = field.getAnnotation(com.ymm.ebatis.annotation.Field.class);
+        if (fieldAnnotation != null) {
+            name = fieldAnnotation.name();
+            if (StringUtils.isNotBlank(name)) {
+                return name;
+            }
+
+            name = fieldAnnotation.value();
+            if (StringUtils.isNotBlank(name)) {
+                return name;
+            }
+        }
+
+        JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
+        if (jsonProperty != null) {
+            name = jsonProperty.value();
+            if (StringUtils.isNotBlank(name)) {
+                return name;
+            }
+        }
+
+        return field.getName();
+
     }
 
-    @Override
-    public Method getReadMethod() {
-        return readMethod;
-    }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass) {
+        return getQueryClauseAnnotation().flatMap(a -> AnnotationUtils.findAttribute(a, annotationClass));
+    }
+
+    @Override
+    public Object getValue(Object instance) {
+        try {
+            return readMethod.invoke(instance);
+        } catch (Exception e) {
+            throw new ReadMethodInvokeException(e);
+        }
+    }
+
+    @Override
+    public boolean isBasic() {
+        return basic;
+    }
+
+    @Override
+    public boolean isBasicArrayOrCollection() {
+        return basicArrayOrCollection;
+    }
+
+    @Override
+    public Class<? extends Annotation> getQueryClauseAnnotationClass() {
+        return queryClauseAnnotationClass;
+    }
+
+    @Override
+    public QueryBuilderFactory getQueryBuilderFactory() {
+        return queryBuilderFactory;
+    }
+
+    @Override
+    public Optional<Annotation> getQueryClauseAnnotation() {
+        return Optional.ofNullable(queryClauseAnnotation);
+    }
+
+
+    @Override
+    public Map<Class<? extends Annotation>, List<FieldMeta>> getQueryClauses(Object instance) {
+        return ClassMeta.field(field, instance == null ? null : instance.getClass()).getQueryClauses();
     }
 }

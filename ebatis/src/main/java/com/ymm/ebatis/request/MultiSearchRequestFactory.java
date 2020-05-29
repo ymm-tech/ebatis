@@ -5,26 +5,26 @@ import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.domain.ContextHolder;
 import com.ymm.ebatis.domain.Pageable;
 import com.ymm.ebatis.meta.MethodMeta;
+import com.ymm.ebatis.meta.ParameterMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-import java.lang.reflect.Parameter;
 import java.util.Collection;
 
 /**
  * @author 章多亮
  * @since 2020/1/14 15:58
  */
-public class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearch, MultiSearchRequest> {
-    public static final MultiSearchRequestFactory INSTANCE = new MultiSearchRequestFactory();
+class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearch, MultiSearchRequest> {
+    static final MultiSearchRequestFactory INSTANCE = new MultiSearchRequestFactory();
 
     private MultiSearchRequestFactory() {
     }
 
     @Override
-    protected void setOptionalMeta(MultiSearchRequest request, MultiSearch multiSearch) {
+    protected void setAnnotationMeta(MultiSearchRequest request, MultiSearch multiSearch) {
         int maxConcurrentSearchRequests = multiSearch.maxConcurrentSearchRequests();
         if (maxConcurrentSearchRequests >= 1) {
             request.maxConcurrentSearchRequests(maxConcurrentSearchRequests);
@@ -45,30 +45,31 @@ public class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearc
     }
 
     @Override
-    protected MultiSearchRequest doCreate(MethodMeta meta, Object... args) {
-        Parameter parameter = meta.getFirstParameter();
-        Object arg = args[0];
+    protected MultiSearchRequest doCreate(MethodMeta meta, Object[] args) {
+        ParameterMeta parameterMeta = meta.getConditionParameter();
+        Object arg = parameterMeta.getValue(args);
+
 
         Object[] conditions;
-        if (Collection.class.isAssignableFrom(parameter.getType())) {
+        if (parameterMeta.isCollection()) {
             Collection<?> collection = (Collection<?>) arg;
             conditions = collection.toArray();
-        } else if (parameter.getType().isArray()) {
+        } else if (parameterMeta.isArray()) {
             conditions = (Object[]) arg;
         } else {
             conditions = new Object[]{arg};
         }
-        Pageable[] pageables = new Pageable[conditions.length];
-        for (int i = 0; i < conditions.length; i++) {
-            if(conditions[i] instanceof Pageable){
-                pageables[i]= (Pageable) conditions[i];
-            }
-        }
-        ContextHolder.setPageables(pageables);
+
+        Pageable[] pageable = meta.getPageableParameter()
+                .map(p -> p.getValue(args))
+                .map(Pageable[].class::cast)
+                .orElse(new Pageable[conditions.length]);
+
+        ContextHolder.setPageables(pageable);
 
         MultiSearchRequest request = new MultiSearchRequest();
         for (int i = 0; i < conditions.length; i++) {
-            ContextHolder.setPageable(pageables[i]);
+            ContextHolder.setPageable(pageable[i]);
             request.add(SearchRequestFactory.INSTANCE.create(meta, conditions[i]));
         }
 

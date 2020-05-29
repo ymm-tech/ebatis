@@ -3,12 +3,14 @@ package com.ymm.ebatis.request;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymm.ebatis.annotation.Index;
-import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.meta.MethodMeta;
+import com.ymm.ebatis.provider.IdProvider;
+import com.ymm.ebatis.provider.VersionProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.ActiveShardCount;
+import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentType;
 
 /**
@@ -16,19 +18,20 @@ import org.elasticsearch.common.xcontent.XContentType;
  * @since 2019/12/17 19:19
  */
 @Slf4j
-public class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
-    public static final IndexRequestFactory INSTANCE = new IndexRequestFactory();
+class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
+    static final IndexRequestFactory INSTANCE = new IndexRequestFactory();
+    private static final ThreadLocal<ObjectMapper> MAPPER_HOLDER = ThreadLocal.withInitial(ObjectMapper::new);
 
     private IndexRequestFactory() {
+        MAPPER_HOLDER.remove();
     }
 
     @Override
-    protected void setOptionalMeta(IndexRequest request, Index index) {
-        ActiveShardCount activeShardCount = DslUtils.getActiveShardCount(index.waitForActiveShards());
+    protected void setAnnotationMeta(IndexRequest request, Index index) {
 
         request.setRefreshPolicy(index.refreshPolicy())
                 .versionType(index.versionType())
-                .waitForActiveShards(activeShardCount)
+                .waitForActiveShards(ActiveShardCount.parseString(index.waitForActiveShards()))
                 .timeout(index.timeout())
                 .routing(index.routing())
                 .opType(index.opType());
@@ -44,10 +47,11 @@ public class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequ
 
     @Override
     protected IndexRequest doCreate(MethodMeta meta, Object[] args) {
-        IndexRequest request = new IndexRequest();
+        IndexRequest request = Requests.indexRequest(meta.getIndex());
 
-        ObjectMapper mapper = new ObjectMapper();
-        Object doc = args[0];
+        Object doc = meta.getConditionParameter().getValue(args);
+
+        ObjectMapper mapper = MAPPER_HOLDER.get();
         byte[] source;
         try {
             source = mapper.writeValueAsBytes(doc);
@@ -55,9 +59,15 @@ public class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequ
             log.error("条件转换成JSON字节数组异常：{}", doc, e);
             source = new byte[0];
         }
-        request.source(source, XContentType.JSON);
 
-        setIdAndVersion(doc, request::id, request::version);
+        request.source(source, XContentType.JSON);
+        if (doc instanceof IdProvider) {
+            request.id(((IdProvider) doc).getId());
+        }
+
+        if (doc instanceof VersionProvider) {
+            request.version(((VersionProvider) doc).getVersion());
+        }
 
         return request;
     }

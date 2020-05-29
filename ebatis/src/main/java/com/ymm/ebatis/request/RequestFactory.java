@@ -2,6 +2,14 @@ package com.ymm.ebatis.request;
 
 import com.ymm.ebatis.meta.MethodMeta;
 import org.elasticsearch.action.ActionRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
 /**
  * # 请求工厂接口，根据请求的方法定义和实参，创建ES请求
@@ -9,7 +17,55 @@ import org.elasticsearch.action.ActionRequest;
  * @author 章多亮
  * @since 2020/5/14 11:16
  */
-public interface RequestFactory {
+public interface RequestFactory<R extends ActionRequest> {
+    static RequestFactory<SearchRequest> search() {
+        return SearchRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<IndexRequest> index() {
+        return IndexRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<MultiSearchRequest> multiSearch() {
+        return MultiSearchRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<SearchRequest> metric() {
+        return MetricAggRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<SearchRequest> bucket() {
+        return BucketAggRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<SearchRequest> pipeline() {
+        return PipelineAggRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<SearchRequest> matrix() {
+        return MatrixAggRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<BulkRequest> bulk() {
+        return BulkRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<UpdateRequest> update() {
+        return UpdateRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<DeleteRequest> delete() {
+        return DeleteRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<UpdateByQueryRequest> updateByQuery() {
+        return UpdateByQueryRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<DeleteByQueryRequest> deleteByQuery() {
+        return DeleteByQueryRequestFactory.INSTANCE;
+    }
+
     /**
      * 创建ES请求，根据注解对应创建不同的ES请求
      *
@@ -22,5 +78,5 @@ public interface RequestFactory {
      * @see org.elasticsearch.action.update.UpdateRequest 更新请求
      * @see org.elasticsearch.action.delete.DeleteRequest 删除请求
      */
-    <R extends ActionRequest> R create(MethodMeta method, Object... args);
+    R create(MethodMeta method, Object... args);
 }

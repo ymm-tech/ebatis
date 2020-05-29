@@ -26,14 +26,14 @@ public @interface Bucket {
      *
      * @return name
      */
-    String name() default "";
+    String name();
 
     /**
      * 聚合字段名称
      *
      * @return fieldName
      */
-    String fieldName() default "";
+    String fieldName();
 
     /**
      * 桶聚合顺序

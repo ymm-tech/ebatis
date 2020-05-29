@@ -1,14 +1,9 @@
 package com.ymm.ebatis.common;
 
 import com.ymm.ebatis.annotation.AnnotationConstants;
-import com.ymm.ebatis.annotation.Filter;
-import com.ymm.ebatis.annotation.MustNot;
-import com.ymm.ebatis.annotation.Should;
-import com.ymm.ebatis.annotation.Must;
 import com.ymm.ebatis.exception.ConditionBeanInfoException;
 import com.ymm.ebatis.exception.ReadMethodInvokeException;
 import com.ymm.ebatis.exception.ReadMethodNotFoundException;
-import com.ymm.ebatis.meta.ConditionMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +15,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -118,22 +112,7 @@ public class DslUtils {
             return method.invoke(condition);
         } catch (IllegalAccessException | InvocationTargetException e) {
             log.error("获取条件属性异常", e);
-            throw new ReadMethodInvokeException();
-        }
-    }
-
-
-    public static Class<? extends Annotation> groupByQueryClauseType(ConditionMeta<? extends AnnotatedElement> conditionMeta) {
-        if (conditionMeta.isAnnotationPresent(Must.class)) {
-            return Must.class;
-        } else if (conditionMeta.isAnnotationPresent(MustNot.class)) {
-            return MustNot.class;
-        } else if (conditionMeta.isAnnotationPresent(Filter.class)) {
-            return Filter.class;
-        } else if (conditionMeta.isAnnotationPresent(Should.class)) {
-            return Should.class;
-        } else {
-            return Must.class;
+            throw new ReadMethodInvokeException(e);
         }
     }
 
@@ -164,18 +143,6 @@ public class DslUtils {
             return Collections.unmodifiableMap(nestedAnnotationMethods);
         } else {
             return Collections.emptyMap();
-        }
-    }
-
-
-    public static <A> A getNestedAnnotation(Object instance, Method method) {
-        if (instance == null || method == null) {
-            return null;
-        }
-        try {
-            return (A) DslUtils.getFirstElement((Object[]) method.invoke(instance));
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalArgumentException();
         }
     }
 

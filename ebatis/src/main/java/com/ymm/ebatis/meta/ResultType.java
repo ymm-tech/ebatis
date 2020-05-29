@@ -14,6 +14,7 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -157,8 +158,8 @@ public enum ResultType {
         this.returnType = returnType;
     }
 
-    public static ResultType valueOf(Class<?> returnType) {
-        return METHOD_RETURN_TYPES.getOrDefault(returnType, OTHER);
+    public static ResultType valueOf(Method method) {
+        return METHOD_RETURN_TYPES.getOrDefault(method.getReturnType(), OTHER);
     }
 
     public Class<?> getReturnType() {

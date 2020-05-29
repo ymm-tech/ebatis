@@ -1,6 +1,7 @@
 package com.ymm.ebatis.annotation;
 
 import org.elasticsearch.action.support.WriteRequest;
+import org.elasticsearch.index.VersionType;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -17,12 +18,61 @@ import java.lang.annotation.Target;
 public @interface Delete {
     String routing() default AnnotationConstants.NO_SET;
 
+    String pipeline() default "";
+
+    /**
+     * 执行删除时，要求的分片副本数量，默认1，即只要主分片活跃即可，<code>all</code>表示全副本+主分片，其他数字
+     * <table>
+     *     <thead>
+     *         <tr>
+     *             <th>
+     *                 值
+     *             </th>
+     *             <th>
+     *                 意义
+     *             </th>
+     *         </tr>
+     *     </thead>
+     *     <tbody>
+     *         <tr>
+     *             <td>1</td>
+     *             <td>只需要主分片可用</td>
+     *         </tr>
+     *         <tr>
+     *             <td>all</td>
+     *             <td>主分片和所有副本都要可用</td>
+     *         </tr>
+     *         <tr>
+     *             <td>其他正数（0 - number_of_replicas + 1）</td>
+     *             <td></td>
+     *         </tr>
+     *     </tbody>
+     * </table>
+     *
+     * @return 分片数量
+     */
+    String waitForActiveShards() default "1";
+
+    /**
+     * 链接master节点的超时间
+     *
+     * @return 超时时间，默认30s
+     */
+    String masterTimeout() default "30s";
+
     /**
      * 超时时间，单位(s/m/h/d)
      *
      * @return 时间
      */
-    String timeout() default "1m";
+    String timeout() default "30s";
+
+    /**
+     * 文档版本控制类型
+     *
+     * @return 版本类型
+     */
+    VersionType versionType() default VersionType.INTERNAL;
 
     /**
      * 获取刷新策略

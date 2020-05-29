@@ -8,7 +8,7 @@ import java.util.Optional;
 
 /**
  * @author 章多亮
- * @since 2020/5/21 16:20
+ * @since 2020/5/27 17:08
  */
 public interface AnnotatedMeta<E extends AnnotatedElement> {
 
@@ -36,7 +36,7 @@ public interface AnnotatedMeta<E extends AnnotatedElement> {
      * @param <A>             注解类型泛型
      * @return 注解实例
      */
-    default <A extends Annotation> Optional<A> getAnnotation(Class<A> annotationClass) {
+    default <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationClass) {
         return Optional.ofNullable(getElement().getAnnotation(annotationClass));
     }
 
@@ -56,7 +56,7 @@ public interface AnnotatedMeta<E extends AnnotatedElement> {
      * @param <A>             具体注解类型
      * @return 注解的实例
      */
-    default <A extends Annotation> A getAnnotationRequired(Class<A> annotationClass) {
-        return getAnnotation(annotationClass).orElseThrow(() -> new AnnotationNotPresentException(annotationClass.getName()));
+    default <A extends Annotation> A getAnnotation(Class<A> annotationClass) {
+        return findAnnotation(annotationClass).orElseThrow(() -> new AnnotationNotPresentException(annotationClass.getName()));
     }
 }

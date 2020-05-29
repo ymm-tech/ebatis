@@ -2,9 +2,10 @@ package com.ymm.ebatis.builder;
 
 import com.ymm.ebatis.annotation.Bool;
 import com.ymm.ebatis.meta.ConditionMeta;
-import com.ymm.ebatis.meta.FieldConditionMeta;
+import com.ymm.ebatis.meta.FieldMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 
 import java.lang.annotation.Annotation;
 import java.util.List;
@@ -22,23 +23,15 @@ public class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQue
     }
 
     @Override
-    protected BoolQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        BoolQueryBuilder builder = new BoolQueryBuilder();
+    protected BoolQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        BoolQueryBuilder builder = QueryBuilders.boolQuery();
         if (condition == null) {
             return builder;
         }
 
-        Map<Class<? extends Annotation>, List<FieldConditionMeta>> elementGroup;
+        Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = meta.getQueryClauses(condition);
 
-        if (conditionMeta instanceof FieldConditionMeta) {
-            elementGroup = ((FieldConditionMeta) conditionMeta).getChildrenGroup();
-        } else {
-            BeanDescriptor beanDescriptor = BeanDescriptor.of(condition);
-            elementGroup = beanDescriptor.getFieldElementGroup();
-        }
-
-        elementGroup.forEach((key, value) ->
-                QueryClauseType.valueOf(key).addQueryBuilder(builder, value, condition));
+        queryClauses.forEach((key, fieldMetas) -> QueryClauseType.valueOf(key).addQueryBuilder(builder, fieldMetas, condition));
 
         return builder;
     }

@@ -1,7 +1,6 @@
 package com.ymm.ebatis.builder;
 
 import com.ymm.ebatis.annotation.Terms;
-import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.meta.ConditionMeta;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermsQueryBuilder;
@@ -19,25 +18,16 @@ public class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQ
     }
 
     @Override
-    protected TermsQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        Class<?> conditionClass = condition.getClass();
-        String name = conditionMeta.getName();
-        if (DslUtils.isBasicClass(conditionClass)) {
-            return QueryBuilders.termsQuery(name, condition);
-        } else if (conditionClass.isArray()) {
+    protected TermsQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        String name = meta.getName();
+        if (meta.isArray()) {
             Object[] terms = (Object[]) condition;
-            if (terms.length == 1) {
-                return QueryBuilders.termsQuery(name, terms[0]);
-            }
             return QueryBuilders.termsQuery(name, terms);
-        } else if (condition instanceof Collection) {
+        } else if (meta.isCollection()) {
             Collection<?> terms = (Collection<?>) condition;
-            if (terms.size() == 1) {
-                return QueryBuilders.termsQuery(name, terms.iterator().next());
-            }
             return QueryBuilders.termsQuery(name, terms);
         } else {
-            throw new IllegalArgumentException("Ids查询，类型不支持：" + conditionClass);
+            throw new IllegalArgumentException(meta.toString());
         }
     }
 }

@@ -1,5 +1,8 @@
 package com.ymm.ebatis.annotation;
 
+import com.ymm.ebatis.meta.MethodMeta;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+
 /**
  * metric聚合类型，单值聚合类型
  *
@@ -35,5 +38,9 @@ public enum MetricType {
     /**
      * 计数
      */
-    VALUE_COUNT
+    VALUE_COUNT;
+
+    public AggregationBuilder aggregate(MethodMeta meta, Metric metric) {
+        throw new UnsupportedOperationException(meta.toString() + metric.name());
+    }
 }

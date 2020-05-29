@@ -1,6 +1,7 @@
 package com.ymm.ebatis.domain;
 
 import com.ymm.ebatis.annotation.Ignore;
+import com.ymm.ebatis.provider.SourceProvider;
 
 /**
  * @author 章多亮

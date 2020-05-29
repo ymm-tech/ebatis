@@ -61,6 +61,7 @@ public class AnnotationUtils {
     }
 
 
+    @SuppressWarnings("unchecked")
     public static <A> A findAttribute(Annotation annotation, Method method) {
         Object o = ReflectionUtils.invokeMethod(method, annotation);
 

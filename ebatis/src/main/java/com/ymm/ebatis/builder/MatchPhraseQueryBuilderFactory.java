@@ -17,7 +17,7 @@ public class MatchPhraseQueryBuilderFactory extends AbstractQueryBuilderFactory<
     }
 
     @Override
-    protected void setOptionalMeta(MatchPhraseQueryBuilder builder, MatchPhrase matchPhrase) {
+    protected void setAnnotationMeta(MatchPhraseQueryBuilder builder, MatchPhrase matchPhrase) {
         builder.zeroTermsQuery(matchPhrase.zeroTermsQuery())
                 .slop(matchPhrase.slop());
 
@@ -27,7 +27,7 @@ public class MatchPhraseQueryBuilderFactory extends AbstractQueryBuilderFactory<
     }
 
     @Override
-    protected MatchPhraseQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        return QueryBuilders.matchPhraseQuery(conditionMeta.getName(), condition);
+    protected MatchPhraseQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return QueryBuilders.matchPhraseQuery(meta.getName(), condition);
     }
 }

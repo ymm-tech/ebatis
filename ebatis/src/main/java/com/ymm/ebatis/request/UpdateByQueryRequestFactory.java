@@ -12,14 +12,14 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 /**
  * @author duoliang.zhang
  */
-public class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, UpdateByQueryRequest> {
-    public static final UpdateByQueryRequestFactory INSTANCE = new UpdateByQueryRequestFactory();
+class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, UpdateByQueryRequest> {
+    static final UpdateByQueryRequestFactory INSTANCE = new UpdateByQueryRequestFactory();
 
     private UpdateByQueryRequestFactory() {
     }
 
     @Override
-    protected void setOptionalMeta(UpdateByQueryRequest request, UpdateByQuery updateByQuery) {
+    protected void setAnnotationMeta(UpdateByQueryRequest request, UpdateByQuery updateByQuery) {
         request.setSlices(updateByQuery.slices())
                 .setRefresh(updateByQuery.refresh())
                 .setTimeout(TimeValue.parseTimeValue(updateByQuery.timeout(), "查询更新超时"))
@@ -44,8 +44,9 @@ public class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateBy
 
     @Override
     protected UpdateByQueryRequest doCreate(MethodMeta meta, Object[] args) {
-        SearchRequest searchRequest = SearchRequestFactory.INSTANCE.create(meta, args);
+        SearchRequest searchRequest = RequestFactory.search().create(meta, args);
         SearchSourceBuilder source = searchRequest.source();
+
         UpdateByQueryRequest request = new UpdateByQueryRequest();
         request.getSearchRequest().source(source);
         Object condition = args[0];

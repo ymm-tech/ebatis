@@ -17,7 +17,7 @@ public class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQ
     }
 
     @Override
-    protected void setOptionalMeta(MatchQueryBuilder builder, Match match) {
+    protected void setAnnotationMeta(MatchQueryBuilder builder, Match match) {
         builder.autoGenerateSynonymsPhraseQuery(match.autoGenerateSynonymsPhraseQuery())
                 .operator(match.operator())
                 .fuzzyTranspositions(match.fuzzyTranspositions())
@@ -48,7 +48,7 @@ public class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQ
     }
 
     @Override
-    protected MatchQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        return QueryBuilders.matchQuery(conditionMeta.getName(), condition);
+    protected MatchQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return QueryBuilders.matchQuery(meta.getName(), condition);
     }
 }

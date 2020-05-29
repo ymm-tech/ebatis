@@ -1,6 +1,6 @@
 package com.ymm.ebatis.domain;
 
-import com.ymm.ebatis.core.builder.BeanDescriptor;
+import com.ymm.ebatis.meta.ClassMeta;
 import com.ymm.ebatis.meta.ConditionMeta;
 import lombok.Data;
 
@@ -58,9 +58,9 @@ abstract class AbstractScript implements Script {
             return (Map<String, Object>) obj;
         }
 
-        BeanDescriptor descriptor = BeanDescriptor.of(obj);
+        ClassMeta meta = ClassMeta.of(obj.getClass());
 
-        return descriptor.getFieldElements()
+        return meta.getFieldMetas()
                 .stream()
                 .collect(Collectors.toMap(ConditionMeta::getName, e -> e.getValue(obj)));
     }

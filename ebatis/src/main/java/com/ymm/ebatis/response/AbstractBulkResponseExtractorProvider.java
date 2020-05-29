@@ -1,7 +1,5 @@
 package com.ymm.ebatis.response;
 
-import com.ymm.ebatis.executor.BooleanBulkResponseExtractor;
-import com.ymm.ebatis.core.executor.RawBulkResponseExtractor;
 import com.ymm.ebatis.meta.RequestType;
 import com.ymm.ebatis.meta.ResultType;
 import org.elasticsearch.action.bulk.BulkResponse;

@@ -16,7 +16,7 @@ public class MatchAllQueryBuilderFactory extends AbstractQueryBuilderFactory<Mat
     }
 
     @Override
-    protected MatchAllQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
+    protected MatchAllQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         return QueryBuilders.matchAllQuery();
     }
 }

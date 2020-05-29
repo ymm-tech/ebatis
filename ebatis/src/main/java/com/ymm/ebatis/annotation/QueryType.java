@@ -1,6 +1,7 @@
 package com.ymm.ebatis.annotation;
 
-import com.ymm.ebatis.meta.FieldConditionMeta;
+import com.ymm.ebatis.builder.QueryBuilderFactory;
+import com.ymm.ebatis.meta.FieldMeta;
 import org.elasticsearch.index.query.QueryBuilder;
 
 /**
@@ -11,58 +12,68 @@ public enum QueryType {
     /**
      * 自动匹配
      */
-    AUTO,
+    AUTO(QueryBuilderFactory.auto()),
     /**
      * Bool组合查询
      */
-    BOOL,
+    BOOL(QueryBuilderFactory.bool()),
     /**
      * 函数积分组合查询
      */
-    FUNCTION_SCORE,
+    FUNCTION_SCORE(QueryBuilderFactory.functionScore()),
     /**
      * 常量积分组合查询
      */
-    CONSTANT_SCORE,
+    CONSTANT_SCORE(QueryBuilderFactory.functionScore()),
     /**
      * Ids查询
      */
-    BOOSTING,
-    DIS_MAX,
-    FIELD,
-    FUZZY,
-    GEO_SHAPE,
-    GEO_DISTANCE,
-    GEO_POLYGON,
-    GEO_BOUNDING_BOX,
-    HAS_CHILD,
-    HAS_PARENT,
-    INDICES,
-    MLT,
-    MULTI_MATCH,
-    NESTED,
-    PREFIX,
-    QUERY_STRING,
-    RANGE,
-    SCRIPT,
-    IDS,
-    TERM,
-    TERMS,
-    EXISTS,
-    MATCH_ALL,
-    MATCH,
-    MATCH_PHRASE,
-    MATCH_PHRASE_PREFIX,
-    SPAN_CONTAINING,
-    SPAN_FIRST,
-    SPAN_NEAR,
-    SPAN_NOT,
-    SPAN_OR,
-    SPAN_TERM,
-    SPAN_WITHIN,
-    WILDCARD;
+    BOOSTING(null),
+    DIS_MAX(null),
+    FIELD(null),
+    FUZZY(QueryBuilderFactory.fuzzy()),
+    GEO_SHAPE(QueryBuilderFactory.geoShape()),
+    GEO_DISTANCE(QueryBuilderFactory.geoDistance()),
+    GEO_POLYGON(null),
+    GEO_BOUNDING_BOX(null),
+    HAS_CHILD(null),
+    HAS_PARENT(null),
+    INDICES(null),
+    MLT(null),
+    MULTI_MATCH(null),
+    NESTED(null),
+    PREFIX(null),
+    QUERY_STRING(null),
+    RANGE(null),
+    SCRIPT(null),
+    IDS(null),
+    TERM(QueryBuilderFactory.term()),
+    TERMS(QueryBuilderFactory.terms()),
+    EXISTS(QueryBuilderFactory.exists()),
+    MATCH_ALL(QueryBuilderFactory.matchAll()),
+    MATCH(QueryBuilderFactory.match()),
+    MATCH_PHRASE(QueryBuilderFactory.matchPhrase()),
+    MATCH_PHRASE_PREFIX(QueryBuilderFactory.matchPhrasePrefix()),
+    SPAN_CONTAINING(null),
+    SPAN_FIRST(null),
+    SPAN_NEAR(null),
+    SPAN_NOT(null),
+    SPAN_OR(null),
+    SPAN_TERM(null),
+    SPAN_WITHIN(null),
+    WILDCARD(QueryBuilderFactory.wildCard());
 
-    public QueryBuilder createBuilder(FieldConditionMeta conditionMeta, Object v) {
-        return null;
+    private final QueryBuilderFactory queryBuilderFactory;
+
+    QueryType(QueryBuilderFactory queryBuilderFactory) {
+        this.queryBuilderFactory = queryBuilderFactory;
+    }
+
+    public QueryBuilderFactory getQueryBuilderFactory() {
+        return queryBuilderFactory;
+    }
+
+    public QueryBuilder createBuilder(FieldMeta fieldMeta, Object value) {
+        return queryBuilderFactory.create(fieldMeta, value);
     }
 }

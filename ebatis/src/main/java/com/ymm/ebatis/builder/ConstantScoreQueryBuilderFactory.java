@@ -18,8 +18,8 @@ public class ConstantScoreQueryBuilderFactory extends AbstractQueryBuilderFactor
     }
 
     @Override
-    protected ConstantScoreQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        QueryBuilder builder = AutoQueryBuilderFactory.INSTANCE.create(conditionMeta, condition);
+    protected ConstantScoreQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        QueryBuilder builder = AutoQueryBuilderFactory.INSTANCE.create(meta, condition);
         return QueryBuilders.constantScoreQuery(builder);
     }
 }

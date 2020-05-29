@@ -20,7 +20,7 @@ public class IdsQueryBuilderFactory extends AbstractQueryBuilderFactory<IdsQuery
     }
 
     @Override
-    protected IdsQueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
+    protected IdsQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         IdsQueryBuilder builder = QueryBuilders.idsQuery();
 
         Class<?> conditionClass = condition.getClass();

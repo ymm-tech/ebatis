@@ -1,5 +1,8 @@
 package com.ymm.ebatis.annotation;
 
+import com.ymm.ebatis.request.RequestFactory;
+import org.elasticsearch.action.search.SearchRequest;
+
 /**
  * 聚合类型
  *
@@ -10,17 +13,26 @@ public enum AggType {
     /**
      * 指标聚合
      */
-    METRIC,
+    METRIC(RequestFactory.metric()),
     /**
      * 桶聚合
      */
-    BUCKET,
+    BUCKET(RequestFactory.bucket()),
     /**
      * 管道聚合
      */
-    PIPELINE,
+    PIPELINE(RequestFactory.pipeline()),
     /**
      * 矩阵聚合
      */
-    MATRIX
+    MATRIX(RequestFactory.matrix());
+    private final RequestFactory<SearchRequest> requestFactory;
+
+    AggType(RequestFactory<SearchRequest> requestFactory) {
+        this.requestFactory = requestFactory;
+    }
+
+    public final RequestFactory<SearchRequest> getRequestFactory() {
+        return requestFactory;
+    }
 }

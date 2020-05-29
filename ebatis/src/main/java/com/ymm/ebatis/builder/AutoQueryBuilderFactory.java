@@ -18,20 +18,25 @@ public class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBu
     }
 
     @Override
-    protected QueryBuilder doCreate(ConditionMeta<?> conditionMeta, Object condition) {
-        if (conditionMeta.isArrayOrCollection() && conditionMeta.isArrayOrCollectionBasicCondition()) {
-            return TermsQueryBuilderFactory.INSTANCE.create(conditionMeta, condition);
-        } else if (conditionMeta.isBasic()) {
-            return TermQueryBuilderFactory.INSTANCE.create(conditionMeta, condition);
-        } else if (conditionMeta.isRange()) {
+    public QueryBuilder create(ConditionMeta meta, Object condition) {
+        if (meta.isBasicArrayOrCollection()) {
+            return QueryBuilderFactory.terms().create(meta, condition);
+        } else if (meta.isBasic()) {
+            return QueryBuilderFactory.term().create(meta, condition);
+        } else if (meta.isRange()) {
             Range<?, ?> range = (Range<?, ?>) condition;
-            range.setName(conditionMeta.getName());
+            range.setName(meta.getName());
             return range.toBuilder();
-        } else if (conditionMeta.isScript()) {
+        } else if (meta.isScript()) {
             Script script = (Script) condition;
             return QueryBuilders.scriptQuery(script.toEsScript());
         } else {
-            return BoolQueryBuilderFactory.INSTANCE.create(conditionMeta, condition);
+            return QueryBuilderFactory.bool().create(meta, condition);
         }
+    }
+
+    @Override
+    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return null;
     }
 }

@@ -1,14 +1,17 @@
 package com.ymm.ebatis.request;
 
 import com.ymm.ebatis.annotation.Bulk;
+import com.ymm.ebatis.annotation.BulkType;
 import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.meta.MethodMeta;
+import com.ymm.ebatis.meta.ParameterMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.Requests;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,35 +24,35 @@ import static com.ymm.ebatis.common.DslUtils.getFirstElement;
  */
 @Slf4j
 public class BulkRequestFactory extends AbstractRequestFactory<Bulk, BulkRequest> {
-    public static final RequestFactory INSTANCE = new BulkRequestFactory();
+    public static final RequestFactory<BulkRequest> INSTANCE = new BulkRequestFactory();
 
     private BulkRequestFactory() {
     }
 
     @Override
-    protected void setOptionalMeta(BulkRequest request, Bulk bulk) {
+    protected void setAnnotationMeta(BulkRequest request, Bulk bulk) {
         request.setRefreshPolicy(bulk.refreshPolicy())
                 .timeout(bulk.timeout())
                 .waitForActiveShards(DslUtils.getActiveShardCount(bulk.waitForActiveShards()));
-        RequestFactoryType type = bulk.bulkType().getType();
+        BulkType type = bulk.bulkType();
 
         switch (type) {
             case INDEX:
                 getFirstElement(bulk.index()).ifPresent(index -> request.requests().stream()
                         .map(IndexRequest.class::cast)
-                        .forEach(req -> IndexRequestFactory.INSTANCE.setOptionalMeta(req, index)));
+                        .forEach(req -> IndexRequestFactory.INSTANCE.setAnnotationMeta(req, index)));
 
                 break;
             case DELETE:
                 getFirstElement(bulk.delete()).ifPresent(delete -> request.requests().stream()
                         .map(DeleteRequest.class::cast)
-                        .forEach(req -> DeleteRequestFactory.INSTANCE.setOptionalMeta(req, delete)));
+                        .forEach(req -> DeleteRequestFactory.INSTANCE.setAnnotationMeta(req, delete)));
 
                 break;
             case UPDATE:
                 getFirstElement(bulk.update()).ifPresent(update -> request.requests().stream()
                         .map(UpdateRequest.class::cast)
-                        .forEach(req -> UpdateRequestFactory.INSTANCE.setOptionalMeta(req, update)));
+                        .forEach(req -> UpdateRequestFactory.INSTANCE.setAnnotationMeta(req, update)));
                 break;
             default:
                 // do nothing
@@ -60,32 +63,35 @@ public class BulkRequestFactory extends AbstractRequestFactory<Bulk, BulkRequest
 
     @Override
     protected BulkRequest doCreate(MethodMeta meta, Object[] args) {
-        Bulk bulk = meta.getAnnotationRequired(Bulk.class);
+        Bulk bulk = meta.getAnnotation(Bulk.class);
 
         Collection<?> documents = getAllDocuments(meta, args);
 
         DocWriteRequest<?>[] requests = buildRequests(meta, bulk, documents);
-        BulkRequest request = new BulkRequest();
+        BulkRequest request = Requests.bulkRequest();
         request.add(requests);
         return request;
     }
 
     private DocWriteRequest<?>[] buildRequests(MethodMeta meta, Bulk bulk, Collection<?> documents) {
-        RequestFactory builder = bulk.bulkType().getBuilder();
+        RequestFactory<?> requestFactory = bulk.bulkType().getRequestFactory();
         return documents.stream()
-                .map(d -> builder.create(meta, d))
+                .map(d -> requestFactory.create(meta, d))
                 .map(DocWriteRequest.class::cast)
                 .toArray(DocWriteRequest[]::new);
     }
 
     private Collection<?> getAllDocuments(MethodMeta meta, Object[] args) {
-        Class<?> clazz = meta.getFirstParameter().getType();
+        ParameterMeta parameterMeta = meta.getConditionParameter();
+
+        Object arg = parameterMeta.getValue(args);
+
         Collection<?> docs;
 
-        if (Collection.class.isAssignableFrom(clazz)) {
-            docs = ((Collection<?>) args[0]);
-        } else if (clazz.isArray()) {
-            docs = Arrays.asList((Object[]) args[0]);
+        if (parameterMeta.isCollection()) {
+            docs = (Collection<?>) arg;
+        } else if (parameterMeta.isArray()) {
+            docs = Arrays.asList((Object[]) arg);
         } else {
             throw new UnsupportedOperationException("入参必须是数据或者集合类型" + meta);
         }

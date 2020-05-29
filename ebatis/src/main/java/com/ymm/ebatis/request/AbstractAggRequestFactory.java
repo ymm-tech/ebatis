@@ -12,7 +12,7 @@ import org.elasticsearch.action.search.SearchRequest;
 public abstract class AbstractAggRequestFactory extends AbstractRequestFactory<Agg, SearchRequest> {
 
     @Override
-    protected void setOptionalMeta(SearchRequest request, Agg agg) {
+    protected void setAnnotationMeta(SearchRequest request, Agg agg) {
         request.routing(DslUtils.getRouting(agg.routing()));
     }
 
