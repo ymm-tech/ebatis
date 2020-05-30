@@ -16,7 +16,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -118,12 +117,7 @@ public enum QueryClauseType {
     public abstract void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance);
 
     @FunctionalInterface
-    private static interface QueryClauseCombiner extends Function<QueryBuilder, BoolQueryBuilder> {
-        @Override
-        default BoolQueryBuilder apply(QueryBuilder queryBuilder) {
-            return combine(queryBuilder);
-        }
-
-        BoolQueryBuilder combine(QueryBuilder queryBuilder);
+    private interface QueryClauseCombiner {
+        void combine(QueryBuilder queryBuilder);
     }
 }

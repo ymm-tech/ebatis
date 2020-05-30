@@ -7,7 +7,6 @@ import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.provider.AggConditionProvider;
 import com.ymm.ebatis.provider.MissingProvider;
 import com.ymm.ebatis.provider.ScriptProvider;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
@@ -31,7 +30,7 @@ class MetricAggRequestFactory extends AbstractAggRequestFactory {
 
     @Override
     protected SearchRequest doCreate(MethodMeta meta, Object[] args) {
-        Object condition = DslUtils.getFirstElement(args).orElse(null);
+        Object condition = meta.getConditionParameter().getValue(args);
 
         SearchRequest request = createSearchRequest(meta, condition);
 
@@ -48,11 +47,9 @@ class MetricAggRequestFactory extends AbstractAggRequestFactory {
     private SearchRequest createSearchRequest(MethodMeta meta, Object condition) {
         SearchRequest request;
         if (condition instanceof AggConditionProvider) {
-            request = SearchRequestFactory.INSTANCE.create(meta, ((AggConditionProvider) condition).getCondition());
-        } else if (condition != null) {
-            request = SearchRequestFactory.INSTANCE.create(meta, condition);
+            request = RequestFactory.search().create(meta, ((AggConditionProvider) condition).getCondition());
         } else {
-            request = new SearchRequest(ArrayUtils.EMPTY_STRING_ARRAY);
+            request = RequestFactory.search().create(meta, condition);
         }
         return request;
     }

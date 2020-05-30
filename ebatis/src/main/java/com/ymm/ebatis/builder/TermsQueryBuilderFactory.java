@@ -11,8 +11,8 @@ import java.util.Collection;
  * @author 章多亮
  * @since 2020/1/7 10:35
  */
-public class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBuilder, Terms> {
-    public static final TermsQueryBuilderFactory INSTANCE = new TermsQueryBuilderFactory();
+class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBuilder, Terms> {
+    static final TermsQueryBuilderFactory INSTANCE = new TermsQueryBuilderFactory();
 
     private TermsQueryBuilderFactory() {
     }

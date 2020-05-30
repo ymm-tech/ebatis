@@ -48,7 +48,7 @@ public interface QueryBuilderFactory {
     }
 
     static QueryBuilderFactory matchPhrasePrefix() {
-        return MatchAllQueryBuilderFactory.INSTANCE;
+        return MatchPhrasePrefixQueryBuilderFactory.INSTANCE;
     }
 
     static QueryBuilderFactory matchPhrase() {
@@ -75,6 +75,9 @@ public interface QueryBuilderFactory {
         return WildCardQueryBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory field() {
+        return FieldQueryBuilderFactory.INSTANCE;
+    }
 
     /**
      * 创建查询构建器

@@ -18,8 +18,8 @@ import java.util.stream.Stream;
  * @author duoliang.zhang
  */
 @Slf4j
-public class FunctionScoreQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, FunctionScore> {
-    public static final FunctionScoreQueryBuilderFactory INSTANCE = new FunctionScoreQueryBuilderFactory();
+class FunctionScoreQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, FunctionScore> {
+    static final FunctionScoreQueryBuilderFactory INSTANCE = new FunctionScoreQueryBuilderFactory();
 
     private FunctionScoreQueryBuilderFactory() {
     }

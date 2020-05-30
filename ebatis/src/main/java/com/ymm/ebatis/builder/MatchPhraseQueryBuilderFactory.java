@@ -10,8 +10,8 @@ import org.elasticsearch.index.query.QueryBuilders;
  * @author 章多亮
  * @since 2020/1/7 10:20
  */
-public class MatchPhraseQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchPhraseQueryBuilder, MatchPhrase> {
-    public static final MatchPhraseQueryBuilderFactory INSTANCE = new MatchPhraseQueryBuilderFactory();
+class MatchPhraseQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchPhraseQueryBuilder, MatchPhrase> {
+    static final MatchPhraseQueryBuilderFactory INSTANCE = new MatchPhraseQueryBuilderFactory();
 
     private MatchPhraseQueryBuilderFactory() {
     }

@@ -29,6 +29,15 @@ import java.io.Closeable;
  */
 public interface Cluster extends Closeable {
     /**
+     * 本地默认配置集群
+     *
+     * @return 集群
+     */
+    static Cluster localhost() {
+        return simple("127.0.0.1", 9200);
+    }
+
+    /**
      * 简单集群
      *
      * @param host 主机名

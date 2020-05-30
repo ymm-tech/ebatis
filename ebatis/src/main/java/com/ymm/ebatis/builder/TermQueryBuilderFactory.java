@@ -9,8 +9,8 @@ import org.elasticsearch.index.query.TermQueryBuilder;
  * @author 章多亮
  * @since 2020/1/7 10:33
  */
-public class TermQueryBuilderFactory extends AbstractQueryBuilderFactory<TermQueryBuilder, Term> {
-    public static final TermQueryBuilderFactory INSTANCE = new TermQueryBuilderFactory();
+class TermQueryBuilderFactory extends AbstractQueryBuilderFactory<TermQueryBuilder, Term> {
+    static final TermQueryBuilderFactory INSTANCE = new TermQueryBuilderFactory();
 
     private TermQueryBuilderFactory() {
     }

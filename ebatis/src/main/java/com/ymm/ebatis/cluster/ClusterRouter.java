@@ -11,6 +11,15 @@ import java.io.Closeable;
  */
 public interface ClusterRouter extends Closeable {
     /**
+     * 本地集群路由，测试用
+     *
+     * @return 集群路由
+     */
+    static ClusterRouter localhost() {
+        return single(Cluster.localhost());
+    }
+
+    /**
      * 创建单集群路由
      *
      * @param cluster 集群

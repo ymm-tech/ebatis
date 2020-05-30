@@ -16,8 +16,8 @@ import java.util.Map;
  * @author duoliang.zhang
  */
 @Slf4j
-public class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuilder, Bool> {
-    public static final BoolQueryBuilderFactory INSTANCE = new BoolQueryBuilderFactory();
+class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuilder, Bool> {
+    static final BoolQueryBuilderFactory INSTANCE = new BoolQueryBuilderFactory();
 
     private BoolQueryBuilderFactory() {
     }

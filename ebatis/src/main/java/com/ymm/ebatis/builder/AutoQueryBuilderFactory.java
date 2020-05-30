@@ -11,8 +11,8 @@ import org.elasticsearch.index.query.QueryBuilders;
  * @author 章多亮
  * @since 2020/1/7 11:03
  */
-public class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Must> {
-    public static final AutoQueryBuilderFactory INSTANCE = new AutoQueryBuilderFactory();
+class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Must> {
+    static final AutoQueryBuilderFactory INSTANCE = new AutoQueryBuilderFactory();
 
     private AutoQueryBuilderFactory() {
     }

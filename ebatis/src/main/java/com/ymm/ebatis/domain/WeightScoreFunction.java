@@ -1,6 +1,6 @@
 package com.ymm.ebatis.domain;
 
-import com.ymm.ebatis.builder.BoolQueryBuilderFactory;
+import com.ymm.ebatis.builder.QueryBuilderFactory;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
 import org.elasticsearch.index.query.functionscore.WeightBuilder;
@@ -15,14 +15,14 @@ class WeightScoreFunction implements ScoreFunction {
 
     private final Object weightCondition;
 
-    public WeightScoreFunction(float weight, Object weightCondition) {
+    WeightScoreFunction(float weight, Object weightCondition) {
         this.weight = weight;
         this.weightCondition = weightCondition;
     }
 
     @Override
     public FunctionScoreQueryBuilder.FilterFunctionBuilder toFunctionBuilder() {
-        QueryBuilder queryBuilder = BoolQueryBuilderFactory.INSTANCE.create(null, weightCondition);
+        QueryBuilder queryBuilder = QueryBuilderFactory.bool().create(null, weightCondition);
         return new FunctionScoreQueryBuilder.FilterFunctionBuilder(queryBuilder, new WeightBuilder().setWeight(weight));
     }
 }

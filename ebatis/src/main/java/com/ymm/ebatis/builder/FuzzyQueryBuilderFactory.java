@@ -10,8 +10,8 @@ import org.elasticsearch.index.query.QueryBuilders;
  * @author 章多亮
  * @since 2020/1/8 17:30
  */
-public class FuzzyQueryBuilderFactory extends AbstractQueryBuilderFactory<FuzzyQueryBuilder, Fuzzy> {
-    public static final FuzzyQueryBuilderFactory INSTANCE = new FuzzyQueryBuilderFactory();
+class FuzzyQueryBuilderFactory extends AbstractQueryBuilderFactory<FuzzyQueryBuilder, Fuzzy> {
+    static final FuzzyQueryBuilderFactory INSTANCE = new FuzzyQueryBuilderFactory();
 
     private FuzzyQueryBuilderFactory() {
     }
