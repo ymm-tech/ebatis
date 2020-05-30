@@ -9,10 +9,15 @@ import org.elasticsearch.index.query.QueryBuilders;
  * @author 章多亮
  * @since 2020/1/7 9:29
  */
-public class MatchAllQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchAllQueryBuilder, MatchAll> {
-    public static final MatchAllQueryBuilderFactory INSTANCE = new MatchAllQueryBuilderFactory();
+class MatchAllQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchAllQueryBuilder, MatchAll> {
+    static final MatchAllQueryBuilderFactory INSTANCE = new MatchAllQueryBuilderFactory();
 
     private MatchAllQueryBuilderFactory() {
+    }
+
+    @Override
+    protected boolean onlyHandleNoneNullable() {
+        return false;
     }
 
     @Override

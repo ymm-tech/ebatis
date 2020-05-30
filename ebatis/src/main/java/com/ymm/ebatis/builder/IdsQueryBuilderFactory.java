@@ -13,8 +13,8 @@ import java.util.stream.Stream;
  * @author 章多亮
  * @since 2020/1/7 9:13
  */
-public class IdsQueryBuilderFactory extends AbstractQueryBuilderFactory<IdsQueryBuilder, Ids> {
-    public static final IdsQueryBuilderFactory INSTANCE = new IdsQueryBuilderFactory();
+class IdsQueryBuilderFactory extends AbstractQueryBuilderFactory<IdsQueryBuilder, Ids> {
+    static final IdsQueryBuilderFactory INSTANCE = new IdsQueryBuilderFactory();
 
     private IdsQueryBuilderFactory() {
     }

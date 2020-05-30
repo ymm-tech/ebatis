@@ -8,8 +8,8 @@ import org.elasticsearch.index.query.GeoShapeQueryBuilder;
  * @author 章多亮
  * @since 2020/1/8 16:45
  */
-public class GeoShapeQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoShapeQueryBuilder, GeoShape> {
-    public static final GeoShapeQueryBuilderFactory INSTANCE = new GeoShapeQueryBuilderFactory();
+class GeoShapeQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoShapeQueryBuilder, GeoShape> {
+    static final GeoShapeQueryBuilderFactory INSTANCE = new GeoShapeQueryBuilderFactory();
 
     private GeoShapeQueryBuilderFactory() {
     }

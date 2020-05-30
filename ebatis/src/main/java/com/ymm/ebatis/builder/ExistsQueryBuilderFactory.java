@@ -12,8 +12,8 @@ import java.util.Optional;
  * @author 章多亮
  * @since 2020/1/7 15:45
  */
-public class ExistsQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Exists> {
-    public static final ExistsQueryBuilderFactory INSTANCE = new ExistsQueryBuilderFactory();
+class ExistsQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Exists> {
+    static final ExistsQueryBuilderFactory INSTANCE = new ExistsQueryBuilderFactory();
 
     private ExistsQueryBuilderFactory() {
     }

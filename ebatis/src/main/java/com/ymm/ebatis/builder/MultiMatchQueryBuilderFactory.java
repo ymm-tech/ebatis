@@ -13,8 +13,8 @@ import org.elasticsearch.index.query.QueryBuilders;
  * @author 章多亮
  * @since 2020/1/16 18:59
  */
-public class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMatchQueryBuilder, MultiMatch> {
-    public static final MultiMatchQueryBuilderFactory INSTANCE = new MultiMatchQueryBuilderFactory();
+class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMatchQueryBuilder, MultiMatch> {
+    static final MultiMatchQueryBuilderFactory INSTANCE = new MultiMatchQueryBuilderFactory();
 
     private MultiMatchQueryBuilderFactory() {
     }

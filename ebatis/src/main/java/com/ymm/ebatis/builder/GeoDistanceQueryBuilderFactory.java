@@ -10,8 +10,8 @@ import org.elasticsearch.index.query.QueryBuilders;
  * @author 章多亮
  * @since 2020/1/8 17:03
  */
-public class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoDistanceQueryBuilder, GeoDistance> {
-    public static final GeoDistanceQueryBuilderFactory INSTANCE = new GeoDistanceQueryBuilderFactory();
+class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoDistanceQueryBuilder, GeoDistance> {
+    static final GeoDistanceQueryBuilderFactory INSTANCE = new GeoDistanceQueryBuilderFactory();
 
     private GeoDistanceQueryBuilderFactory() {
     }

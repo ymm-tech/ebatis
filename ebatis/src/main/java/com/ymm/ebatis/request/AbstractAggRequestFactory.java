@@ -18,6 +18,6 @@ public abstract class AbstractAggRequestFactory extends AbstractRequestFactory<A
 
     @Override
     protected SearchRequest doCreate(MethodMeta meta, Object[] args) {
-        return new SearchRequest();
+        return new SearchRequest(meta.getIndices());
     }
 }

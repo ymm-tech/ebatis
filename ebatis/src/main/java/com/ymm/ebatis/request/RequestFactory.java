@@ -66,12 +66,15 @@ public interface RequestFactory<R extends ActionRequest> {
         return DeleteByQueryRequestFactory.INSTANCE;
     }
 
+    static RequestFactory<SearchRequest> agg() {
+        return AggRequestFactory.INSTANCE;
+    }
+
     /**
      * 创建ES请求，根据注解对应创建不同的ES请求
      *
      * @param method 接口方法
      * @param args   实参
-     * @param <R>    请求类型
      * @return ES请求
      * @see org.elasticsearch.action.search.SearchRequest 搜索请求
      * @see org.elasticsearch.action.index.IndexRequest 索引请求

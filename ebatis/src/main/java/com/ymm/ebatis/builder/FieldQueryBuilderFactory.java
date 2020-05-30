@@ -9,7 +9,11 @@ import org.elasticsearch.index.query.QueryBuilder;
  *
  * @author duoliang.zhang
  */
-public class FieldQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Field> {
+class FieldQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Field> {
+    static final FieldQueryBuilderFactory INSTANCE = new FieldQueryBuilderFactory();
+
+    private FieldQueryBuilderFactory() {
+    }
 
     @Override
     protected QueryBuilder doCreate(ConditionMeta conditionMeta, Object condition) {

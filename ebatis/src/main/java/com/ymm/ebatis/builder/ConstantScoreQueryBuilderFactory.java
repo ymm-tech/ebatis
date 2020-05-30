@@ -11,8 +11,8 @@ import org.elasticsearch.index.query.QueryBuilders;
  *
  * @author 章多亮
  */
-public class ConstantScoreQueryBuilderFactory extends AbstractQueryBuilderFactory<ConstantScoreQueryBuilder, ConstantScore> {
-    public static final ConstantScoreQueryBuilderFactory INSTANCE = new ConstantScoreQueryBuilderFactory();
+class ConstantScoreQueryBuilderFactory extends AbstractQueryBuilderFactory<ConstantScoreQueryBuilder, ConstantScore> {
+    static final ConstantScoreQueryBuilderFactory INSTANCE = new ConstantScoreQueryBuilderFactory();
 
     private ConstantScoreQueryBuilderFactory() {
     }

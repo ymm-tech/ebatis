@@ -18,6 +18,10 @@ public interface Pageable {
         return of(page, size, 0);
     }
 
+    static Pageable first(int size) {
+        return of(0, size);
+    }
+
     /**
      * 创建分页信息
      *
@@ -37,7 +41,7 @@ public interface Pageable {
      * @param offset 偏移量
      * @return 分页信息
      */
-    static Pageable firstPageWithOffset(int size, int offset) {
+    static Pageable firstWithOffset(int size, int offset) {
         return of(0, size, offset);
     }
 

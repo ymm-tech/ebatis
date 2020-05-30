@@ -1,6 +1,5 @@
 package com.ymm.ebatis.executor;
 
-import com.ymm.ebatis.annotation.Agg;
 import com.ymm.ebatis.cluster.Cluster;
 import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.request.RequestFactory;
@@ -19,18 +18,8 @@ class AggRequestExecutor extends AbstractRequestExecutor<SearchRequest> {
     }
 
     @Override
-    protected SearchRequest createActionRequest(MethodMeta method, Object[] args) {
-        Agg agg = method.getAnnotation(Agg.class);
-
-        SearchRequest request = agg.type().getRequestFactory().create(method, args);
-        request.indices(method.getIndex());
-
-        return request;
-    }
-
-    @Override
     protected RequestFactory<SearchRequest> getRequestFactory() {
-        return RequestFactory.search();
+        return RequestFactory.agg();
     }
 
     @Override
