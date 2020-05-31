@@ -4,6 +4,7 @@ import com.ymm.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -80,6 +81,10 @@ public interface RequestFactory<R extends ActionRequest> {
 
     static RequestFactory<CatCountRequest> catCount() {
         return CatCountRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<GetRequest> get() {
+        return GetRequestFactory.INSTANCE;
     }
 
     /**

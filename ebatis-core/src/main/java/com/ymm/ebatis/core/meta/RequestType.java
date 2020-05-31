@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.annotation.Bulk;
 import com.ymm.ebatis.core.annotation.Cat;
 import com.ymm.ebatis.core.annotation.Delete;
 import com.ymm.ebatis.core.annotation.DeleteByQuery;
+import com.ymm.ebatis.core.annotation.Get;
 import com.ymm.ebatis.core.annotation.Index;
 import com.ymm.ebatis.core.annotation.MultiMatch;
 import com.ymm.ebatis.core.annotation.MultiSearch;
@@ -63,8 +64,8 @@ public enum RequestType {
      * 聚合查询
      */
     AGG(Agg.class, RequestExecutor.agg()),
+    GET(Get.class, RequestExecutor.get()),
     CAT(Cat.class, RequestExecutor.cat()),
-
     ;
     private static final Map<Class<? extends Annotation>, RequestType> ANNOTATION_EXECUTOR_TYPES;
 

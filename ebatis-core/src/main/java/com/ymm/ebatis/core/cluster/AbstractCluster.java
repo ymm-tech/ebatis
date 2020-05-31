@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.elasticsearch.action.ActionListener;
@@ -128,6 +129,10 @@ public abstract class AbstractCluster implements Cluster {
      * @return 返回构建器自己
      */
     protected RestClientBuilder custom(RestClientBuilder builder) {
+        builder.setHttpClientConfigCallback(httpBuilder -> {
+            httpBuilder.addInterceptorFirst((HttpRequestInterceptor) (request, context) -> log.info("{}", request));
+            return httpBuilder;
+        });
         // do nothing
         return builder;
     }

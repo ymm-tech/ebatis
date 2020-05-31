@@ -23,12 +23,10 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
     private static final ThreadLocal<ObjectMapper> MAPPER_HOLDER = ThreadLocal.withInitial(ObjectMapper::new);
 
     private IndexRequestFactory() {
-        MAPPER_HOLDER.remove();
     }
 
     @Override
     protected void setAnnotationMeta(IndexRequest request, Index index) {
-
         request.setRefreshPolicy(index.refreshPolicy())
                 .versionType(index.versionType())
                 .waitForActiveShards(ActiveShardCount.parseString(index.waitForActiveShards()))
