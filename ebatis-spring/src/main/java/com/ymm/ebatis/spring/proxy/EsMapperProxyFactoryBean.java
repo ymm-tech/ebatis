@@ -1,7 +1,7 @@
 package com.ymm.ebatis.spring.proxy;
 
-import com.ymm.ebatis.cluster.ClusterRouter;
-import com.ymm.ebatis.proxy.MapperProxyFactory;
+import com.ymm.ebatis.core.cluster.ClusterRouter;
+import com.ymm.ebatis.core.proxy.MapperProxyFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.FactoryBean;
 
