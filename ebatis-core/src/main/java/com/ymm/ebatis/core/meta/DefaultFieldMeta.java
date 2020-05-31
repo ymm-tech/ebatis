@@ -1,6 +1,5 @@
 package com.ymm.ebatis.core.meta;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
@@ -24,7 +23,7 @@ import java.util.Optional;
  * @author 章多亮
  * @since 2020/5/27 19:16
  */
-public class DefaultFieldMeta extends AbstractConditionMeta implements FieldMeta {
+class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta {
     private final Field field;
 
     private final boolean basic;
@@ -35,8 +34,8 @@ public class DefaultFieldMeta extends AbstractConditionMeta implements FieldMeta
     private final Annotation queryClauseAnnotation;
     private final QueryBuilderFactory queryBuilderFactory;
 
-    public DefaultFieldMeta(Field field) {
-        super(field.getType());
+    DefaultFieldMeta(Field field) {
+        super(field, field.getType());
         this.field = field;
         this.readMethod = getReadMethod(field);
 
@@ -83,32 +82,10 @@ public class DefaultFieldMeta extends AbstractConditionMeta implements FieldMeta
         throw new ReadMethodNotFoundException(field.toString());
     }
 
-    private String getName(Field field) {
-        String name; // NOSONAR
-
-        com.ymm.ebatis.core.annotation.Field fieldAnnotation = field.getAnnotation(com.ymm.ebatis.core.annotation.Field.class);
-        if (fieldAnnotation != null) {
-            name = fieldAnnotation.name();
-            if (StringUtils.isNotBlank(name)) {
-                return name;
-            }
-
-            name = fieldAnnotation.value();
-            if (StringUtils.isNotBlank(name)) {
-                return name;
-            }
-        }
-
-        JsonProperty jsonProperty = field.getAnnotation(JsonProperty.class);
-        if (jsonProperty != null) {
-            name = jsonProperty.value();
-            if (StringUtils.isNotBlank(name)) {
-                return name;
-            }
-        }
-
-        return field.getName();
-
+    @Override
+    protected String getName(Field field) {
+        String n = super.getName(field);
+        return StringUtils.isBlank(n) ? field.getName() : n;
     }
 
 
