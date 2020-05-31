@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.ymm.ebatis</groupId>
-    <artifactId>ebatis2</artifactId>
+    <artifactId>ebatis</artifactId>
     <version>7.5.1.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
     <modules>
-        <module>ebatis</module>
+        <module>ebatis-core</module>
         <module>ebatis-spring</module>
     </modules>
-    <packaging>pom</packaging>
 
     <properties>
         <java.version>1.8</java.version>

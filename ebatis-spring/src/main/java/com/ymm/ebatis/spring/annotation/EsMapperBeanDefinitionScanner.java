@@ -1,6 +1,6 @@
 package com.ymm.ebatis.spring.annotation;
 
-import com.ymm.ebatis.annotation.Mapper;
+import com.ymm.ebatis.core.annotation.Mapper;
 import com.ymm.ebatis.spring.exception.ClusterNameNotFoundException;
 import com.ymm.ebatis.spring.proxy.EsMapperProxyFactoryBean;
 import lombok.extern.slf4j.Slf4j;
