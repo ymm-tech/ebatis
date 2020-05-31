@@ -1,6 +1,7 @@
 package com.ymm.ebatis.meta;
 
 import com.ymm.ebatis.cluster.Cluster;
+import com.ymm.ebatis.domain.ContextHolder;
 import com.ymm.ebatis.exception.RequestTypeNotSupportException;
 import com.ymm.ebatis.executor.RequestExecutor;
 import com.ymm.ebatis.response.ResponseExtractor;
@@ -78,7 +79,11 @@ public class DefaultMapperMethodMeta implements MapperMethod {
 
     @Override
     public Object execute(Cluster cluster, Object[] args) {
-        return requestExecutor.execute(cluster, this, args);
+        try {
+            return requestExecutor.execute(cluster, this, args);
+        } finally {
+            ContextHolder.remove();
+        }
     }
 
     @Override

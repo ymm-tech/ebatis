@@ -28,7 +28,7 @@ public enum QueryType {
     /**
      * Ids查询
      */
-    BOOSTING(null),
+    BOOSTING(QueryBuilderFactory.boosting()),
     DIS_MAX(null),
     FIELD(null),
     FUZZY(QueryBuilderFactory.fuzzy()),

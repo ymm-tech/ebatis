@@ -4,7 +4,7 @@ import com.ymm.ebatis.annotation.Agg;
 import com.ymm.ebatis.annotation.AggType;
 import com.ymm.ebatis.annotation.Metric;
 import com.ymm.ebatis.annotation.MetricType;
-import com.ymm.ebatis.common.DslUtils;
+import com.ymm.ebatis.meta.MetaUtils;
 import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.meta.RequestType;
 import com.ymm.ebatis.meta.ResultType;
@@ -34,7 +34,7 @@ public abstract class AbstractAggResponseExtractorProvider extends AbstractRespo
     }
 
     private static SearchResponseExtractor<?> createMetricAggSearchResponseExtractor(MethodMeta method) {
-        Metric metric = DslUtils.getFirstElementRequired(method.getAnnotation(Agg.class).metric());
+        Metric metric = MetaUtils.getFirstElement(method.getAnnotation(Agg.class).metric());
 
         MetricType type = metric.type();
 

@@ -28,7 +28,7 @@ public @interface UpdateByQuery {
 
     int maxRetries() default 11;
 
-    int waitForActiveShards() default AnnotationConstants.ACTIVE_SHARD_COUNT_DEFAULT;
+    String waitForActiveShards() default "-2";
 
     boolean shouldStoreResult() default false;
 

@@ -1,4 +1,4 @@
-package com.ymm.ebatis.executor;
+package com.ymm.ebatis.response;
 
 import lombok.Data;
 

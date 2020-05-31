@@ -1,7 +1,7 @@
 package com.ymm.ebatis.response;
 
-import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.domain.Page;
+import com.ymm.ebatis.meta.MetaUtils;
 import com.ymm.ebatis.meta.RequestType;
 import com.ymm.ebatis.meta.ResultType;
 import org.elasticsearch.action.search.SearchResponse;
@@ -30,7 +30,7 @@ public abstract class AbstractSearchResponseExtractorProvider extends AbstractRe
             return new DocumentPageExtractor<>(DocumentMapper.of(resolvedResultType.resolveGeneric(0)));
         } else if (List.class.isAssignableFrom(resultClass)) {
             return new DocumentExtractor<>(DocumentMapper.of(resolvedResultType.resolveGeneric(0)), Integer.MAX_VALUE);
-        } else if (!DslUtils.isBasicClass(resultClass)) {
+        } else if (!MetaUtils.isBasic(resultClass)) {
             return new SingleDocumentExtractor<>(DocumentMapper.of(resultClass));
         } else {
             throw new UnsupportedOperationException();

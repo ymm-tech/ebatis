@@ -1,6 +1,8 @@
 package com.ymm.ebatis.cluster;
 
 import com.ymm.ebatis.exception.ClusterCreationException;
+import com.ymm.ebatis.request.CatRequest;
+import com.ymm.ebatis.response.CatResponse;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
@@ -8,6 +10,10 @@ import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.Response;
+import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -142,6 +148,23 @@ public abstract class AbstractCluster implements Cluster {
         } catch (ConcurrentException e) {
             throw new ClusterCreationException("Low Level Rest Client 创建失败");
         }
+    }
+
+    @Override
+    public void catAsync(CatRequest catRequest, ActionListener<CatResponse> listener) {
+        Request request = catRequest.toRequest();
+
+        lowLevelClient().performRequestAsync(request, new ResponseListener() {
+            @Override
+            public void onSuccess(Response response) {
+                listener.onResponse(new CatResponse());
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                listener.onFailure(exception);
+            }
+        });
     }
 
     @Override

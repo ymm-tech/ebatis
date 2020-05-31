@@ -3,7 +3,7 @@ package com.ymm.ebatis.request;
 import com.ymm.ebatis.annotation.Agg;
 import com.ymm.ebatis.annotation.Bucket;
 import com.ymm.ebatis.annotation.BucketOrder;
-import com.ymm.ebatis.common.DslUtils;
+import com.ymm.ebatis.meta.MetaUtils;
 import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.provider.AggConditionProvider;
 import org.elasticsearch.action.search.SearchRequest;
@@ -26,12 +26,12 @@ class BucketAggRequestFactory extends AbstractAggRequestFactory {
 
     @Override
     protected SearchRequest doCreate(MethodMeta meta, Object[] args) {
-        Object condition = DslUtils.getFirstElement(args).orElse(null);
+        Object condition = MetaUtils.findFirstElement(args).orElse(null);
 
         SearchRequest request = createSearchRequest(meta, condition);
 
         Agg agg = meta.getAnnotation(Agg.class);
-        Bucket bucket = DslUtils.getFirstElementRequired(agg.bucket());
+        Bucket bucket = MetaUtils.getFirstElement(agg.bucket());
 
         // 聚合
         AggregationBuilder aggregation = createAggregation(meta, bucket);

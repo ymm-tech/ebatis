@@ -1,11 +1,15 @@
 package com.ymm.ebatis.cluster;
 
+import com.ymm.ebatis.request.CatRequest;
+import com.ymm.ebatis.response.CatResponse;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -34,7 +38,11 @@ public interface Cluster extends Closeable {
      * @return 集群
      */
     static Cluster localhost() {
-        return simple("127.0.0.1", 9200);
+        return localhost(9200);
+    }
+
+    static Cluster localhost(int port) {
+        return simple("127.0.0.1", port);
     }
 
     /**
@@ -280,5 +288,23 @@ public interface Cluster extends Closeable {
      */
     default void multiSearchAsync(MultiSearchRequest request, ActionListener<MultiSearchResponse> listener) {
         highLevelClient().msearchAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    /**
+     * 异步cat接口
+     *
+     * @param request  cat请求
+     * @param listener 响应监听器
+     */
+    void catAsync(CatRequest request, ActionListener<CatResponse> listener);
+
+    /**
+     *
+     *
+     * @param request  Get请求
+     * @param listener 响应监听器
+     */
+    default void getAsync(GetRequest request, ActionListener<GetResponse> listener) {
+        highLevelClient().getAsync(request, RequestOptions.DEFAULT, listener);
     }
 }

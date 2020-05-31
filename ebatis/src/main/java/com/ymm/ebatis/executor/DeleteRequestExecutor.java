@@ -1,12 +1,9 @@
 package com.ymm.ebatis.executor;
 
-import com.ymm.ebatis.cluster.Cluster;
-import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.request.RequestFactory;
-import com.ymm.ebatis.response.ResponseExtractor;
+import com.ymm.ebatis.session.ClusterSession;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.common.TriFunction;
 
 /**
  * @author 章多亮
@@ -20,8 +17,8 @@ class DeleteRequestExecutor extends AbstractRequestExecutor<DeleteRequest> {
     }
 
     @Override
-    protected TriFunction<Cluster, DeleteRequest, ResponseExtractor<?>, Object> getExecutor(MethodMeta method) {
-        return method.getResultType()::delete;
+    protected RequestAction<DeleteRequest> getRequestAction(ClusterSession session) {
+        return session::deleteAsync;
     }
 
     @Override

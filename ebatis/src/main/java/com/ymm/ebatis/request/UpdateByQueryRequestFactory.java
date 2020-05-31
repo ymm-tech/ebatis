@@ -5,6 +5,7 @@ import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.provider.ScriptProvider;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -24,7 +25,7 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
                 .setRefresh(updateByQuery.refresh())
                 .setTimeout(TimeValue.parseTimeValue(updateByQuery.timeout(), "查询更新超时"))
                 .setMaxRetries(updateByQuery.maxRetries())
-                .setWaitForActiveShards(DslUtils.getActiveShardCount(updateByQuery.waitForActiveShards()))
+                .setWaitForActiveShards(ActiveShardCount.parseString(updateByQuery.waitForActiveShards()))
                 .setShouldStoreResult(updateByQuery.shouldStoreResult())
                 .setBatchSize(updateByQuery.batchSize())
                 .setConflicts(updateByQuery.conflicts());

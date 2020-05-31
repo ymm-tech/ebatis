@@ -1,14 +1,10 @@
 package com.ymm.ebatis.meta;
 
-import com.ymm.ebatis.annotation.Filter;
-import com.ymm.ebatis.annotation.Must;
-import com.ymm.ebatis.annotation.MustNot;
-import com.ymm.ebatis.annotation.Should;
-
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -17,7 +13,6 @@ import java.util.Set;
  */
 public class MetaUtils {
     private static final Set<Class<?>> BASIC_CLASSES = new HashSet<>();
-    private static final Class<?>[] QUERY_CLAUSE_ANNOTATION_CLASSES = {Must.class, MustNot.class, Should.class, Filter.class};
 
     static {
         BASIC_CLASSES.add(Boolean.TYPE);
@@ -51,6 +46,19 @@ public class MetaUtils {
 
     public static void registerBasicClass(Class<?> clazz) {
         BASIC_CLASSES.add(clazz);
+    }
+
+
+    public static <E> Optional<E> findFirstElement(E[] array) {
+        return array == null || array.length == 0 ? Optional.empty() : Optional.of(array[0]);
+    }
+
+    public static <E> E getFirstElement(E[] array) {
+        if (array == null || array.length == 0) {
+            throw new IndexOutOfBoundsException("数组至少需要一个元素");
+        } else {
+            return array[0];
+        }
     }
 
 }

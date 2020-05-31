@@ -18,7 +18,7 @@ public @interface Bulk {
 
     String timeout() default "1m";
 
-    int waitForActiveShards() default -2;
+    String waitForActiveShards() default "-2";
 
     String refreshPolicy() default "NONE";
 

@@ -7,8 +7,10 @@ import com.ymm.ebatis.domain.ContextHolder;
 import com.ymm.ebatis.domain.Page;
 import com.ymm.ebatis.domain.Pageable;
 import com.ymm.ebatis.exception.InvalidResponseException;
+import com.ymm.ebatis.interceptor.Interceptor;
+import com.ymm.ebatis.interceptor.InterceptorFactory;
+import com.ymm.ebatis.request.CatRequest;
 import com.ymm.ebatis.response.ResponseExtractor;
-import org.apache.logging.log4j.util.BiConsumer;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionResponse;
@@ -35,9 +37,11 @@ import java.util.concurrent.CompletableFuture;
 class CachedClusterSession implements ClusterSession {
     private static final Map<Cluster, ClusterSession> CLUSTER_SESSIONS = new HashMap<>();
     private final Cluster cluster;
+    private final Interceptor interceptor;
 
     private CachedClusterSession(Cluster cluster) {
         this.cluster = cluster;
+        this.interceptor = InterceptorFactory.interceptors();
     }
 
     static synchronized ClusterSession createOrGet(Cluster cluster) {
@@ -46,42 +50,42 @@ class CachedClusterSession implements ClusterSession {
 
     @Override
     public <T> CompletableFuture<T> getAsync(GetRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::getAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> deleteAsync(DeleteRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::deleteAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> deleteByQueryAsync(DeleteByQueryRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::deleteByQueryAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> updateAsync(UpdateRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::updateAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> updateByQueryAsync(UpdateByQueryRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::updateByQueryAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> indexAsync(IndexRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::indexAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> multiSearchAsync(MultiSearchRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::multiSearchAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> multiSearchAsync(MultiSearchRequest request, ResponseExtractor<T> extractor, Pageable[] pageable) {
-        return null;
+        return performRequestAsync(cluster::multiSearchAsync, request, extractor);
     }
 
     @Override
@@ -90,13 +94,13 @@ class CachedClusterSession implements ClusterSession {
     }
 
     @Override
-    public <T> CompletableFuture<Page<T>> searchAsync(SearchRequest request, ResponseExtractor<T> extractor, Pageable pageable) {
-        return null;
+    public <T> CompletableFuture<Page<T>> searchAsync(SearchRequest request, ResponseExtractor<Page<T>> extractor, Pageable pageable) {
+        return performRequestAsync(cluster::searchAsync, request, extractor);
     }
 
     @Override
     public <T> CompletableFuture<T> bulkAsync(BulkRequest request, ResponseExtractor<T> extractor) {
-        return null;
+        return performRequestAsync(cluster::bulkAsync, request, extractor);
     }
 
     @Override
@@ -107,6 +111,11 @@ class CachedClusterSession implements ClusterSession {
     @Override
     public Cluster getCluster() {
         return cluster;
+    }
+
+    @Override
+    public <T> CompletableFuture<T> catAsync(CatRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::catAsync, request, extractor);
     }
 
 
@@ -130,8 +139,9 @@ class CachedClusterSession implements ClusterSession {
             } finally {
                 ContextHolder.remove();
             }
-        }, ex -> {
-            future.completeExceptionally(ex);
+        }, exception -> {
+            future.completeExceptionally(exception);
+            interceptor.handleException(exception);
             ContextHolder.remove();
         });
     }
@@ -149,16 +159,13 @@ class CachedClusterSession implements ClusterSession {
 
 
     @FunctionalInterface
-    private interface RequestExecutor<A extends ActionRequest, R> extends BiConsumer<A, ActionListener<R>> {
-
+    private interface RequestExecutor<A extends ActionRequest, R extends ActionResponse> {
         /**
          * 执行ES请求
          *
          * @param request  ES请求
          * @param listener 响应监听器
          */
-        default void execute(A request, ActionListener<R> listener) {
-            accept(request, listener);
-        }
+        void execute(A request, ActionListener<R> listener);
     }
 }

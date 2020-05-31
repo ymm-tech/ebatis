@@ -79,6 +79,10 @@ public interface QueryBuilderFactory {
         return FieldQueryBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory boosting() {
+        return BoostingQueryBuilderFactory.INSTANCE;
+    }
+
     /**
      * 创建查询构建器
      *

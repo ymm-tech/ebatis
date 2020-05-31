@@ -1,12 +1,9 @@
 package com.ymm.ebatis.executor;
 
-import com.ymm.ebatis.cluster.Cluster;
-import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.request.RequestFactory;
-import com.ymm.ebatis.response.ResponseExtractor;
+import com.ymm.ebatis.session.ClusterSession;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.MultiSearchRequest;
-import org.elasticsearch.common.TriFunction;
 
 /**
  * @author 章多亮
@@ -19,9 +16,10 @@ class MultiSearchRequestExecutor extends AbstractRequestExecutor<MultiSearchRequ
     private MultiSearchRequestExecutor() {
     }
 
+
     @Override
-    protected TriFunction<Cluster, MultiSearchRequest, ResponseExtractor<?>, Object> getExecutor(MethodMeta method) {
-        return method.getResultType()::multiSearch;
+    protected RequestAction<MultiSearchRequest> getRequestAction(ClusterSession session) {
+        return session::multiSearchAsync;
     }
 
     @Override
