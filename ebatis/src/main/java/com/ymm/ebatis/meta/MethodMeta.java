@@ -16,6 +16,11 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
         return new DefaultMapperMethodMeta(mapperInterface, method);
     }
 
+    /**
+     * 获取接口要操作的所有索引
+     *
+     * @return 索引列表
+     */
     String[] getIndices();
 
     String[] getTypes();

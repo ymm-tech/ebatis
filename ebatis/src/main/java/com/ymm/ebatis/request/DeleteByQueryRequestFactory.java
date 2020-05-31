@@ -4,6 +4,7 @@ import com.ymm.ebatis.annotation.DeleteByQuery;
 import com.ymm.ebatis.common.DslUtils;
 import com.ymm.ebatis.meta.MethodMeta;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -23,7 +24,7 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setRefresh(deleteByQuery.refresh())
                 .setTimeout(TimeValue.parseTimeValue(deleteByQuery.timeout(), "查询删除超时"))
                 .setMaxRetries(deleteByQuery.maxRetries())
-                .setWaitForActiveShards(DslUtils.getActiveShardCount(deleteByQuery.waitForActiveShards()))
+                .setWaitForActiveShards(ActiveShardCount.parseString(deleteByQuery.waitForActiveShards()))
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
                 .setConflicts(deleteByQuery.conflicts());

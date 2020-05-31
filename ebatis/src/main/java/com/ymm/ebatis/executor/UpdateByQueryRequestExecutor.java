@@ -1,11 +1,8 @@
 package com.ymm.ebatis.executor;
 
-import com.ymm.ebatis.cluster.Cluster;
-import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.request.RequestFactory;
-import com.ymm.ebatis.response.ResponseExtractor;
+import com.ymm.ebatis.session.ClusterSession;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.common.TriFunction;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
 /**
@@ -22,8 +19,8 @@ class UpdateByQueryRequestExecutor extends AbstractRequestExecutor<UpdateByQuery
     }
 
     @Override
-    protected TriFunction<Cluster, UpdateByQueryRequest, ResponseExtractor<?>, Object> getExecutor(MethodMeta method) {
-        return method.getResultType()::updateByQuery;
+    protected RequestAction<UpdateByQueryRequest> getRequestAction(ClusterSession session) {
+        return session::updateByQueryAsync;
     }
 
     @Override

@@ -59,6 +59,10 @@ public interface ClusterRouter extends Closeable {
         return new SimpleWeightedClusterRouter(clusters);
     }
 
+    static ClusterRouter localhost(int port) {
+        return single(Cluster.localhost(port));
+    }
+
     /**
      * 根据入参信息选择一个集群执行操作
      *

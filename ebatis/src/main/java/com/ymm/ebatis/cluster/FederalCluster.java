@@ -1,10 +1,14 @@
 package com.ymm.ebatis.cluster;
 
+import com.ymm.ebatis.request.CatRequest;
+import com.ymm.ebatis.response.CatResponse;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -156,6 +160,16 @@ public interface FederalCluster extends Cluster {
         for (Cluster cluster : getClusters()) {
             cluster.updateByQueryAsync(request, listener);
         }
+    }
+
+    @Override
+    default void catAsync(CatRequest request, ActionListener<CatResponse> listener) {
+        throw new UnsupportedOperationException("联邦集群不支持cat");
+    }
+
+    @Override
+    default void getAsync(GetRequest request, ActionListener<GetResponse> listener) {
+        throw new UnsupportedOperationException("联邦集群不支持GET");
     }
 
     /**

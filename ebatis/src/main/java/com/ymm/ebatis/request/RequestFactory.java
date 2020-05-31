@@ -70,6 +70,18 @@ public interface RequestFactory<R extends ActionRequest> {
         return AggRequestFactory.INSTANCE;
     }
 
+    static RequestFactory<CatRequest> cat() {
+        return CatRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<CatAliasesRequest> catAliases() {
+        return CatAliasesRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<CatCountRequest> catCount() {
+        return CatCountRequestFactory.INSTANCE;
+    }
+
     /**
      * 创建ES请求，根据注解对应创建不同的ES请求
      *

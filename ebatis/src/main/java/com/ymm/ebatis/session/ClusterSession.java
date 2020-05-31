@@ -3,6 +3,7 @@ package com.ymm.ebatis.session;
 import com.ymm.ebatis.cluster.Cluster;
 import com.ymm.ebatis.domain.Page;
 import com.ymm.ebatis.domain.Pageable;
+import com.ymm.ebatis.request.CatRequest;
 import com.ymm.ebatis.response.ResponseExtractor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -228,7 +229,7 @@ public interface ClusterSession extends Cloneable {
      * @param <T>       结果类型
      * @return 异步结果
      */
-    <T> CompletableFuture<Page<T>> searchAsync(SearchRequest request, ResponseExtractor<T> extractor, Pageable pageable);
+    <T> CompletableFuture<Page<T>> searchAsync(SearchRequest request, ResponseExtractor<Page<T>> extractor, Pageable pageable);
 
     /**
      * 同步搜索
@@ -239,7 +240,7 @@ public interface ClusterSession extends Cloneable {
      * @param <T>       结果类型
      * @return 结果
      */
-    default <T> Page<T> searchSync(SearchRequest request, ResponseExtractor<T> extractor, Pageable pageable) {
+    default <T> Page<T> searchSync(SearchRequest request, ResponseExtractor<Page<T>> extractor, Pageable pageable) {
         return searchAsync(request, extractor, pageable).join();
     }
 
@@ -265,6 +266,19 @@ public interface ClusterSession extends Cloneable {
      */
     <T> CompletableFuture<T> bulkAsync(BulkRequest request, ResponseExtractor<T> extractor);
 
+    /**
+     * 异步_cat操作
+     *
+     * @param request   cat请求
+     * @param extractor 结果提取器
+     * @param <T>       结果类型
+     * @return 异步结果
+     */
+    <T> CompletableFuture<T> catAsync(CatRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T catSync(CatRequest request, ResponseExtractor<T> extractor) {
+        return catAsync(request, extractor).join();
+    }
 
     /**
      * 创建或获取指定类型接口代理对象，

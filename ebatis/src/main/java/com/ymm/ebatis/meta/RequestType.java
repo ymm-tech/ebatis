@@ -2,6 +2,7 @@ package com.ymm.ebatis.meta;
 
 import com.ymm.ebatis.annotation.Agg;
 import com.ymm.ebatis.annotation.Bulk;
+import com.ymm.ebatis.annotation.Cat;
 import com.ymm.ebatis.annotation.Delete;
 import com.ymm.ebatis.annotation.DeleteByQuery;
 import com.ymm.ebatis.annotation.Index;
@@ -61,7 +62,10 @@ public enum RequestType {
     /**
      * 聚合查询
      */
-    AGG(Agg.class, RequestExecutor.agg());
+    AGG(Agg.class, RequestExecutor.agg()),
+    CAT(Cat.class, RequestExecutor.cat()),
+
+    ;
     private static final Map<Class<? extends Annotation>, RequestType> ANNOTATION_EXECUTOR_TYPES;
 
     static {

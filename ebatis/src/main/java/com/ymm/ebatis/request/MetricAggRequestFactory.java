@@ -3,6 +3,7 @@ package com.ymm.ebatis.request;
 import com.ymm.ebatis.annotation.Agg;
 import com.ymm.ebatis.annotation.Metric;
 import com.ymm.ebatis.common.DslUtils;
+import com.ymm.ebatis.meta.MetaUtils;
 import com.ymm.ebatis.meta.MethodMeta;
 import com.ymm.ebatis.provider.AggConditionProvider;
 import com.ymm.ebatis.provider.MissingProvider;
@@ -35,7 +36,7 @@ class MetricAggRequestFactory extends AbstractAggRequestFactory {
         SearchRequest request = createSearchRequest(meta, condition);
 
         Agg agg = meta.getAnnotation(Agg.class);
-        Metric metric = DslUtils.getFirstElementRequired(agg.metric());
+        Metric metric = MetaUtils.getFirstElement(agg.metric());
 
         // 聚合
         AggregationBuilder aggregation = createAggregation(meta, metric, condition);

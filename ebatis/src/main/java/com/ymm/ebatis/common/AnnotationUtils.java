@@ -1,6 +1,7 @@
 package com.ymm.ebatis.common;
 
 import com.ymm.ebatis.exception.AnnotationNotPresentException;
+import com.ymm.ebatis.meta.MetaUtils;
 import lombok.Synchronized;
 import org.springframework.util.ReflectionUtils;
 
@@ -30,7 +31,7 @@ public class AnnotationUtils {
      * @return 属性注解
      */
     public static <A> Optional<A> getAnnotation(Supplier<A[]> attrAnnotations) {
-        return DslUtils.getFirstElement(attrAnnotations.get());
+        return MetaUtils.findFirstElement(attrAnnotations.get());
     }
 
     /**
@@ -41,7 +42,7 @@ public class AnnotationUtils {
      * @return 属性注解
      */
     public static <A> A getAnnotationRequired(Supplier<A[]> attrAnnotations) {
-        return DslUtils.getFirstElement(attrAnnotations.get()).orElseThrow(AnnotationNotPresentException::new);
+        return MetaUtils.findFirstElement(attrAnnotations.get()).orElseThrow(AnnotationNotPresentException::new);
     }
 
     /**
