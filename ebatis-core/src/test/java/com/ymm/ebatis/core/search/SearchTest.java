@@ -20,7 +20,7 @@ public class SearchTest {
 
     @Test
     public void get() {
-        Optional<Order> order = orderMapper.findById(584677L);
+        Optional<Order> order = orderMapper.findById("vnGvZHIBstINTxAKc0wF");
 
         Assert.assertTrue(order.isPresent());
     }

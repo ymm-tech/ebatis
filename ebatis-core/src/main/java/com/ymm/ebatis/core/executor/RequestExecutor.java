@@ -94,6 +94,10 @@ public interface RequestExecutor {
         return CatRequestExecutor.INSTANCE;
     }
 
+    static RequestExecutor get() {
+        return GetRequestExecutor.INSTANCE;
+    }
+
     /**
      * 执行实际的ES操作
      *

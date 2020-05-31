@@ -6,6 +6,7 @@ import com.ymm.ebatis.core.exception.RequestTypeNotSupportException;
 import com.ymm.ebatis.core.executor.RequestExecutor;
 import com.ymm.ebatis.core.response.ResponseExtractor;
 import com.ymm.ebatis.core.response.ResponseExtractorLoader;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,6 +20,7 @@ import java.util.Optional;
  * @author 章多亮
  * @since 2020/5/27 18:27
  */
+@Slf4j
 public class DefaultMapperMethodMeta implements MapperMethod {
     private final Method method;
     private final List<ParameterMeta> parameterMetas;
@@ -81,6 +83,9 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     public Object execute(Cluster cluster, Object[] args) {
         try {
             return requestExecutor.execute(cluster, this, args);
+        } catch (Exception e) {
+            log.error("接口执行异常: {}", method, e);
+            throw e;
         } finally {
             ContextHolder.remove();
         }
