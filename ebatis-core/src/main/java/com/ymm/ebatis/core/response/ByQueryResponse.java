@@ -1,7 +1,6 @@
 package com.ymm.ebatis.core.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ymm.ebatis.core.executor.Retries;
 import lombok.Data;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.reindex.BulkByScrollTask;

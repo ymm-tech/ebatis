@@ -4,6 +4,7 @@ import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.response.ResponseExtractor;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ResolvableType;
 
 import java.lang.annotation.Annotation;
@@ -18,7 +19,7 @@ import java.util.Optional;
  * @since 2020/5/27 19:05
  */
 @ToString(of = "parameter")
-public class DefaultParameterMeta extends AbstractConditionMeta implements ParameterMeta {
+class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements ParameterMeta {
     private final Parameter parameter;
     private final int index;
     private final boolean pageable;
@@ -28,8 +29,8 @@ public class DefaultParameterMeta extends AbstractConditionMeta implements Param
     private final String name;
     private final Annotation requestAnnotation;
 
-    public DefaultParameterMeta(MethodMeta methodMeta, Parameter parameter, int index) {
-        super(parameter.getType());
+    DefaultParameterMeta(MethodMeta methodMeta, Parameter parameter, int index) {
+        super(parameter, parameter.getType());
         this.parameter = parameter;
         this.index = index;
         this.name = parameter.getName();
@@ -52,6 +53,12 @@ public class DefaultParameterMeta extends AbstractConditionMeta implements Param
             type = getType();
         }
         return type;
+    }
+
+    @Override
+    protected String getName(Parameter parameter) {
+        String n = super.getName(parameter);
+        return StringUtils.isBlank(n) ? parameter.getName() : n;
     }
 
     @Override
