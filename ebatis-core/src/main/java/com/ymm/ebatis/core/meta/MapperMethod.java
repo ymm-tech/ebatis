@@ -14,5 +14,5 @@ public interface MapperMethod extends MethodMeta {
         return new DefaultMapperMethodMeta(mapperInterface, method);
     }
 
-    Object execute(Cluster cluster, Object[] args);
+    Object invoke(Cluster cluster, Object[] args);
 }

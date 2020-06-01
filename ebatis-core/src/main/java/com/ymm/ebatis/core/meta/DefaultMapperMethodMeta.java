@@ -1,7 +1,9 @@
 package com.ymm.ebatis.core.meta;
 
+import com.ymm.ebatis.core.annotation.Http;
 import com.ymm.ebatis.core.cluster.Cluster;
 import com.ymm.ebatis.core.domain.ContextHolder;
+import com.ymm.ebatis.core.domain.HttpConfig;
 import com.ymm.ebatis.core.exception.RequestTypeNotSupportException;
 import com.ymm.ebatis.core.executor.RequestExecutor;
 import com.ymm.ebatis.core.response.ResponseExtractor;
@@ -32,6 +34,7 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     private final ResultType resultType;
     private final RequestExecutor requestExecutor;
     private final Annotation requestAnnotation;
+    private final HttpConfig httpConfig;
     private ParameterMeta conditionParameter;
     private ParameterMeta pageableParameter;
     private ParameterMeta responseExtractorParameter;
@@ -47,9 +50,25 @@ public class DefaultMapperMethodMeta implements MapperMethod {
         this.resultType = getResultType(method);
 
         this.requestAnnotation = getAnnotation(requestType.getAnnotationClass());
+        this.httpConfig = getHttpConfig(mapperInterface);
 
         this.requestExecutor = requestType.getRequestExecutor();
         this.parameterMetas = getParameterMetas(method);
+    }
+
+    private HttpConfig getHttpConfig(MapperInterface mapperInterface) {
+        Http http = findAnnotation(Http.class)
+                .orElse(mapperInterface.findAnnotation(Http.class).orElse(null));
+
+        if (http == null) {
+            return HttpConfig.DEFAULT;
+        }
+
+        return new HttpConfig()
+                .connectionRequestTimeout(http.connectionRequestTimeout())
+                .connectTimeout(http.connectTimeout())
+                .socketTimeout(http.socketTimeout());
+
     }
 
     private List<ParameterMeta> getParameterMetas(Method method) {
@@ -80,7 +99,7 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     @Override
-    public Object execute(Cluster cluster, Object[] args) {
+    public Object invoke(Cluster cluster, Object[] args) {
         try {
             return requestExecutor.execute(cluster, this, args);
         } catch (Exception e) {
@@ -120,6 +139,11 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     @SuppressWarnings("unchecked")
     public <A extends Annotation> A getRequestAnnotation() {
         return (A) requestAnnotation;
+    }
+
+    @Override
+    public HttpConfig getHttpConfig() {
+        return httpConfig;
     }
 
     @Override

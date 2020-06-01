@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.proxy;
 
 import com.ymm.ebatis.core.cluster.Cluster;
 import com.ymm.ebatis.core.cluster.ClusterRouter;
+import com.ymm.ebatis.core.domain.Context;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.meta.MapperInterface;
 import com.ymm.ebatis.core.meta.MapperMethod;
@@ -25,7 +26,9 @@ class MapperProxy implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
-        ContextHolder.getContext().getStopWatch().ifPresent(stopWatch -> {
+        Context context = ContextHolder.getContext();
+
+        context.getStopWatch().ifPresent(stopWatch -> {
             stopWatch.stop();
             stopWatch.start("查询准备耗时");
         });
@@ -35,9 +38,11 @@ class MapperProxy implements InvocationHandler {
         }
 
         MapperMethod mapperMethod = mapperInterface.getMapperMethod(method);
+        ContextHolder.setHttpConfig(mapperMethod.getHttpConfig());
+
         Cluster cluster = clusterRouter.route(mapperMethod);
 
-        return mapperMethod.execute(cluster, args);
+        return mapperMethod.invoke(cluster, args);
     }
 
     private Object invokeObjectMethod(Method method, Object[] args) {
