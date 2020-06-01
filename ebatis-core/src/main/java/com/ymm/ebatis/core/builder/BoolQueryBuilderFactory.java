@@ -25,9 +25,6 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuild
     @Override
     protected BoolQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         BoolQueryBuilder builder = QueryBuilders.boolQuery();
-        if (condition == null) {
-            return builder;
-        }
 
         Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = meta.getQueryClauses(condition);
 
