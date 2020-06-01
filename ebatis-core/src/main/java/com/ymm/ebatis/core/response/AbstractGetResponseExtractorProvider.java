@@ -36,7 +36,7 @@ public abstract class AbstractGetResponseExtractorProvider extends AbstractRespo
                         return null;
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new DocumentDeserializeException(e);
                 }
             };
         }
