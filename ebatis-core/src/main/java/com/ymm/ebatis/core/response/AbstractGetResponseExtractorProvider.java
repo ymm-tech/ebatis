@@ -1,7 +1,6 @@
 package com.ymm.ebatis.core.response;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ymm.ebatis.core.exception.DocumentDeserializeException;
 import com.ymm.ebatis.core.meta.RequestType;
 import com.ymm.ebatis.core.meta.ResultType;
 import org.elasticsearch.action.get.GetResponse;
@@ -9,13 +8,17 @@ import org.springframework.core.ResolvableType;
 
 import java.io.IOException;
 
-public abstract class AbstractGetResponseExtractorProvider extends AbstractResponseExtractorProvider {
-    private final ObjectMapper objectMapper;
+import static com.ymm.ebatis.core.response.ObjectMapperHolder.objectMapper;
 
+/**
+ * 抽象Get响应抽提器
+ *
+ * @author 章多亮
+ * @since 2020/06/01 16:28:49
+ */
+public abstract class AbstractGetResponseExtractorProvider extends AbstractResponseExtractorProvider {
     AbstractGetResponseExtractorProvider(ResultType... resultTypes) {
         super(RequestType.GET, resultTypes);
-        this.objectMapper = new ObjectMapper();
-        objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     }
 
     @Override
@@ -28,7 +31,7 @@ public abstract class AbstractGetResponseExtractorProvider extends AbstractRespo
             return (ConcreteResponseExtractor<?, GetResponse>) response -> {
                 try {
                     if (response.isExists()) {
-                        return objectMapper.readValue(response.getSourceAsBytes(), resultClass);
+                        return objectMapper().readValue(response.getSourceAsBytes(), resultClass);
                     } else {
                         return null;
                     }
