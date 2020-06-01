@@ -15,7 +15,7 @@ public interface DocumentMapper<T> {
      * @return 文档映射器
      */
     static <T> DocumentMapper<T> of(Class<T> entityClass) {
-        return FastJsonDocumentMapper.of(entityClass);
+        return JacksonDocumentMapper.of(entityClass);
     }
 
     /**
