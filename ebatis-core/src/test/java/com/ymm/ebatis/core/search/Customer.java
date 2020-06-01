@@ -6,28 +6,21 @@ import com.ymm.ebatis.core.annotation.Must;
 import com.ymm.ebatis.core.annotation.QueryType;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
+/**
+ * @author 章多亮
+ * @since 2020/6/1 17:16
+ */
 @Data
-public class Order {
-    @JsonProperty("order_id")
-    private Long id;
-    @JsonProperty("order_date")
-    private Date orderDate;
-
-    @JsonProperty("taxful_total_price")
-    private BigDecimal taxfulTotalPrice;
-
+public class Customer {
     @JsonProperty("customer_id")
-    private Long customerId;
+    private Long id;
     @JsonProperty("customer_first_name")
-    private String customerFirstName;
+    private String firstName;
     @Field("customer_last_name")
-    private String customerLastName;
+    private String lastName;
     @Must(queryType = QueryType.MATCH)
     @JsonProperty("customer_full_name")
-    private String customerFullName;
+    private String fullName;
     @JsonProperty("customer_phone")
-    private String customerPhone;
+    private String phone;
 }

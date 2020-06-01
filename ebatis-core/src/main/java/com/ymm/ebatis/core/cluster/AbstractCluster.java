@@ -1,6 +1,5 @@
 package com.ymm.ebatis.core.cluster;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymm.ebatis.core.config.Env;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.HttpConfig;
@@ -34,6 +33,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static com.ymm.ebatis.core.response.ObjectMapperHolder.objectMapper;
 
 /**
  * @author 章多亮
@@ -174,8 +175,6 @@ public abstract class AbstractCluster implements Cluster {
     }
 
     private void printRequest(HttpRequest request, HttpContext context) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-
         StringBuilder sb = new StringBuilder(System.lineSeparator());
         sb.append(request.getRequestLine()).append(System.lineSeparator());
 
@@ -189,9 +188,9 @@ public abstract class AbstractCluster implements Cluster {
             HttpEntityEnclosingRequest enclosingRequest = (HttpEntityEnclosingRequest) request;
             HttpEntity entity = enclosingRequest.getEntity();
             if (entity != null) {
-                Map<?, ?> map = mapper.readValue(entity.getContent(), Map.class);
+                Map<?, ?> map = objectMapper().readValue(entity.getContent(), Map.class);
 
-                String body = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+                String body = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
                 sb.append(body);
             }
         }
