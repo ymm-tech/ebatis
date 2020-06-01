@@ -57,11 +57,10 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     private HttpConfig getHttpConfig(MapperInterface mapperInterface) {
-        Http http = findAnnotation(Http.class)
-                .orElse(mapperInterface.findAnnotation(Http.class).orElse(null));
+        Http http = findAnnotation(Http.class).orElse(null);
 
         if (http == null) {
-            return HttpConfig.DEFAULT;
+            return mapperInterface.getHttpConfig();
         }
 
         return new HttpConfig()

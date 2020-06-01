@@ -36,19 +36,5 @@ public @interface Http {
      * @return 超时间
      */
     int connectionRequestTimeout() default -1;
-
-    /**
-     * 一个目标路由的最大连接数
-     *
-     * @return 每个路由最大连接数
-     */
-    int maxConnectionPerRoute() default 10;
-
-    /**
-     * 连接池最大连接数
-     *
-     * @return 最大连接数
-     */
-    int maxConnectionTotal() default 30;
 }
 

@@ -17,6 +17,8 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.protocol.HttpContext;
@@ -144,21 +146,31 @@ public abstract class AbstractCluster implements Cluster {
                 httpBuilder.addInterceptorLast(this::printRequest)
                         .addInterceptorLast(this::printResponse);
             }
+
+            // 设置单次请求的超时时间
+            httpBuilder.addInterceptorLast(this::setRequestTimeout);
             return httpBuilder;
         });
 
-        builder.setRequestConfigCallback(requestBuilder -> {
-            HttpConfig config = ContextHolder.getContext().getHttpConfig();
-
-            requestBuilder.setSocketTimeout(config.socketTimeout())
-                    .setConnectTimeout(config.connectTimeout())
-                    .setConnectionRequestTimeout(config.connectionRequestTimeout());
-
-            return requestBuilder;
-        });
-
-        // do nothing
+        // 设置默认超时时间
+        builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder);
         return builder;
+    }
+
+    private void setRequestTimeout(HttpRequest request, HttpContext context) {
+        HttpConfig httpConfig = ContextHolder.getContext().getHttpConfig();
+        if (httpConfig == null) {
+            return;
+        }
+
+        RequestConfig config = (RequestConfig) context.getAttribute(HttpClientContext.REQUEST_CONFIG);
+        config = RequestConfig.copy(config)
+                .setSocketTimeout(httpConfig.socketTimeout())
+                .setConnectTimeout(httpConfig.connectTimeout())
+                .setConnectionRequestTimeout(httpConfig.connectionRequestTimeout())
+                .build();
+
+        context.setAttribute(HttpClientContext.REQUEST_CONFIG, config);
     }
 
     private void printRequest(HttpRequest request, HttpContext context) throws IOException {

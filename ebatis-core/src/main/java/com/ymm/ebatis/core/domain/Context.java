@@ -20,10 +20,6 @@ public class Context {
     private ResponseExtractor<?> responseExtractor;
     private Map<String, Object> contextMap;
 
-    public Context() {
-        httpConfig = HttpConfig.DEFAULT;
-    }
-
     public Optional<Pageable> getPageable() {
         return Optional.ofNullable(pageable);
     }
@@ -64,11 +60,11 @@ public class Context {
         this.pageables = pageables;
     }
 
-    void setValue(String key, Object o) {
+    void setValue(String key, Object value) {
         if (Objects.isNull(contextMap)) {
-            contextMap = new HashMap<>();
+            contextMap = new HashMap<>(4);
         }
-        contextMap.put(key, o);
+        contextMap.put(key, value);
     }
 
     Object getValue(String key) {

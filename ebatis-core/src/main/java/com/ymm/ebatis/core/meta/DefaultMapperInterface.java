@@ -1,6 +1,8 @@
 package com.ymm.ebatis.core.meta;
 
+import com.ymm.ebatis.core.annotation.Http;
 import com.ymm.ebatis.core.annotation.Mapper;
+import com.ymm.ebatis.core.domain.HttpConfig;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -17,12 +19,24 @@ class DefaultMapperInterface implements MapperInterface {
     private final Class<?> mapperInterface;
     private final Mapper mapper;
     private final Map<Method, MapperMethod> mapperMethods;
+    private final HttpConfig httpConfig;
 
 
     DefaultMapperInterface(Class<?> mapperInterface) {
         this.mapperInterface = mapperInterface;
+        this.httpConfig = getHttpConfig(mapperInterface);
         this.mapper = getAnnotation(Mapper.class);
+
         this.mapperMethods = getMapperMethods(mapperInterface);
+    }
+
+    private HttpConfig getHttpConfig(Class<?> mapperInterface) {
+        Http http = mapperInterface.getAnnotation(Http.class);
+
+        return http == null ? null : new HttpConfig()
+                .socketTimeout(http.socketTimeout())
+                .connectTimeout(http.connectTimeout())
+                .connectionRequestTimeout(http.connectionRequestTimeout());
     }
 
     private Map<Method, MapperMethod> getMapperMethods(Class<?> mapperInterface) {
@@ -57,6 +71,11 @@ class DefaultMapperInterface implements MapperInterface {
     @Override
     public String getClusterRouter() {
         return mapper.clusterRouter();
+    }
+
+    @Override
+    public HttpConfig getHttpConfig() {
+        return httpConfig;
     }
 
     @Override
