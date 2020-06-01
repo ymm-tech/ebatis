@@ -15,9 +15,14 @@ import java.util.Optional;
 public class Context {
     private Pageable pageable;
     private Pageable[] pageables;
+    private HttpConfig httpConfig;
     private StopWatch stopWatch;
     private ResponseExtractor<?> responseExtractor;
     private Map<String, Object> contextMap;
+
+    public Context() {
+        httpConfig = HttpConfig.DEFAULT;
+    }
 
     public Optional<Pageable> getPageable() {
         return Optional.ofNullable(pageable);
@@ -35,12 +40,20 @@ public class Context {
         this.stopWatch = stopWatch;
     }
 
-    public Optional<ResponseExtractor<?>> getResponseExtractor() {
+    public Optional<ResponseExtractor<?>> getResponseExtractor() { // NOSONAR
         return Optional.ofNullable(responseExtractor);
     }
 
     public void setResponseExtractor(ResponseExtractor<?> responseExtractor) {
         this.responseExtractor = responseExtractor;
+    }
+
+    public HttpConfig getHttpConfig() {
+        return httpConfig;
+    }
+
+    void setHttpConfig(HttpConfig httpConfig) {
+        this.httpConfig = httpConfig;
     }
 
     public Optional<Pageable[]> getPageables() {

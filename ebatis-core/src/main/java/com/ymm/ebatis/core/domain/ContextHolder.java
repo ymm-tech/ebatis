@@ -22,7 +22,7 @@ public class ContextHolder {
         CONTEXT_THREAD_LOCAL.set(context);
     }
 
-    public static Optional<ResponseExtractor<?>> getResponseExtractor() {
+    public static Optional<ResponseExtractor<?>> getResponseExtractor() { // NOSONAR
         return getContext().getResponseExtractor();
     }
 
@@ -71,5 +71,9 @@ public class ContextHolder {
     @SuppressWarnings("unchecked")
     public static <T> T getValue(String key) {
         return (T) getContext().getValue(key);
+    }
+
+    public static void setHttpConfig(HttpConfig httpConfig) {
+        getContext().setHttpConfig(httpConfig);
     }
 }

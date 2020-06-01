@@ -2,6 +2,8 @@ package com.ymm.ebatis.core.cluster;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymm.ebatis.core.config.Env;
+import com.ymm.ebatis.core.domain.ContextHolder;
+import com.ymm.ebatis.core.domain.HttpConfig;
 import com.ymm.ebatis.core.exception.ClusterCreationException;
 import com.ymm.ebatis.core.request.CatRequest;
 import com.ymm.ebatis.core.response.CatResponse;
@@ -144,6 +146,17 @@ public abstract class AbstractCluster implements Cluster {
             }
             return httpBuilder;
         });
+
+        builder.setRequestConfigCallback(requestBuilder -> {
+            HttpConfig config = ContextHolder.getContext().getHttpConfig();
+
+            requestBuilder.setSocketTimeout(config.socketTimeout())
+                    .setConnectTimeout(config.connectTimeout())
+                    .setConnectionRequestTimeout(config.connectionRequestTimeout());
+
+            return requestBuilder;
+        });
+
         // do nothing
         return builder;
     }

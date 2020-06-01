@@ -1,5 +1,6 @@
 package com.ymm.ebatis.core.meta;
 
+import com.ymm.ebatis.core.domain.HttpConfig;
 import com.ymm.ebatis.core.response.ResponseExtractor;
 
 import java.lang.annotation.Annotation;
@@ -32,6 +33,8 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
     ResultType getResultType();
 
     <A extends Annotation> A getRequestAnnotation();
+
+    HttpConfig getHttpConfig();
 
     List<ParameterMeta> getParameterMetas();
 
