@@ -1,9 +1,10 @@
 package com.ymm.ebatis.core.response;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymm.ebatis.core.domain.AdditionalSource;
 import com.ymm.ebatis.core.domain.MetaSource;
 import com.ymm.ebatis.core.domain.ResponseMeta;
+import com.ymm.ebatis.core.exception.DocumentDeserializeException;
+import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.search.SearchHit;
 
@@ -13,29 +14,33 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static com.ymm.ebatis.core.response.ObjectMapperHolder.objectMapper;
+
 /**
  * @author duoliang.zhang
  */
-public class FastJsonDocumentMapper<T> implements DocumentMapper<T> {
+@Slf4j
+public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
     private static final Map<Class<?>, DocumentMapper<?>> MAPPERS = new ConcurrentHashMap<>();
     private final Class<T> entityClass;
 
-    private FastJsonDocumentMapper(Class<T> entityClass) { // NOSONAR
+    private JacksonDocumentMapper(Class<T> entityClass) { // NOSONAR
         this.entityClass = entityClass;
     }
 
     @SuppressWarnings("unchecked")
     public static <T> DocumentMapper<T> of(Class<T> entityClass) {
-        return (DocumentMapper<T>) MAPPERS.computeIfAbsent(entityClass, FastJsonDocumentMapper::new);
+        return (DocumentMapper<T>) MAPPERS.computeIfAbsent(entityClass, JacksonDocumentMapper::new);
     }
 
     @Override
     public T mapRow(SearchHit hit, int index) {
-        T document = null;
+        T document;
         try {
-            document = new ObjectMapper().readValue(hit.getSourceRef().toBytesRef().bytes, entityClass);
+            document = objectMapper().readValue(hit.getSourceRef().toBytesRef().bytes, entityClass);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("反序列化文档异常", e);
+            throw new DocumentDeserializeException(e);
         }
 
         if (document instanceof MetaSource) {
