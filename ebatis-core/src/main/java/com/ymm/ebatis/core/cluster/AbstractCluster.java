@@ -1,5 +1,7 @@
 package com.ymm.ebatis.core.cluster;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ymm.ebatis.core.config.Env;
 import com.ymm.ebatis.core.exception.ClusterCreationException;
 import com.ymm.ebatis.core.request.CatRequest;
 import com.ymm.ebatis.core.response.CatResponse;
@@ -7,10 +9,15 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.protocol.HttpContext;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
@@ -21,6 +28,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -130,11 +138,51 @@ public abstract class AbstractCluster implements Cluster {
      */
     protected RestClientBuilder custom(RestClientBuilder builder) {
         builder.setHttpClientConfigCallback(httpBuilder -> {
-            httpBuilder.addInterceptorFirst((HttpRequestInterceptor) (request, context) -> log.info("{}", request));
+            if (Env.debugEnabled()) {
+                httpBuilder.addInterceptorLast(this::printRequest)
+                        .addInterceptorLast(this::printResponse);
+            }
             return httpBuilder;
         });
         // do nothing
         return builder;
+    }
+
+    private void printRequest(HttpRequest request, HttpContext context) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        StringBuilder sb = new StringBuilder(System.lineSeparator());
+        sb.append(request.getRequestLine()).append(System.lineSeparator());
+
+        for (Header header : request.getAllHeaders()) {
+            sb.append(header).append(System.lineSeparator());
+        }
+
+        sb.append(System.lineSeparator());
+
+        if (request instanceof HttpEntityEnclosingRequest) {
+            HttpEntityEnclosingRequest enclosingRequest = (HttpEntityEnclosingRequest) request;
+            HttpEntity entity = enclosingRequest.getEntity();
+            if (entity != null) {
+                Map<?, ?> map = mapper.readValue(entity.getContent(), Map.class);
+
+                String body = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map);
+                sb.append(body);
+            }
+        }
+
+        log.debug("{}", sb);
+    }
+
+    private void printResponse(HttpResponse response, HttpContext context) {
+        StringBuilder sb = new StringBuilder(System.lineSeparator());
+        sb.append(response.getStatusLine()).append(System.lineSeparator());
+
+        for (Header header : response.getAllHeaders()) {
+            sb.append(header).append(System.lineSeparator());
+        }
+
+        log.debug("{}", sb);
     }
 
     @Override
