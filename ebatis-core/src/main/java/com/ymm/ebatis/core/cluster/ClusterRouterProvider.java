@@ -20,6 +20,13 @@ public interface ClusterRouterProvider {
     }
 
     /**
+     * 找到对应集群提供方后，会回调此接口，默认啥都不干
+     */
+    default void init() {
+        // do nothing
+    }
+
+    /**
      * 获取指定名称的集群路由器
      *
      * @return 集群路由器
