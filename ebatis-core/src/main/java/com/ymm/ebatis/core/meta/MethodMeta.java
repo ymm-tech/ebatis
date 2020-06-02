@@ -17,6 +17,8 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
         return new DefaultMapperMethodMeta(mapperInterface, method);
     }
 
+    Class<?> getReturnType();
+
     /**
      * 获取接口要操作的所有索引
      *
@@ -54,5 +56,5 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
 
     String[] getIncludeFields();
 
-    <T> ResponseExtractor<T> getResponseExtractor(Object[] args);
+    ResponseExtractor<?> getResponseExtractor(Object[] args);
 }

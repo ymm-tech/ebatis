@@ -26,4 +26,6 @@ public interface DocumentMapper<T> {
      * @return 映射后的实体对象
      */
     T mapRow(SearchHit hit, int index);
+
+    Class<T> getEntityClass();
 }

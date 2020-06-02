@@ -28,9 +28,7 @@ public class SearchTest {
     @Test
     public void get() {
         Optional<Order> order = orderMapper.findById("FcSRbXIBHucreWHcyrOa");
-
         Assert.assertTrue(order.isPresent());
-        orderMapper.findById("FcSRbXIBHucreWHcyrOa");
     }
 
     @Test

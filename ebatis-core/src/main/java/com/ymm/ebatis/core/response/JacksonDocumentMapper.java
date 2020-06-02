@@ -57,4 +57,9 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
         }
         return document;
     }
+
+    @Override
+    public Class<T> getEntityClass() {
+        return entityClass;
+    }
 }
