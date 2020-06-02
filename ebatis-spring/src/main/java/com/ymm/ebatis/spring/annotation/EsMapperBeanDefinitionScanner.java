@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -36,7 +35,7 @@ public class EsMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScanne
         beanDefinition.setBeanClassName(EsMapperProxyFactoryBean.class.getName());
         ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
         constructorArgumentValues.addGenericArgumentValue(beanClassName);
-        constructorArgumentValues.addGenericArgumentValue(new RuntimeBeanReference(getClusterRouterName(clusterRouter)));
+        constructorArgumentValues.addGenericArgumentValue(getClusterRouterName(clusterRouter));
 
         super.registerBeanDefinition(definitionHolder, registry);
     }

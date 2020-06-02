@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.proxy;
 
 import com.ymm.ebatis.core.cluster.Cluster;
 import com.ymm.ebatis.core.cluster.ClusterRouter;
+import com.ymm.ebatis.core.cluster.ClusterRouterLoader;
 import com.ymm.ebatis.core.domain.Context;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.meta.MapperInterface;
@@ -19,8 +20,8 @@ class MapperProxy implements InvocationHandler {
     private final MapperInterface mapperInterface;
     private final ClusterRouter clusterRouter;
 
-    MapperProxy(Class<?> mapperInterface, ClusterRouter clusterRouter) {
-        this.clusterRouter = clusterRouter;
+    MapperProxy(Class<?> mapperInterface, String name) {
+        this.clusterRouter = ClusterRouterLoader.getClusterRouter(name);
         this.mapperInterface = MapperInterface.of(mapperInterface);
     }
 

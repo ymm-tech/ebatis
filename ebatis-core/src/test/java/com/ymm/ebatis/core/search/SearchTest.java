@@ -1,7 +1,6 @@
 package com.ymm.ebatis.core.search;
 
 
-import com.ymm.ebatis.core.cluster.ClusterRouter;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.proxy.MapperProxyFactory;
@@ -21,7 +20,7 @@ public class SearchTest {
 
     @BeforeClass
     public static void setup() {
-        orderMapper = MapperProxyFactory.getMapperProxy(OrderMapper.class, ClusterRouter.localhost());
+        orderMapper = MapperProxyFactory.getMapperProxy(OrderMapper.class);
     }
 
 

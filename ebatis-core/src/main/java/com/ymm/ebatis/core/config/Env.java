@@ -15,6 +15,7 @@ public class Env {
     public static final String DEBUG_ENABLED = "ebatis.debugEnabled";
     public static final String PRINT_DSL_ENABLED = "ebatis.prettyPrintEnabled";
     public static final String OFFLINE_ENABLED = "ebatis.offlineEnabled";
+    public static final String CLUSTER_ROUTER_NAME = "ebatis.clusterRouter";
     private static final PropertiesConfiguration CONFIG;
 
     static {
@@ -44,5 +45,9 @@ public class Env {
 
     public static boolean offlineEnabled() {
         return CONFIG.getBoolean(OFFLINE_ENABLED, false);
+    }
+
+    public static String getClusterRouter() {
+        return CONFIG.getString(CLUSTER_ROUTER_NAME);
     }
 }

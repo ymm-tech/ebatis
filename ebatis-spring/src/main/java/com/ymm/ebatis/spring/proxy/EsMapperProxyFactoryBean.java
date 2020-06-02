@@ -1,6 +1,5 @@
 package com.ymm.ebatis.spring.proxy;
 
-import com.ymm.ebatis.core.cluster.ClusterRouter;
 import com.ymm.ebatis.core.proxy.MapperProxyFactory;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.FactoryBean;
@@ -11,12 +10,12 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class EsMapperProxyFactoryBean implements FactoryBean<Object>, BeanClassLoaderAware {
     private final Class<?> mapperInterface;
-    private final ClusterRouter clusterRouter;
+    private final String clusterRouter;
     private ClassLoader classLoader;
 
-    public EsMapperProxyFactoryBean(Class<?> mapperInterface, ClusterRouter router) {
+    public EsMapperProxyFactoryBean(Class<?> mapperInterface, String clusterRouter) {
         this.mapperInterface = mapperInterface;
-        this.clusterRouter = router;
+        this.clusterRouter = clusterRouter;
     }
 
     @Override
