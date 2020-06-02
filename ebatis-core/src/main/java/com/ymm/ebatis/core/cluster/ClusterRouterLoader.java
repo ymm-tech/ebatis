@@ -35,11 +35,11 @@ public class ClusterRouterLoader {
 
         for (ClusterRouterProvider provider : providers) {
             if (Objects.equals(name, provider.getName())) {
+                provider.init();
                 return provider.getClusterRouter();
             }
         }
 
         throw new ClusterRouterNotFoundException(name);
     }
-
 }
