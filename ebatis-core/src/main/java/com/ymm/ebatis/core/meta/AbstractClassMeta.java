@@ -20,27 +20,39 @@ import java.util.stream.Collectors;
 public abstract class AbstractClassMeta implements ClassMeta {
     protected static final Map<Class<?>, ClassMeta> CLASS_METAS = new ConcurrentHashMap<>();
     private final Class<?> clazz;
-    private final Map<Field, FieldMeta> fieldMetas;
+    private final Map<Field, FieldMeta> fieldMetaMap;
     private final Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses;
+    private final List<FieldMeta> fieldMetas;
+    private final List<MethodMeta> methodMetas;
 
 
     protected AbstractClassMeta(Class<?> clazz) {
         this.clazz = clazz;
         this.fieldMetas = getFieldMetas(clazz);
+        this.fieldMetaMap = getFieldMetaMap(fieldMetas);
         this.queryClauses = getQueryClauses(fieldMetas);
+
+        this.methodMetas = Collections.emptyList();
     }
 
-    private Map<Class<? extends Annotation>, List<FieldMeta>> getQueryClauses(Map<Field, FieldMeta> fieldMetas) {
-        Map<Class<? extends Annotation>, List<FieldMeta>> metas = fieldMetas.values()
-                .stream()
+    private List<FieldMeta> getFieldMetas(Class<?> clazz) {
+        List<FieldMeta> metas = Arrays.stream(clazz.getDeclaredFields())
+                .filter(this::filterField)
+                .map(FieldMeta::of)
+                .collect(Collectors.toList());
+
+        return Collections.unmodifiableList(metas);
+    }
+
+    private Map<Class<? extends Annotation>, List<FieldMeta>> getQueryClauses(List<FieldMeta> fieldMetas) {
+        Map<Class<? extends Annotation>, List<FieldMeta>> metas = fieldMetas.stream()
                 .collect(Collectors.groupingBy(FieldMeta::getQueryClauseAnnotationClass, Collectors.toList()));
+
         return Collections.unmodifiableMap(metas);
     }
 
-    private Map<Field, FieldMeta> getFieldMetas(Class<?> clazz) {
-        Map<Field, FieldMeta> metas = Arrays.stream(clazz.getDeclaredFields())
-                .filter(this::filterField)
-                .map(FieldMeta::of)
+    private Map<Field, FieldMeta> getFieldMetaMap(List<FieldMeta> fieldMetas) {
+        Map<Field, FieldMeta> metas = fieldMetas.stream()
                 .collect(Collectors.toMap(FieldMeta::getElement, meta -> meta));
 
         return Collections.unmodifiableMap(metas);
@@ -52,7 +64,7 @@ public abstract class AbstractClassMeta implements ClassMeta {
 
     @Override
     public List<MethodMeta> getMethodMetas() {
-        throw new UnsupportedOperationException();
+        return methodMetas;
     }
 
     @Override
@@ -67,17 +79,17 @@ public abstract class AbstractClassMeta implements ClassMeta {
 
     @Override
     public List<FieldMeta> getFieldMetas() {
-        return Collections.emptyList();
+        return fieldMetas;
     }
 
     @Override
     public Optional<FieldMeta> findFieldMeta(Field field) {
-        return Optional.ofNullable(fieldMetas.get(field));
+        return Optional.ofNullable(fieldMetaMap.get(field));
     }
 
     @Override
     public FieldMeta getFieldMeta(Field field) {
-        return fieldMetas.computeIfAbsent(field, f -> {
+        return fieldMetaMap.computeIfAbsent(field, f -> {
             throw new FieldMetaNotFoundException(field.toString());
         });
     }

@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.builder;
 
 import com.ymm.ebatis.core.annotation.Bool;
+import com.ymm.ebatis.core.meta.ClassMeta;
 import com.ymm.ebatis.core.meta.ConditionMeta;
 import com.ymm.ebatis.core.meta.FieldMeta;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +27,8 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuild
     protected BoolQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         BoolQueryBuilder builder = QueryBuilders.boolQuery();
 
-        Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = meta.getQueryClauses(condition);
+        Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = meta == null ?
+                ClassMeta.of(condition.getClass()).getQueryClauses() : meta.getQueryClauses(condition);
 
         queryClauses.forEach((key, fieldMetas) -> QueryClauseType.valueOf(key).addQueryBuilder(builder, fieldMetas, condition));
 

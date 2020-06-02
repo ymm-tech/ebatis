@@ -35,13 +35,6 @@ public interface MapperInterface extends AnnotatedMeta<Class<?>> {
     String[] getTypes();
 
     /**
-     * 路由信息
-     *
-     * @return 路由
-     */
-    String getRouting();
-
-    /**
      * 获取集群路由器
      *
      * @return 集群路由

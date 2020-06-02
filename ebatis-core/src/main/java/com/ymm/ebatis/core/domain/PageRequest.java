@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.domain;
 
 import com.ymm.ebatis.core.annotation.Ignore;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -9,6 +10,7 @@ import lombok.ToString;
  * @author 章多亮
  * @since 2020/05/21 10:58:13
  */
+@Setter
 @ToString
 public class PageRequest implements Pageable {
     /**
@@ -46,17 +48,9 @@ public class PageRequest implements Pageable {
         return page;
     }
 
-    public void setPage(int page) {
-        this.page = page;
-    }
-
     @Override
     public int getSize() {
         return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
     }
 
     @Override
@@ -64,7 +58,13 @@ public class PageRequest implements Pageable {
         return offset;
     }
 
-    public void setOffset(int offset) {
-        this.offset = offset;
+    @Override
+    public Pageable next() {
+        return Pageable.withOffset(page + 1, size, offset);
+    }
+
+    @Override
+    public Pageable previous() {
+        return page == 0 ? Pageable.firstWithOffset(size, offset) : Pageable.withOffset(page - 1, size, offset);
     }
 }

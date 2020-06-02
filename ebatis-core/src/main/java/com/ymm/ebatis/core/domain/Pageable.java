@@ -15,7 +15,7 @@ public interface Pageable {
      * @return 分页信息
      */
     static Pageable of(int page, int size) {
-        return of(page, size, 0);
+        return withOffset(page, size, 0);
     }
 
     static Pageable first(int size) {
@@ -30,7 +30,7 @@ public interface Pageable {
      * @param offset 偏移量
      * @return 分页信息
      */
-    static Pageable of(int page, int size, int offset) {
+    static Pageable withOffset(int page, int size, int offset) {
         return new PageRequest(page, size, offset);
     }
 
@@ -42,7 +42,7 @@ public interface Pageable {
      * @return 分页信息
      */
     static Pageable firstWithOffset(int size, int offset) {
-        return of(0, size, offset);
+        return withOffset(0, size, offset);
     }
 
     /**
@@ -65,6 +65,20 @@ public interface Pageable {
      * @return 偏移量大大小
      */
     int getOffset();
+
+    /**
+     * 向后翻页
+     *
+     * @return 下一页
+     */
+    Pageable next();
+
+    /**
+     * 向前翻页
+     *
+     * @return 前一页
+     */
+    Pageable previous();
 
     /**
      * 获取文档偏移量
