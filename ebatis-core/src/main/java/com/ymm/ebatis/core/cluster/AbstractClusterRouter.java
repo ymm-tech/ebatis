@@ -25,11 +25,6 @@ public abstract class AbstractClusterRouter implements ClusterRouter {
         return cluster;
     }
 
-    @Override
-    public String getName() {
-        return getClass().getSimpleName();
-    }
-
     private Cluster choose(MethodMeta meta) {
         return getLoadBalancer(meta).choose(getClusters());
     }
