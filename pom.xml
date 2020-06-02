@@ -12,6 +12,7 @@
     <modules>
         <module>ebatis-core</module>
         <module>ebatis-spring</module>
+        <module>ebatis-sample</module>
     </modules>
 
     <properties>
