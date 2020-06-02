@@ -39,7 +39,7 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
         this.basic = MetaUtils.isBasic(type);
         this.pageable = Pageable.class == type;
         this.responseExtractor = ResponseExtractor.class == type;
-        this.basicArrayOrCollection = isArrayOrCollection() || basic;
+        this.basicArrayOrCollection = isArrayOrCollection() && basic;
         this.requestAnnotation = methodMeta.getRequestAnnotation();
     }
 

@@ -11,8 +11,8 @@ import java.lang.annotation.Target;
  * @since 2020/5/22 11:30
  */
 @Documented
-@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 public @interface Mapper {
     /**
      * 映射的ES索引列表
@@ -27,13 +27,6 @@ public @interface Mapper {
      * @return 类型列表
      */
     String[] types() default {};
-
-    /**
-     * 获取路由信息
-     *
-     * @return 路由列表
-     */
-    String routing() default "";
 
     /**
      * 集群名称

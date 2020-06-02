@@ -29,12 +29,12 @@ public class DefaultMapperMethodMeta implements MapperMethod {
 
     private final String[] indices;
     private final String[] types;
-    private final String routing;
     private final RequestType requestType;
     private final ResultType resultType;
     private final RequestExecutor requestExecutor;
     private final Annotation requestAnnotation;
     private final HttpConfig httpConfig;
+    private final String[] includeFields;
     private ParameterMeta conditionParameter;
     private ParameterMeta pageableParameter;
     private ParameterMeta responseExtractorParameter;
@@ -44,7 +44,6 @@ public class DefaultMapperMethodMeta implements MapperMethod {
 
         this.indices = mapperInterface.getIndices();
         this.types = mapperInterface.getTypes();
-        this.routing = mapperInterface.getRouting();
 
         this.requestType = getRequestType(method);
         this.resultType = getResultType(method);
@@ -54,6 +53,15 @@ public class DefaultMapperMethodMeta implements MapperMethod {
 
         this.requestExecutor = requestType.getRequestExecutor();
         this.parameterMetas = getParameterMetas(method);
+
+        this.includeFields = getIncludeFields(method);
+    }
+
+    private String[] getIncludeFields(Method method) {
+        Class<?> returnType = method.getReturnType();
+        ClassMeta.of(returnType).getFieldMetas();
+
+        return new String[0];
     }
 
     private HttpConfig getHttpConfig(MapperInterface mapperInterface) {
@@ -120,11 +128,6 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     @Override
-    public String getRouting() {
-        return routing;
-    }
-
-    @Override
     public RequestType getRequestType() {
         return requestType;
     }
@@ -168,6 +171,11 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     @Override
     public ParameterMeta getResponseExtractorParameter() {
         return responseExtractorParameter;
+    }
+
+    @Override
+    public String[] getIncludeFields() {
+        return includeFields;
     }
 
     @Override

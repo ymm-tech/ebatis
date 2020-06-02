@@ -26,8 +26,6 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
 
     String[] getTypes();
 
-    String getRouting();
-
     RequestType getRequestType();
 
     ResultType getResultType();
@@ -53,6 +51,8 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
     default String getType() {
         return getTypes()[0];
     }
+
+    String[] getIncludeFields();
 
     <T> ResponseExtractor<T> getResponseExtractor(Object[] args);
 }

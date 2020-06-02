@@ -64,11 +64,6 @@ class DefaultMapperInterface implements MapperInterface {
     }
 
     @Override
-    public String getRouting() {
-        return mapper.routing();
-    }
-
-    @Override
     public String getClusterRouter() {
         return mapper.clusterRouter();
     }

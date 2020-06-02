@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.DslUtils;
+import com.ymm.ebatis.core.domain.Collapse;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.domain.ScriptField;
@@ -16,7 +17,6 @@ import com.ymm.ebatis.core.provider.ScriptFieldProvider;
 import com.ymm.ebatis.core.provider.SortProvider;
 import com.ymm.ebatis.core.provider.SourceProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
@@ -24,7 +24,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,15 +65,17 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         SearchSourceBuilder searchSource = new SearchSourceBuilder();
         searchSource.query(queryBuilder);
 
+        // 设置分页参数
         meta.getPageableParameter()
                 .map(p -> p.getValue(args))
                 .map(Pageable.class::cast)
                 .ifPresent(p -> {
+                    // 设个上下文是为了创建Page
                     ContextHolder.setPageable(p);
                     searchSource.from(p.getFrom()).size(p.getSize());
                 });
 
-        additionalProvider(condition, searchSource);
+        setProviderMeta(condition, searchSource);
 
         request.source(searchSource);
 
@@ -87,15 +88,15 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                 .getQueryBuilderFactory());
     }
 
-    private void additionalProvider(Object condition, SearchSourceBuilder searchSource) {
-        if (condition instanceof ScriptFieldProvider && ArrayUtils.isNotEmpty(((ScriptFieldProvider) condition).getScriptFields())) {
+    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource) {
+        if (condition instanceof ScriptFieldProvider) {
             ScriptField[] fields = ((ScriptFieldProvider) condition).getScriptFields();
             for (ScriptField field : fields) {
                 searchSource.scriptField(field.getName(), field.getScript().toEsScript());
             }
         }
 
-        if (condition instanceof SortProvider && ArrayUtils.isNotEmpty(((SortProvider) condition).getSorts())) {
+        if (condition instanceof SortProvider) {
             Sort[] sorts = ((SortProvider) condition).getSorts();
             for (Sort sort : sorts) {
                 searchSource.sort(sort.toSortBuilder());
@@ -107,9 +108,9 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
             searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
         }
 
-        if (condition instanceof CollapseProvider && Objects.nonNull(((CollapseProvider) condition).getCollapse())) {
-            CollapseProvider collapseProvider = (CollapseProvider) condition;
-            searchSource.collapse(collapseProvider.getCollapse().toCollapseBuilder());
+        if (condition instanceof CollapseProvider) {
+            Collapse collapse = ((CollapseProvider) condition).getCollapse();
+            searchSource.collapse(collapse.toCollapseBuilder());
         }
     }
 }
