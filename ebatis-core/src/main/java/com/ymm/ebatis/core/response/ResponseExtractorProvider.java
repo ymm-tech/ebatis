@@ -10,7 +10,21 @@ import com.ymm.ebatis.core.meta.ResultType;
  * @author 章多亮
  * @since 2020/1/17 11:59
  */
-public interface ResponseExtractorProvider {
+public interface ResponseExtractorProvider extends Comparable<ResponseExtractorProvider> {
+    /**
+     * 获取当前抽提器提供者的顺序值，默认优先级最低，值越小，优先级越高
+     *
+     * @return 排序值
+     */
+    default int getOrder() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    default int compareTo(ResponseExtractorProvider o) {
+        return Integer.compare(getOrder(), o.getOrder());
+    }
+
     /**
      * 判断当前Provider是否支持提取当前方法的返回值
      *

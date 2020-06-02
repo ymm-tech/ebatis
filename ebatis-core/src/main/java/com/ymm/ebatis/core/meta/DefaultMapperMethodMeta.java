@@ -35,12 +35,14 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     private final Annotation requestAnnotation;
     private final HttpConfig httpConfig;
     private final String[] includeFields;
+    private final Class<?> returnType;
     private ParameterMeta conditionParameter;
     private ParameterMeta pageableParameter;
     private ParameterMeta responseExtractorParameter;
 
     public DefaultMapperMethodMeta(MapperInterface mapperInterface, Method method) {
         this.method = method;
+        this.returnType = method.getReturnType();
 
         this.indices = mapperInterface.getIndices();
         this.types = mapperInterface.getTypes();
@@ -58,9 +60,6 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     private String[] getIncludeFields(Method method) {
-        Class<?> returnType = method.getReturnType();
-        ClassMeta.of(returnType).getFieldMetas();
-
         return new String[0];
     }
 
@@ -115,6 +114,11 @@ public class DefaultMapperMethodMeta implements MapperMethod {
         } finally {
             ContextHolder.remove();
         }
+    }
+
+    @Override
+    public Class<?> getReturnType() {
+        return returnType;
     }
 
     @Override
@@ -179,9 +183,8 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public <T> ResponseExtractor<T> getResponseExtractor(Object[] args) {
-        return responseExtractorParameter == null ? ResponseExtractorLoader.getResponseExtractor(this) : (ResponseExtractor<T>) responseExtractorParameter.getValue(args);
+    public ResponseExtractor<?> getResponseExtractor(Object[] args) {
+        return responseExtractorParameter == null ? ResponseExtractorLoader.getResponseExtractor(this) : (ResponseExtractor<?>) responseExtractorParameter.getValue(args);
     }
 
     @Override

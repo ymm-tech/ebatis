@@ -2,7 +2,10 @@ package com.ymm.ebatis.core.response;
 
 import com.ymm.ebatis.core.meta.MethodMeta;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -12,23 +15,28 @@ import java.util.ServiceLoader;
  */
 public class ResponseExtractorLoader {
     private static final Map<MethodMeta, ResponseExtractor<?>> RESPONSE_EXTRACTORS = new HashMap<>();
+    private static final List<ResponseExtractorProvider> RESPONSE_EXTRACTOR_PROVIDERS = new ArrayList<>();
+
+    static {
+        // 载入全部的提供者，然后排序，用户可以自定义顺序，把自己的Provider优先级提高
+        ServiceLoader.load(ResponseExtractorProvider.class).forEach(RESPONSE_EXTRACTOR_PROVIDERS::add);
+        Collections.sort(RESPONSE_EXTRACTOR_PROVIDERS);
+    }
 
     private ResponseExtractorLoader() {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> ResponseExtractor<T> getResponseExtractor(MethodMeta method) {
-        return (ResponseExtractor<T>) RESPONSE_EXTRACTORS.computeIfAbsent(method, ResponseExtractorLoader::findResponseExtractor);
+    public static ResponseExtractor<?> getResponseExtractor(MethodMeta method) {
+        return RESPONSE_EXTRACTORS.computeIfAbsent(method, ResponseExtractorLoader::findResponseExtractor);
     }
 
     private static ResponseExtractor<?> findResponseExtractor(MethodMeta method) {
-        ServiceLoader<ResponseExtractorProvider> providers = ServiceLoader.load(ResponseExtractorProvider.class);
-        for (ResponseExtractorProvider provider : providers) {
+        for (ResponseExtractorProvider provider : RESPONSE_EXTRACTOR_PROVIDERS) {
             if (provider.support(method)) {
                 return provider.getResponseExtractor(method);
             }
         }
-        return null;
+        throw new UnsupportedOperationException("找不到响应提取器");
     }
 }

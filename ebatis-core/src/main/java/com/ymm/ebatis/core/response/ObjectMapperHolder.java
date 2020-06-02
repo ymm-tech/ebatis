@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Jackson对象序列化容器，此举是为了避免思索问题，每个现成绑定一个 {@link ObjectMapper}
+ * Jackson对象序列化容器，此举是为了避免死锁问题，每个线程绑定一个 {@link ObjectMapper}
  *
  * @author 章多亮
  * @since 2020/6/1 15:34
