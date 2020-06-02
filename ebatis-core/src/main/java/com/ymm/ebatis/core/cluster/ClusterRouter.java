@@ -70,4 +70,11 @@ public interface ClusterRouter extends Closeable {
      * @return ES集群
      */
     Cluster route(MethodMeta meta);
+
+    /**
+     * 获取集群路由的名称，用于定位集群路由
+     *
+     * @return 名称，默认是类简单名
+     */
+    String getName();
 }
