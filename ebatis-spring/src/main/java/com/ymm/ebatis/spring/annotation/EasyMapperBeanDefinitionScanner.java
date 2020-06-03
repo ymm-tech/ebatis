@@ -2,7 +2,7 @@ package com.ymm.ebatis.spring.annotation;
 
 import com.ymm.ebatis.core.annotation.Mapper;
 import com.ymm.ebatis.spring.exception.ClusterNameNotFoundException;
-import com.ymm.ebatis.spring.proxy.EsMapperProxyFactoryBean;
+import com.ymm.ebatis.spring.proxy.EasyMapperProxyFactoryBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
@@ -34,7 +34,7 @@ public class EasyMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScan
         String clusterRouter = AnnotationAttributes.fromMap(beanDefinition.getMetadata().getAnnotationAttributes(Mapper.class.getName())).getString("clusterRouter");
 
         // 实际的Bean对象是EsMapperProxyFactory，它是个FactoryBean，负责创建EsMapperProxy代理
-        beanDefinition.setBeanClassName(EsMapperProxyFactoryBean.class.getName());
+        beanDefinition.setBeanClassName(EasyMapperProxyFactoryBean.class.getName());
         ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
         constructorArgumentValues.addGenericArgumentValue(beanClassName);
         constructorArgumentValues.addGenericArgumentValue(getClusterRouterName(clusterRouter));
