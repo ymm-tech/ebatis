@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>ebatis-spring-boot</artifactId>
+        <groupId>com.ymm.ebatis</groupId>
+        <version>7.5.1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ebatis-spring-boot-starter</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ymm.ebatis</groupId>
+            <artifactId>ebatis-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ymm.ebatis</groupId>
+            <artifactId>ebatis-spring</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ymm.ebatis</groupId>
+            <artifactId>ebatis-spring-boot-autoconfigure</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
