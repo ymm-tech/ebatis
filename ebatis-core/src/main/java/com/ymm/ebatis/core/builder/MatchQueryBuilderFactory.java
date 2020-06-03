@@ -24,26 +24,14 @@ class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQueryBui
                 .lenient(match.lenient())
                 .maxExpansions(match.maxExpansions())
                 .zeroTermsQuery(match.zeroTermsQuery())
+                .fuzzyRewrite(StringUtils.trimToNull(match.fuzzyRewrite()))
+                .minimumShouldMatch(StringUtils.trimToNull(match.minimumShouldMatch()))
+                .fuzziness(StringUtils.trimToNull(match.fuzziness()))
+                .analyzer(StringUtils.trimToNull(match.analyzer()))
                 .prefixLength(match.prefixLength());
 
         if (match.cutoffFrequency() >= 0 && match.cutoffFrequency() <= 1) {
             builder.cutoffFrequency(match.cutoffFrequency());
-        }
-
-        if (StringUtils.isNotBlank(match.analyzer())) {
-            builder.analyzer(match.analyzer());
-        }
-
-        if (StringUtils.isNotBlank(match.fuzziness())) {
-            builder.fuzziness(match.fuzziness());
-        }
-
-        if (StringUtils.isNotBlank(match.fuzzyRewrite())) {
-            builder.fuzzyRewrite(match.fuzzyRewrite());
-        }
-
-        if (StringUtils.isNotBlank(match.minimumShouldMatch())) {
-            builder.minimumShouldMatch(match.minimumShouldMatch());
         }
     }
 

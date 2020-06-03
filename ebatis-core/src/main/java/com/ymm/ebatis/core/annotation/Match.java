@@ -23,9 +23,9 @@ public @interface Match {
 
     boolean fuzzyTranspositions() default FuzzyQuery.defaultTranspositions;
 
-    String minimumShouldMatch() default AnnotationConstants.NO_SET;
+    String minimumShouldMatch() default "";
 
-    String fuzzyRewrite() default AnnotationConstants.NO_SET;
+    String fuzzyRewrite() default "";
 
     boolean lenient() default MatchQuery.DEFAULT_LENIENCY;
 
@@ -37,7 +37,7 @@ public @interface Match {
 
     Operator operator() default Operator.OR;
 
-    String analyzer() default AnnotationConstants.NO_SET;
+    String analyzer() default "";
 
-    String fuzziness() default AnnotationConstants.NO_SET;
+    String fuzziness() default "";
 }

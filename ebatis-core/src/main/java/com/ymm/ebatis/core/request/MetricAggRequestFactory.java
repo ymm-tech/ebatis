@@ -2,7 +2,6 @@ package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.Agg;
 import com.ymm.ebatis.core.annotation.Metric;
-import com.ymm.ebatis.core.common.DslUtils;
 import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.provider.AggConditionProvider;
@@ -25,7 +24,6 @@ class MetricAggRequestFactory extends AbstractAggRequestFactory {
 
     @Override
     protected void setAnnotationMeta(SearchRequest request, Agg agg) {
-        request.routing(DslUtils.getRouting(agg.routing()));
         request.source().fetchSource(agg.fetchSource()).size(agg.size());
     }
 

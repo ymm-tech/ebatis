@@ -25,9 +25,7 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
         request.setRefreshPolicy(delete.refreshPolicy())
                 .waitForActiveShards(ActiveShardCount.parseString(delete.waitForActiveShards()))
                 .versionType(delete.versionType())
-                .timeout(delete.timeout())
-                .routing(delete.routing());
-
+                .timeout(delete.timeout());
     }
 
     @Override

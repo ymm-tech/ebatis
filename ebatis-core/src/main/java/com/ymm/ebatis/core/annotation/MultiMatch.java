@@ -36,9 +36,9 @@ public @interface MultiMatch {
 
     int maxExpansions() default 50;
 
-    String minimumShouldMatch() default AnnotationConstants.NO_SET;
+    String minimumShouldMatch() default "";
 
-    String fuzzyRewrite() default AnnotationConstants.NO_SET;
+    String fuzzyRewrite() default "";
 
     float tieBreaker() default 0.0F;
 

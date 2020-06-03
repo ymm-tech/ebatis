@@ -22,7 +22,7 @@ public @interface Should {
     /**
      * @return 最小匹配度
      */
-    String minimumShouldMatch() default AnnotationConstants.NO_SET;
+    String minimumShouldMatch() default "";
 
     /**
      * @return 百分比形式，返回<code>true</code>

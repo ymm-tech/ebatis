@@ -8,7 +8,9 @@ import com.ymm.ebatis.core.provider.ScriptProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.common.unit.TimeValue;
 
 import java.util.Optional;
 
@@ -24,8 +26,9 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
 
     @Override
     protected void setAnnotationMeta(UpdateRequest request, Update update) {
-        request.routing(update.routing())
-                .fetchSource(update.fetchSource())
+        request.fetchSource(update.fetchSource())
+                .timeout(TimeValue.parseTimeValue(update.timeout(), "更新超时时间"))
+                .waitForActiveShards(ActiveShardCount.parseString(update.waitForActiveShards()))
                 .detectNoop(update.detectNoop())
                 .docAsUpsert(update.docAsUpsert())
                 .retryOnConflict(update.retryOnConflict())

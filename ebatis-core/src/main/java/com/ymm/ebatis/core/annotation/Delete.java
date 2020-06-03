@@ -16,8 +16,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Delete {
-    String routing() default AnnotationConstants.NO_SET;
-
     String pipeline() default "";
 
     /**
@@ -65,7 +63,7 @@ public @interface Delete {
      *
      * @return 时间
      */
-    String timeout() default "30s";
+    String timeout() default "1m";
 
     /**
      * 文档版本控制类型

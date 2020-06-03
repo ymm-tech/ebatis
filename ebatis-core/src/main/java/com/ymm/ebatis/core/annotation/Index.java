@@ -22,7 +22,7 @@ public @interface Index {
      *
      * @return id字段 名称
      */
-    String id() default AnnotationConstants.NO_SET;
+    String id() default "";
 
     /**
      * 创建索引的方式
@@ -33,16 +33,9 @@ public @interface Index {
 
     VersionType versionType() default VersionType.INTERNAL;
 
-    /**
-     * 获取路由字段，可以不指定，默认<code>_id</code>
-     *
-     * @return 路由字段
-     */
-    String routing() default AnnotationConstants.NO_SET;
+    String parent() default "";
 
-    String parent() default AnnotationConstants.NO_SET;
-
-    String pipeline() default AnnotationConstants.NO_SET;
+    String pipeline() default "";
 
     /**
      * 数字 + 时间单位（s/m/h）
@@ -53,5 +46,10 @@ public @interface Index {
 
     WriteRequest.RefreshPolicy refreshPolicy() default WriteRequest.RefreshPolicy.NONE;
 
-    String waitForActiveShards() default "1";
+    /**
+     * 获取等待的主分片和副本分片数量，默认只需要主分片活跃就可以
+     *
+     * @return 活跃分片数量
+     */
+    String waitForActiveShards() default "-2";
 }

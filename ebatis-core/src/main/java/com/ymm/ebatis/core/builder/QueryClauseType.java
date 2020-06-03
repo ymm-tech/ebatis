@@ -1,11 +1,11 @@
 package com.ymm.ebatis.core.builder;
 
-import com.ymm.ebatis.core.annotation.AnnotationConstants;
 import com.ymm.ebatis.core.annotation.Filter;
 import com.ymm.ebatis.core.annotation.Must;
 import com.ymm.ebatis.core.annotation.MustNot;
 import com.ymm.ebatis.core.annotation.Should;
 import com.ymm.ebatis.core.meta.FieldMeta;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,7 +51,8 @@ public enum QueryClauseType {
             // 有多个Should条件，则只处理其中一个Should，处理多个没有意义，覆盖掉了，而且多个层级是可以分别设置自己的Should#minimumShouldMatch值的
             for (FieldMeta field : fields) {
                 Should should = field.getAnnotation(Should.class);
-                if (!Objects.equals(AnnotationConstants.NO_SET, should.minimumShouldMatch())) {
+                String minimumShouldMatch = StringUtils.trimToNull(should.minimumShouldMatch());
+                if (minimumShouldMatch != null) {
                     builder.minimumShouldMatch(should.minimumShouldMatch());
                     break;
                 }

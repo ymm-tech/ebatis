@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface MatchPhrase {
 
-    String analyzer() default AnnotationConstants.NO_SET;
+    String analyzer() default "";
 
     int slop() default MatchQuery.DEFAULT_PHRASE_SLOP;
 

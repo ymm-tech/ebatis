@@ -22,7 +22,7 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
     protected void setAnnotationMeta(DeleteByQueryRequest request, DeleteByQuery deleteByQuery) {
         request.setSlices(deleteByQuery.slices())
                 .setRefresh(deleteByQuery.refresh())
-                .setTimeout(TimeValue.parseTimeValue(deleteByQuery.timeout(), "查询删除超时"))
+                .setTimeout(deleteByQuery.timeout())
                 .setMaxRetries(deleteByQuery.maxRetries())
                 .setWaitForActiveShards(ActiveShardCount.parseString(deleteByQuery.waitForActiveShards()))
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
@@ -38,8 +38,6 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
         if (keepAlive != null) {
             request.setScroll(keepAlive);
         }
-
-        request.getSearchRequest().routing(DslUtils.getRouting(deleteByQuery.routing()));
     }
 
     @Override

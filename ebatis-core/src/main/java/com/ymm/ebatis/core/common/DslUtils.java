@@ -1,7 +1,5 @@
 package com.ymm.ebatis.core.common;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.unit.TimeValue;
 
 import java.util.Calendar;
@@ -28,20 +26,5 @@ public class DslUtils {
 
     public static TimeValue getScrollKeepAlive(long keepAlive) {
         return keepAlive <= 0 ? null : TimeValue.timeValueMillis(keepAlive);
-    }
-
-    public static String getRouting(String... routing) {
-        if (ArrayUtils.isEmpty(routing)) {
-            return null;
-        }
-        if (routing.length == 1) {
-            if (StringUtils.isBlank(routing[0])) {
-                return null;
-            } else {
-                return routing[0];
-            }
-        } else {
-            return StringUtils.join(routing, ",");
-        }
     }
 }

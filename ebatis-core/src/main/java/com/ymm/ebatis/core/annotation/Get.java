@@ -17,13 +17,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Get {
     /**
-     * 设置查询路由，默认为空
-     *
-     * @return 路由
-     */
-    String routing() default "";
-
-    /**
      * 设置查询偏好，影响查询的分片策略
      *
      * @return 查询偏好

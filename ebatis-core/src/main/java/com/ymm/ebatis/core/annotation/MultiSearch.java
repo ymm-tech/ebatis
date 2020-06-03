@@ -24,9 +24,7 @@ public @interface MultiSearch {
 
     boolean countOnly() default false;
 
-    String routing() default AnnotationConstants.NO_SET;
-
-    String preference() default AnnotationConstants.NO_SET;
+    String preference() default "";
 
     SearchType searchType() default SearchType.QUERY_THEN_FETCH;
 

@@ -62,6 +62,4 @@ public @interface Agg {
      * @see AggType#PIPELINE
      */
     Pipeline[] pipeline() default {};
-
-    String routing() default AnnotationConstants.NO_SET;
 }

@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.builder;
 
 import com.ymm.ebatis.core.annotation.Wildcard;
 import com.ymm.ebatis.core.meta.ConditionMeta;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 
@@ -14,7 +15,7 @@ class WildCardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQu
 
     @Override
     protected void setAnnotationMeta(WildcardQueryBuilder builder, Wildcard wildcard) {
-        builder.rewrite(wildcard.rewrite());
+        builder.rewrite(StringUtils.trimToNull(wildcard.rewrite()));
     }
 
     @Override
