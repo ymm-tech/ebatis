@@ -148,7 +148,7 @@ class CachedClusterSession implements ClusterSession {
 
     private <T extends ActionRequest, R extends ActionResponse, E> CompletableFuture<E> performRequestAsync(RequestExecutor<T, R> executor, T request, ResponseExtractor<E> extractor) {
         CompletableFuture<E> future = new CompletableFuture<>();
-        if (Env.offlineEnabled()) {
+        if (Env.isOfflineEnabled()) {
             future.complete(extractor.empty());
             return future;
         }

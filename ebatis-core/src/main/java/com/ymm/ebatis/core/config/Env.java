@@ -13,7 +13,6 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 public class Env {
     public static final Env INSTANCE = new Env();
     public static final String DEBUG_ENABLED = "ebatis.debugEnabled";
-    public static final String PRINT_DSL_ENABLED = "ebatis.prettyPrintEnabled";
     public static final String OFFLINE_ENABLED = "ebatis.offlineEnabled";
     public static final String CLUSTER_ROUTER_NAME = "ebatis.clusterRouter";
     private static final PropertiesConfiguration CONFIG;
@@ -33,21 +32,33 @@ public class Env {
     }
 
     private Env() {
+        throw new UnsupportedOperationException();
     }
 
-    public static boolean debugEnabled() {
+    /**
+     * 判断当前配置是否启用调试模式
+     *
+     * @return 如果当前启用调试模式，返回<code>true</code>
+     */
+    public static boolean isDebugEnabled() {
         return CONFIG.getBoolean(DEBUG_ENABLED, false);
     }
 
-    public static boolean prettyPrintEnabled() {
-        return CONFIG.getBoolean(PRINT_DSL_ENABLED, false);
-    }
-
-    public static boolean offlineEnabled() {
+    /**
+     * 判断当前配置是否是离线模式，如果是离线模式，则不会发出请求
+     *
+     * @return 如果是离线模式，返回<code>true</code>
+     */
+    public static boolean isOfflineEnabled() {
         return CONFIG.getBoolean(OFFLINE_ENABLED, false);
     }
 
-    public static String getClusterRouter() {
+    /**
+     * 获取配置文件中的集群路由名称，作为默认值吧
+     *
+     * @return 集群路由名称
+     */
+    public static String getClusterRouterName() {
         return CONFIG.getString(CLUSTER_ROUTER_NAME);
     }
 }

@@ -143,7 +143,7 @@ public abstract class AbstractCluster implements Cluster {
      */
     protected RestClientBuilder custom(RestClientBuilder builder) {
         builder.setHttpClientConfigCallback(httpBuilder -> {
-            if (Env.debugEnabled()) {
+            if (Env.isDebugEnabled()) {
                 httpBuilder.addInterceptorLast(this::printRequest)
                         .addInterceptorLast(this::printResponse);
             }

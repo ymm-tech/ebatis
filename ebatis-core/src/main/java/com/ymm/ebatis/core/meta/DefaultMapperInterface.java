@@ -2,13 +2,18 @@ package com.ymm.ebatis.core.meta;
 
 import com.ymm.ebatis.core.annotation.Http;
 import com.ymm.ebatis.core.annotation.Mapper;
+import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.domain.HttpConfig;
+import com.ymm.ebatis.core.exception.AttributeNotFoundException;
+import com.ymm.ebatis.core.exception.MapperAnnotationNotPresentException;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -16,18 +21,63 @@ import java.util.stream.Collectors;
  * @since 2020/5/27 18:30
  */
 class DefaultMapperInterface implements MapperInterface {
-    private final Class<?> mapperInterface;
-    private final Mapper mapper;
+    private final Class<?> mapperType;
+    private final String[] indices;
+    private final String[] types;
+    private final String clusterRouter;
     private final Map<Method, MapperMethod> mapperMethods;
     private final HttpConfig httpConfig;
 
 
-    DefaultMapperInterface(Class<?> mapperInterface) {
-        this.mapperInterface = mapperInterface;
-        this.httpConfig = getHttpConfig(mapperInterface);
-        this.mapper = getAnnotation(Mapper.class);
+    DefaultMapperInterface(Class<?> mapperType) {
+        this.mapperType = mapperType;
+        this.httpConfig = getHttpConfig(mapperType);
 
-        this.mapperMethods = getMapperMethods(mapperInterface);
+        Annotation mapperAnnotation = getMapperAnnotation(mapperType);
+
+        this.indices = getIndices(mapperAnnotation);
+        this.types = getTypes(mapperAnnotation);
+        this.clusterRouter = getClusterRouter(mapperAnnotation);
+
+        this.mapperMethods = getMapperMethods(mapperType);
+    }
+
+    private String getClusterRouter(Annotation mapperAnnotation) {
+        return getAnnotationAttribute(mapperAnnotation, "clusterRouter", false);
+    }
+
+    private String[] getTypes(Annotation mapperAnnotation) {
+        return getAnnotationAttribute(mapperAnnotation, "types", false);
+    }
+
+    private String[] getIndices(Annotation mapperAnnotation) {
+        return getAnnotationAttribute(mapperAnnotation, "indices", true);
+    }
+
+    private <A> A getAnnotationAttribute(Annotation mapperAnnotation, String attributeName, boolean required) {
+        Optional<A> attribute = AnnotationUtils.findAttribute(mapperAnnotation, attributeName);
+        if (attribute.isPresent()) {
+            return attribute.get();
+        }
+
+        if (required) {
+            throw new AttributeNotFoundException(mapperAnnotation.annotationType().getName() + '#' + attributeName);
+        }
+        return null;
+    }
+
+    private Annotation getMapperAnnotation(Class<?> mapperInterface) {
+        Annotation[] annotations = mapperInterface.getAnnotations();
+
+        for (Annotation annotation : annotations) {
+            Class<? extends Annotation> annotationType = annotation.annotationType();
+
+            if (annotationType == Mapper.class || annotationType.isAnnotationPresent(Mapper.class)) {
+                return annotation;
+            }
+        }
+
+        throw new MapperAnnotationNotPresentException(mapperInterface.getName());
     }
 
     private HttpConfig getHttpConfig(Class<?> mapperInterface) {
@@ -55,17 +105,17 @@ class DefaultMapperInterface implements MapperInterface {
 
     @Override
     public String[] getIndices() {
-        return mapper.indices();
+        return indices;
     }
 
     @Override
     public String[] getTypes() {
-        return mapper.types();
+        return types;
     }
 
     @Override
-    public String getClusterRouter() {
-        return mapper.clusterRouter();
+    public String getClusterRouterName() {
+        return clusterRouter;
     }
 
     @Override
@@ -80,6 +130,6 @@ class DefaultMapperInterface implements MapperInterface {
 
     @Override
     public Class<?> getElement() {
-        return mapperInterface;
+        return mapperType;
     }
 }

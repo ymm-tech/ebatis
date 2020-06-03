@@ -104,7 +104,7 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
 
     @Override
     public <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass) {
-        return AnnotationUtils.findAttribute(requestAnnotation, annotationClass);
+        return AnnotationUtils.findAttributeAnnotation(requestAnnotation, annotationClass);
     }
 
     @Override

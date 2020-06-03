@@ -1,7 +1,5 @@
 package com.ymm.ebatis.core.proxy;
 
-import com.ymm.ebatis.core.config.Env;
-
 /**
  * @author 章多亮
  * @since 2020/5/25 17:28
@@ -40,6 +38,6 @@ public interface MapperProxyFactory {
      * @return 接口代理
      */
     static <M> M getMapperProxy(Class<M> mapperInterface) {
-        return getMapperProxy(mapperInterface, mapperInterface.getClassLoader(), Env.getClusterRouter());
+        return getMapperProxy(mapperInterface, mapperInterface.getClassLoader(), null);
     }
 }
