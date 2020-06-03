@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 2020/6/1 18:27
  */
 @Configuration
-@EnableEasyMapper(basePackages = "com.ymm.ebatis.sample.mapper", clusterRouter = "clusterRouter")
+@EnableEasyMapper(basePackages = "com.ymm.ebatis.sample.mapper")
 public class EbatisConfig {
     @Bean(destroyMethod = "close")
     public ClusterRouter clusterRouter() {

@@ -40,5 +40,5 @@ public @interface EnableEasyMapper {
      *
      * @return 集群路由器名称
      */
-    String clusterRouter() default "localhost";
+    String clusterRouter() default "clusterRouter";
 }
