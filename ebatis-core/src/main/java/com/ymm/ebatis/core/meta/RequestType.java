@@ -7,7 +7,6 @@ import com.ymm.ebatis.core.annotation.Delete;
 import com.ymm.ebatis.core.annotation.DeleteByQuery;
 import com.ymm.ebatis.core.annotation.Get;
 import com.ymm.ebatis.core.annotation.Index;
-import com.ymm.ebatis.core.annotation.MultiMatch;
 import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.annotation.Update;
@@ -59,7 +58,6 @@ public enum RequestType {
      */
     SEARCH(Search.class, RequestExecutor.search()),
     MULTI_SEARCH(MultiSearch.class, RequestExecutor.multiSearch()),
-    MULTI_MATCH(MultiMatch.class, RequestExecutor.multiSearch()),
     /**
      * 聚合查询
      */
