@@ -96,7 +96,7 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
 
     @Override
     public <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass) {
-        return getQueryClauseAnnotation().flatMap(a -> AnnotationUtils.findAttribute(a, annotationClass));
+        return getQueryClauseAnnotation().flatMap(a -> AnnotationUtils.findAttributeAnnotation(a, annotationClass));
     }
 
     @Override

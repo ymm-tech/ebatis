@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.cluster;
 
 import com.ymm.ebatis.core.exception.ClusterRouterNotFoundException;
+import lombok.Synchronized;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +31,7 @@ public class ClusterRouterLoader {
         return CLUSTER_ROUTERS.computeIfAbsent(name, ClusterRouterLoader::findClusterRouter);
     }
 
+    @Synchronized
     private static ClusterRouter findClusterRouter(String name) {
         ServiceLoader<ClusterRouterProvider> providers = ServiceLoader.load(ClusterRouterProvider.class);
 

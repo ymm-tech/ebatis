@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.exception.MapperAnnotationNotPresentException;
 import com.ymm.ebatis.core.exception.MapperNotAllowInheritException;
 import com.ymm.ebatis.core.exception.MapperNotInterfaceException;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ class MapperRegistry {
         throw new UnsupportedOperationException();
     }
 
-    static synchronized Object createProxy(Class<?> mapperInterface, ClassLoader classLoader, String clusterRouterName) {
+    private static synchronized Object createProxy(Class<?> mapperInterface, ClassLoader classLoader, String clusterRouterName) {
         ClassLoader cl = classLoader == null ? mapperInterface.getClassLoader() : classLoader;
         return Proxy.newProxyInstance(cl, new Class[]{mapperInterface}, new MapperProxy(mapperInterface, clusterRouterName));
     }
@@ -35,9 +36,20 @@ class MapperRegistry {
             throw new MapperNotAllowInheritException(mapperInterface.toString());
         }
 
-        if (!mapperInterface.isAnnotationPresent(Mapper.class)) {
+        Annotation[] annotations = mapperInterface.getAnnotations();
+
+        boolean mapperPresent = false;
+        for (Annotation annotation : annotations) {
+            mapperPresent = annotation.annotationType() == Mapper.class || annotation.annotationType().isAnnotationPresent(Mapper.class);
+            if (mapperPresent) {
+                break;
+            }
+        }
+
+        if (!mapperPresent) {
             throw new MapperAnnotationNotPresentException(mapperInterface.toString());
         }
+
 
         return (M) PROXIES.computeIfAbsent(mapperInterface, clazz -> createProxy(clazz, classLoader, clusterRouterName));
     }

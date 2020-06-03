@@ -12,12 +12,12 @@ public interface MapperInterface extends AnnotatedMeta<Class<?>> {
     /**
      * 缓存创建指定该接口的映射
      *
-     * @param mapperInterface 映射接口
-     * @param <T>             实际接口类型
+     * @param mapperType 映射接口
+     * @param <T>        实际接口类型
      * @return 接口映射信息
      */
-    static <T> MapperInterface of(Class<T> mapperInterface) {
-        return new DefaultMapperInterface(mapperInterface);
+    static <T> MapperInterface of(Class<T> mapperType) {
+        return new DefaultMapperInterface(mapperType);
     }
 
     /**
@@ -39,7 +39,7 @@ public interface MapperInterface extends AnnotatedMeta<Class<?>> {
      *
      * @return 集群路由
      */
-    String getClusterRouter();
+    String getClusterRouterName();
 
     /**
      * 一些http相关的配置信息，连接ES

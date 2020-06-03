@@ -15,20 +15,22 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 @Slf4j
-public class EsMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
+public class EasyMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
     private final String globalClusterRouter;
 
-    public EsMapperBeanDefinitionScanner(BeanDefinitionRegistry registry, String globalClusterRouter) {
+    public EasyMapperBeanDefinitionScanner(BeanDefinitionRegistry registry, String globalClusterRouter) {
         super(registry, false);
         this.globalClusterRouter = globalClusterRouter;
 
         addIncludeFilter(new AnnotationTypeFilter(Mapper.class));
+        addIncludeFilter(new AnnotationTypeFilter(EasyMapper.class));
     }
 
     @Override
     protected void registerBeanDefinition(BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry) {
         AnnotatedBeanDefinition beanDefinition = (AnnotatedBeanDefinition) definitionHolder.getBeanDefinition();
         String beanClassName = beanDefinition.getBeanClassName();
+
         String clusterRouter = AnnotationAttributes.fromMap(beanDefinition.getMetadata().getAnnotationAttributes(Mapper.class.getName())).getString("clusterRouter");
 
         // 实际的Bean对象是EsMapperProxyFactory，它是个FactoryBean，负责创建EsMapperProxy代理

@@ -10,12 +10,12 @@ import org.springframework.beans.factory.FactoryBean;
  */
 public class EsMapperProxyFactoryBean implements FactoryBean<Object>, BeanClassLoaderAware {
     private final Class<?> mapperInterface;
-    private final String clusterRouter;
+    private final String clusterRouterName;
     private ClassLoader classLoader;
 
-    public EsMapperProxyFactoryBean(Class<?> mapperInterface, String clusterRouter) {
+    public EsMapperProxyFactoryBean(Class<?> mapperInterface, String clusterRouterName) {
         this.mapperInterface = mapperInterface;
-        this.clusterRouter = clusterRouter;
+        this.clusterRouterName = clusterRouterName;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class EsMapperProxyFactoryBean implements FactoryBean<Object>, BeanClassL
 
     @Override
     public Object getObject() {
-        return MapperProxyFactory.getMapperProxy(mapperInterface, classLoader, clusterRouter);
+        return MapperProxyFactory.getMapperProxy(mapperInterface, classLoader, clusterRouterName);
     }
 
     @Override

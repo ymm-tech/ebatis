@@ -13,6 +13,7 @@
         <module>ebatis-core</module>
         <module>ebatis-spring</module>
         <module>ebatis-sample</module>
+        <module>ebatis-web</module>
     </modules>
 
     <properties>

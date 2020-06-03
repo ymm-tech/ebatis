@@ -1,5 +1,7 @@
 package com.ymm.ebatis.core.common;
 
+import com.ymm.ebatis.core.exception.MethodInvokeException;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -31,6 +33,15 @@ public class MethodUtils {
         }
 
         return Stream.of(baseClass.getDeclaredMethods()).anyMatch(m -> isSameSignature(method, m));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <E> E invoke(Method method, Object instance, Object... args) {
+        try {
+            return (E) method.invoke(instance, args);
+        } catch (Exception e) {
+            throw new MethodInvokeException(e);
+        }
     }
 
     /**
