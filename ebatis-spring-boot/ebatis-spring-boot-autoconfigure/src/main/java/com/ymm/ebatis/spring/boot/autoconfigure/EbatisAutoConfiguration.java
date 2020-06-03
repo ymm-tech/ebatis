@@ -4,7 +4,7 @@ import com.ymm.ebatis.core.cluster.Cluster;
 import com.ymm.ebatis.core.cluster.ClusterRouter;
 import com.ymm.ebatis.core.cluster.WeightedCluster;
 import com.ymm.ebatis.spring.annotation.EasyMapperBeanDefinitionScanner;
-import com.ymm.ebatis.spring.proxy.EsMapperProxyFactoryBean;
+import com.ymm.ebatis.spring.proxy.EasyMapperProxyFactoryBean;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +35,8 @@ import java.util.stream.Stream;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(EbatisProperties.class)
-@ConditionalOnClass({Cluster.class, EsMapperProxyFactoryBean.class})
-public class EbatisAutoConfiguration { // NOSONAR
+@ConditionalOnClass({Cluster.class, EasyMapperProxyFactoryBean.class})
+public class EbatisAutoConfiguration {
     public static final int DEFAULT_PORT = 9200;
     private static final String DEFAULT_CLUSTER_ROUTER_NAME = "clusterRouter";
     private static final String EBATIS_CLUSTER_PREFIX = "ebatis.cluster";
@@ -122,7 +122,7 @@ public class EbatisAutoConfiguration { // NOSONAR
         }
     }
 
-    public static class AutoConfiguredEsMapperRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
+    public static class AutoConfiguredEasyMapperRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
         private BeanFactory beanFactory;
 
         @Override
@@ -132,7 +132,7 @@ public class EbatisAutoConfiguration { // NOSONAR
                 return;
             }
 
-            log.info("自动扫描 @EsMapper 注解的接口");
+            log.info("自动扫描 @EasyMapper 注解的接口");
 
             List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
             new EasyMapperBeanDefinitionScanner(registry, DEFAULT_CLUSTER_ROUTER_NAME).scan(packages.toArray(new String[0]));
@@ -145,13 +145,13 @@ public class EbatisAutoConfiguration { // NOSONAR
     }
 
     @Configuration
-    @Import(AutoConfiguredEsMapperRegistrar.class)
-    @ConditionalOnMissingBean(type = "com.ymm.ebatis.spring.annotation.EsMapperRegistrar")
+    @Import(AutoConfiguredEasyMapperRegistrar.class)
+    @ConditionalOnMissingBean(type = "com.ymm.ebatis.spring.annotation.EasyMapperRegistrar")
     public static class EsMapperScannerNotFound implements InitializingBean {
 
         @Override
         public void afterPropertiesSet() {
-            log.debug("没有配置扫描 @EnableEsMapper，由 EbatisAutoConfiguration 自动配置完成");
+            log.debug("没有配置扫描 @EnableEasyMapper，由 EbatisAutoConfiguration 自动配置完成");
         }
     }
 }
