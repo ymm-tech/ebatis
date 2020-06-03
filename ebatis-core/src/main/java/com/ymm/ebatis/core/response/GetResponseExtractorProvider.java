@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.response;
 
 import com.google.auto.service.AutoService;
+import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.exception.DocumentDeserializeException;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.get.GetResponse;
@@ -8,7 +9,6 @@ import org.springframework.core.ResolvableType;
 
 import java.io.IOException;
 
-import static com.ymm.ebatis.core.response.ObjectMapperHolder.objectMapper;
 
 /**
  * 抽象Get响应抽提器
@@ -32,7 +32,7 @@ public class GetResponseExtractorProvider extends AbstractResponseExtractorProvi
             return (ConcreteResponseExtractor<?, GetResponse>) response -> {
                 try {
                     if (response.isExists()) {
-                        return objectMapper().readValue(response.getSourceAsBytes(), resultClass);
+                        return ObjectMapperHolder.objectMapper().readValue(response.getSourceAsBytes(), resultClass);
                     } else {
                         return null;
                     }

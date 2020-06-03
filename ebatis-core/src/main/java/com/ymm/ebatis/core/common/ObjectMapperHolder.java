@@ -1,4 +1,4 @@
-package com.ymm.ebatis.core.response;
+package com.ymm.ebatis.core.common;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

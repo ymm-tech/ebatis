@@ -25,13 +25,13 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
 
         builder.autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
                 .cutoffFrequency(cutoffFrequency)
-                .fuzziness(StringUtils.stripToNull(multiMatch.fuzziness()))
-                .fuzzyRewrite(StringUtils.stripToNull(multiMatch.fuzzyRewrite()))
+                .fuzziness(StringUtils.trimToNull(multiMatch.fuzziness()))
+                .fuzzyRewrite(StringUtils.trimToNull(multiMatch.fuzzyRewrite()))
                 .fuzzyTranspositions(multiMatch.fuzzyTranspositions())
                 .lenient(multiMatch.lenient())
                 .maxExpansions(multiMatch.maxExpansions())
                 .prefixLength(multiMatch.prefixLength())
-                .minimumShouldMatch(StringUtils.stripToNull(multiMatch.minimumShouldMatch()))
+                .minimumShouldMatch(StringUtils.trimToNull(multiMatch.minimumShouldMatch()))
                 .operator(multiMatch.operator())
                 .slop(multiMatch.slop())
                 .tieBreaker(multiMatch.tieBreaker());

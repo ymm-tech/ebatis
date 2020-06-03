@@ -21,5 +21,5 @@ public @interface MatchPhrasePrefix {
 
     int maxExpansions() default FuzzyQuery.defaultMaxExpansions;
 
-    String analyzer() default AnnotationConstants.NO_SET;
+    String analyzer() default "";
 }

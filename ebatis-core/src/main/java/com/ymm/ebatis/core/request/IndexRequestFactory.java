@@ -13,6 +13,8 @@ import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentType;
 
+import static com.ymm.ebatis.core.common.ObjectMapperHolder.objectMapper;
+
 /**
  * @author 章多亮
  * @since 2019/12/17 19:19
@@ -20,7 +22,6 @@ import org.elasticsearch.common.xcontent.XContentType;
 @Slf4j
 class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
     static final IndexRequestFactory INSTANCE = new IndexRequestFactory();
-    private static final ThreadLocal<ObjectMapper> MAPPER_HOLDER = ThreadLocal.withInitial(ObjectMapper::new);
 
     private IndexRequestFactory() {
     }
@@ -31,16 +32,13 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
                 .versionType(index.versionType())
                 .waitForActiveShards(ActiveShardCount.parseString(index.waitForActiveShards()))
                 .timeout(index.timeout())
-                .routing(index.routing())
                 .opType(index.opType());
 
         if (StringUtils.isNotBlank(index.id())) {
             request.id(String.valueOf(request.sourceAsMap().get(index.id())));
         }
 
-        if (StringUtils.isNotBlank(index.pipeline())) {
-            request.setPipeline(index.pipeline());
-        }
+        request.setPipeline(StringUtils.trimToNull(index.pipeline()));
     }
 
     @Override
@@ -50,7 +48,7 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
         Object doc = meta.getConditionParameter().getValue(args);
 
-        ObjectMapper mapper = MAPPER_HOLDER.get();
+        ObjectMapper mapper = objectMapper();
         byte[] source;
         try {
             source = mapper.writeValueAsBytes(doc);

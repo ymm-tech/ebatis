@@ -38,6 +38,4 @@ public @interface DeleteByQuery {
      * @return 毫秒
      */
     long scrollKeepAlive() default 0;
-
-    String routing() default AnnotationConstants.NO_SET;
 }

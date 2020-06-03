@@ -34,7 +34,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.ymm.ebatis.core.response.ObjectMapperHolder.objectMapper;
+import static com.ymm.ebatis.core.common.ObjectMapperHolder.objectMapper;
+
 
 /**
  * @author 章多亮

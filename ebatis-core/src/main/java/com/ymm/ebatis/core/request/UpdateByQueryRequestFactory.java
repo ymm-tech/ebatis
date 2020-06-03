@@ -23,7 +23,7 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
     protected void setAnnotationMeta(UpdateByQueryRequest request, UpdateByQuery updateByQuery) {
         request.setSlices(updateByQuery.slices())
                 .setRefresh(updateByQuery.refresh())
-                .setTimeout(TimeValue.parseTimeValue(updateByQuery.timeout(), "查询更新超时"))
+                .setTimeout(updateByQuery.timeout())
                 .setMaxRetries(updateByQuery.maxRetries())
                 .setWaitForActiveShards(ActiveShardCount.parseString(updateByQuery.waitForActiveShards()))
                 .setShouldStoreResult(updateByQuery.shouldStoreResult())
@@ -39,8 +39,6 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
         if (keepAlive != null) {
             request.setScroll(keepAlive);
         }
-
-        request.getSearchRequest().routing(DslUtils.getRouting(updateByQuery.routing()));
     }
 
     @Override

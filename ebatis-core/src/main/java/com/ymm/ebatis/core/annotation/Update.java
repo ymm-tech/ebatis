@@ -17,15 +17,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Update {
-    String id() default AnnotationConstants.NO_SET;
-
-    String routing() default AnnotationConstants.NO_SET;
+    String id() default "";
 
     boolean fetchSource() default false;
 
-    String parent() default AnnotationConstants.NO_SET;
+    String parent() default "";
 
-    long timeout() default AnnotationConstants.TIMEOUT_NO_SET;
+    String timeout() default "";
 
     WriteRequest.RefreshPolicy refreshPolicy() default WriteRequest.RefreshPolicy.NONE;
 
@@ -39,5 +37,5 @@ public @interface Update {
 
     VersionType versionType() default VersionType.INTERNAL;
 
-    int waitForActiveShards() default AnnotationConstants.ACTIVE_SHARD_COUNT_DEFAULT;
+    String waitForActiveShards() default "-2";
 }

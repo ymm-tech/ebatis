@@ -1,5 +1,6 @@
 package com.ymm.ebatis.core.response;
 
+import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.domain.AdditionalSource;
 import com.ymm.ebatis.core.domain.MetaSource;
 import com.ymm.ebatis.core.domain.ResponseMeta;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static com.ymm.ebatis.core.response.ObjectMapperHolder.objectMapper;
 
 /**
  * @author duoliang.zhang
@@ -37,7 +37,7 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
     public T mapRow(SearchHit hit, int index) {
         T document;
         try {
-            document = objectMapper().readValue(hit.getSourceRef().toBytesRef().bytes, entityClass);
+            document = ObjectMapperHolder.objectMapper().readValue(hit.getSourceRef().toBytesRef().bytes, entityClass);
         } catch (IOException e) {
             log.error("反序列化文档异常", e);
             throw new DocumentDeserializeException(e);

@@ -18,8 +18,7 @@ class GetRequestFactory extends AbstractRequestFactory<Get, GetRequest> {
 
     @Override
     protected void setAnnotationMeta(GetRequest request, Get get) {
-        request.routing(StringUtils.trimToNull(get.routing()))
-                .realtime(get.realtime())
+        request.realtime(get.realtime())
                 .refresh(get.refresh())
                 .preference(StringUtils.trimToNull(get.preference()));
     }

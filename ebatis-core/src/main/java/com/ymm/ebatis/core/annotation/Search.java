@@ -20,11 +20,9 @@ public @interface Search {
 
     SearchType searchType() default SearchType.QUERY_THEN_FETCH;
 
-    String[] routing() default {};
+    String preference() default "";
 
-    String preference() default AnnotationConstants.NO_SET;
-
-    String analyzer() default AnnotationConstants.NO_SET;
+    String analyzer() default "";
 
     FunctionScore[] functionScore() default {};
 

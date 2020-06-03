@@ -4,7 +4,6 @@ import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
-import com.ymm.ebatis.core.common.DslUtils;
 import com.ymm.ebatis.core.domain.Collapse;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Pageable;
@@ -41,8 +40,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
 
     @Override
     protected void setAnnotationMeta(SearchRequest request, Search search) {
-        request.routing(DslUtils.getRouting(search.routing()))
-                .preference(StringUtils.trimToNull(search.preference()))
+        request.preference(StringUtils.trimToNull(search.preference()))
                 .searchType(search.searchType());
     }
 

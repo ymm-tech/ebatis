@@ -1,7 +1,6 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.MultiSearch;
-import com.ymm.ebatis.core.common.DslUtils;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.meta.MethodMeta;
@@ -36,9 +35,10 @@ class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearch, Mult
                 source.fetchSource(false).size(0);
             }
 
-            searchRequest.routing(DslUtils.getRouting(multiSearch.routing()))
+            searchRequest
                     .searchType(multiSearch.searchType())
                     .preference(StringUtils.trimToNull(multiSearch.preference()));
+
             searchRequest.setPreFilterShardSize(multiSearch.preFilterShardSize());
             searchRequest.setBatchedReduceSize(multiSearch.batchedReduceSize());
         }
