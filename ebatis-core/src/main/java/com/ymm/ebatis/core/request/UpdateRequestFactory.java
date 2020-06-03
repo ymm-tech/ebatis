@@ -44,6 +44,7 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
     protected UpdateRequest doCreate(MethodMeta meta, Object[] args) {
         UpdateRequest request = new UpdateRequest();
         request.index(meta.getIndex());
+        setTypeIfNecessary(meta, request::type);
 
         ParameterMeta parameterMeta = meta.getConditionParameter();
         Object doc = parameterMeta.getValue(args);

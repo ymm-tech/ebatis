@@ -1,9 +1,12 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.meta.MethodMeta;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionRequest;
 
 import java.lang.annotation.Annotation;
+import java.util.function.Consumer;
 
 /**
  * @author 章多亮
@@ -17,6 +20,19 @@ public abstract class AbstractRequestFactory<A extends Annotation, R extends Act
         setAnnotationMeta(request, meta.getRequestAnnotation());
         return request;
     }
+
+    protected void setTypeIfNecessary(MethodMeta meta, Consumer<String> consumer) {
+        if (StringUtils.isNotBlank(meta.getType())) {
+            consumer.accept(meta.getType());
+        }
+    }
+
+    protected void setTypesIfNecessary(MethodMeta meta, Consumer<String[]> consumer) {
+        if (ArrayUtils.isNotEmpty(meta.getTypes())) {
+            consumer.accept(meta.getTypes());
+        }
+    }
+
 
     /**
      * 设置可选信息，通过注解传递过来

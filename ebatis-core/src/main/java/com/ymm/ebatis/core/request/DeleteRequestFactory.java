@@ -33,6 +33,8 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
     @Override
     protected DeleteRequest doCreate(MethodMeta meta, Object[] args) {
         DeleteRequest request = Requests.deleteRequest(meta.getIndex());
+        setTypeIfNecessary(meta, request::type);
+
         ParameterMeta parameterMeta = meta.getConditionParameter();
 
         Object condition = parameterMeta.getValue(args);
