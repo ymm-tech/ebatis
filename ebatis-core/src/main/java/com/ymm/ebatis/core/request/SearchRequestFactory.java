@@ -42,6 +42,10 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
     protected void setAnnotationMeta(SearchRequest request, Search search) {
         request.preference(StringUtils.trimToNull(search.preference()))
                 .searchType(search.searchType());
+
+        if (search.countOnly()) {
+            request.source().fetchSource(false).size(0);
+        }
     }
 
     @Override
