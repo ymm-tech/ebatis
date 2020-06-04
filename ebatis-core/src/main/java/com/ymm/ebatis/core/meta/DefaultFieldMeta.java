@@ -1,5 +1,6 @@
 package com.ymm.ebatis.core.meta;
 
+import com.ymm.ebatis.core.annotation.Prefix;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
@@ -28,7 +29,6 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
 
     private final boolean basic;
     private final boolean basicArrayOrCollection;
-    private final String name;
     private final Method readMethod;
     private final Class<? extends Annotation> queryClauseAnnotationClass;
     private final Annotation queryClauseAnnotation;
@@ -42,7 +42,6 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
         Class<?> type = getActualType(field);
         this.basic = MetaUtils.isBasic(type);
         this.basicArrayOrCollection = isArrayOrCollection() && basic;
-        this.name = getName(field);
 
         this.queryClauseAnnotationClass = QueryClauses.getQueryClauseClass(this);
 
@@ -84,14 +83,31 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
 
     @Override
     protected String getName(Field field) {
-        String n = super.getName(field);
-        return StringUtils.isBlank(n) ? field.getName() : n;
+        String name = super.getName(field);
+        name = StringUtils.isBlank(name) ? field.getName() : name;
+
+        Class<?> declaringClass = field.getDeclaringClass();
+        String prefix = getPrefix(declaringClass);
+
+        if (prefix == null) {
+            return name;
+        } else {
+            return String.format("%s.%s", prefix, name);
+        }
     }
 
-
-    @Override
-    public String getName() {
-        return name;
+    /**
+     * 获取字段前缀
+     *
+     * @param clazz 字段所在类
+     * @return 前缀
+     */
+    private String getPrefix(Class<?> clazz) {
+        if (clazz.isAnnotationPresent(Prefix.class)) {
+            return StringUtils.trimToNull(clazz.getAnnotation(Prefix.class).value());
+        } else {
+            return null;
+        }
     }
 
     @Override

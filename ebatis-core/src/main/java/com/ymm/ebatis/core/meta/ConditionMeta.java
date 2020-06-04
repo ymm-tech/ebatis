@@ -69,7 +69,19 @@ public interface ConditionMeta {
      */
     boolean isBasicArrayOrCollection();
 
+    /**
+     * 获取查询条件名称，对应到ES的Mapping字段
+     *
+     * @return 名称
+     */
     String getName();
 
+    /**
+     * 查找指定类型的属性注解
+     *
+     * @param annotationClass 属性注解类
+     * @param <A>             属性注解泛型类
+     * @return 属性注解
+     */
     <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass);
 }
