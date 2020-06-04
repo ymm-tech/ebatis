@@ -18,5 +18,7 @@ public interface SourceProvider extends Provider {
      *
      * @return 字段列表
      */
-    String[] getExcludeFields();
+    default String[] getExcludeFields() {
+        return null; // NOSONAR
+    }
 }

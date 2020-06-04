@@ -3,9 +3,10 @@ package com.ymm.ebatis.core.search;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ymm.ebatis.core.annotation.Field;
 import com.ymm.ebatis.core.annotation.Prefix;
+import com.ymm.ebatis.core.annotation.QueryType;
+import com.ymm.ebatis.core.annotation.Should;
+import com.ymm.ebatis.core.domain.Range;
 import lombok.Data;
-
-import java.math.BigDecimal;
 
 /**
  * "base_price" : 11.99,
@@ -32,7 +33,9 @@ import java.math.BigDecimal;
 @Prefix("products")
 public class ProductCondition {
     @JsonProperty("base_price")
-    private BigDecimal basePrice;
+    private Range<Double> basePrice;
     @Field("product_name")
+    @Should(queryType = QueryType.MATCH_PHRASE_PREFIX)
     private String name;
+
 }
