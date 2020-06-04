@@ -3,6 +3,7 @@ package com.ymm.ebatis.core.search;
 
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
+import com.ymm.ebatis.core.domain.Range;
 import com.ymm.ebatis.core.proxy.MapperProxyFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
@@ -11,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -67,5 +69,30 @@ public class SearchTest {
         Assert.assertFalse(orders.isEmpty());
 
         orders.forEach(o -> log.info("{}", o));
+    }
+
+    @Test
+    public void complexSearch() {
+        OrderCondition condition = new OrderCondition();
+        condition.setOrderId(1L);
+        condition.setManufacturers(new String[]{"Oceanavigations", "Elitelligence"});
+
+        CustomerCondition customerCondition = new CustomerCondition();
+        customerCondition.setFullName("Eddie");
+        customerCondition.setFirstName("Eddie");
+        customerCondition.setLastName("Underwood");
+        customerCondition.setPhone("18951621100");
+
+        condition.setCustomerCondition(customerCondition);
+
+        ProductCondition productCondition = new ProductCondition();
+        productCondition.setBasePrice(Range.of(10.0, 100.0));
+        productCondition.setName("运满满");
+
+        condition.setProductCondition(productCondition);
+
+        Page<Order> orders = orderMapper.search(condition, Pageable.first(10));
+        orders.stream().map(Objects::toString).forEach(log::info);
+        Assert.assertTrue(orders.isEmpty());
     }
 }

@@ -2,72 +2,108 @@ package com.ymm.ebatis.core.domain;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
-import java.util.Date;
-
-public interface Range<T, D> {
-    static Range<Short, Short> numberRange(Short value) {
-        return new ShortRange(value);
+/**
+ * 范围
+ *
+ * @param <T> 可比较的类型
+ */
+public interface Range<T extends Comparable<T>> {
+    /**
+     * 创建指定上下界限的范围，默认左右两边均为开区间
+     *
+     * @param min 最小值
+     * @param max 最大值
+     * @param <T> 比较类型发型
+     * @return 范围
+     */
+    static <T extends Comparable<T>> Range<T> of(T min, T max) {
+        return new DefaultRange<>(min, max);
     }
 
-    static Range<Short, Short> numberRange(Short min, Short max) {
-        return new ShortRange(min, max);
+    /**
+     * 创建小于指定最大值范围
+     *
+     * @param max 最大值
+     * @param <T> 比较类型泛型
+     * @return 范围
+     */
+    static <T extends Comparable<T>> Range<T> lt(T max) {
+        return new DefaultRange<>(null, max).openRight();
     }
 
-    static Range<Integer, Integer> numberRange(Integer value) {
-        return new IntegerRange(value);
+    /**
+     * 创建小于等于指定最大值范围
+     *
+     * @param max 最大值
+     * @param <T> 比较类型泛型
+     * @return 范围
+     */
+    static <T extends Comparable<T>> Range<T> le(T max) {
+        return new DefaultRange<>(null, max).closeRight();
     }
 
-    static Range<Integer, Integer> numberRange(Integer min, Integer max) {
-        return new IntegerRange(min, max);
+    /**
+     * 创建大于指定最小值范围
+     *
+     * @param min 最小值
+     * @param <T> 比较类型泛型
+     * @return 范围
+     */
+    static <T extends Comparable<T>> Range<T> gt(T min) {
+        return new DefaultRange<>(min, null).openLeft();
     }
 
-    static Range<Long, Long> numberRange(Long value) {
-        return new LongRange(value);
+    /**
+     * 创建大于等于指定最小值范围
+     *
+     * @param min 最小值
+     * @param <T> 比较类型泛型
+     * @return 范围
+     */
+    static <T extends Comparable<T>> Range<T> ge(T min) {
+        return new DefaultRange<>(min, null).closeLeft();
     }
 
-    static Range<Long, Long> numberRange(Long min, Long max) {
-        return new LongRange(min, max);
-    }
+    /**
+     * 设置字段名称，ES的Mapping
+     *
+     * @param name 字段名称
+     * @return 自身
+     */
+    Range<T> setName(String name);
 
-    static Range<Float, Float> numberRange(Float value) {
-        return new FloatRange(value);
-    }
+    /**
+     * 左闭区间
+     *
+     * @return 自身
+     */
+    Range<T> closeLeft();
 
-    static Range<Float, Float> numberRange(Float min, Float max) {
-        return new FloatRange(min, max);
-    }
+    /**
+     * 左开区间
+     *
+     * @return 自身
+     */
+    Range<T> openLeft();
 
-    static Range<Double, Double> numberRange(Double value) {
-        return new DoubleRange(value);
-    }
+    /**
+     * 右闭区间
+     *
+     * @return 自身
+     */
+    Range<T> closeRight();
 
-    static Range<Double, Double> numberRange(Double min, Double max) {
-        return new DoubleRange(min, max);
-    }
+    /**
+     * 右开区间
+     *
+     * @return 自身
+     */
+    Range<T> openRight();
 
-    static Range<Date, Long> dateRange(Date value) {
-        return new DateRange(value);
-    }
-
-    static Range<Date, Long> dateRange(Date min, Date max) {
-        return new DateRange(min, max);
-    }
-
-    Range<T, D> setName(String name);
-
-    Range<T, D> setExcludedMiddle(boolean excludedMiddle);
-
-    Range<T, D> expand(D delta);
-
-    Range<T, D> expand(D leftDelta, D rightDelta);
-
-    IntervalType getLeftIntervalType();
-
-    void setLeftIntervalType(IntervalType type);
-
-    IntervalType getRightIntervalType();
-
-    void setRightIntervalType(IntervalType type);
-
+    /**
+     * 转换成ES的插叙构建器
+     *
+     * @return 查询构建器
+     */
     QueryBuilder toBuilder();
 }

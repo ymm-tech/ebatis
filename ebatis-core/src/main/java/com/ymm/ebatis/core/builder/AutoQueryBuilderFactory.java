@@ -24,7 +24,7 @@ class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
         } else if (meta.isBasic()) {
             return QueryBuilderFactory.term().create(meta, condition);
         } else if (meta.isRange()) {
-            Range<?, ?> range = (Range<?, ?>) condition;
+            Range<?> range = (Range<?>) condition;
             range.setName(meta.getName());
             return range.toBuilder();
         } else if (meta.isScript()) {

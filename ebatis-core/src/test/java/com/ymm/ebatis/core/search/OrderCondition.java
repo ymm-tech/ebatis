@@ -5,12 +5,14 @@ import com.ymm.ebatis.core.annotation.Field;
 import com.ymm.ebatis.core.annotation.Filter;
 import com.ymm.ebatis.core.annotation.MustNot;
 import com.ymm.ebatis.core.annotation.QueryType;
+import com.ymm.ebatis.core.provider.SourceProvider;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class OrderCondition {
+public class OrderCondition implements SourceProvider {
+    private static final String[] INCLUDE_FIELDS = {"order_id", "order_date", "products"};
     @MustNot
     @JsonProperty("order_id")
     private Long orderId;
@@ -22,7 +24,12 @@ public class OrderCondition {
     @Field("manufacturer")
     private String[] manufacturers;
 
-    private ProductCondition[] products;
+    private ProductCondition productCondition;
 
     private CustomerCondition customerCondition;
+
+    @Override
+    public String[] getIncludeFields() {
+        return INCLUDE_FIELDS;
+    }
 }

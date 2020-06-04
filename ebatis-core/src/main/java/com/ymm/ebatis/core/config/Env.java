@@ -32,7 +32,6 @@ public class Env {
     }
 
     private Env() {
-        throw new UnsupportedOperationException();
     }
 
     /**
