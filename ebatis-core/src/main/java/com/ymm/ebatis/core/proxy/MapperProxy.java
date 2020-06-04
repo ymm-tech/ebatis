@@ -14,6 +14,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /**
+ * Mapper接口的代理，解析接口定义的元数据信息，并将元数据和实参转变成对应请求调用
+ *
  * @author 章多亮
  * @since 2020/5/22 15:04
  */
@@ -28,21 +30,24 @@ class MapperProxy implements InvocationHandler {
     }
 
     /**
-     * 有好几个地方，可以获取集群路由名称，优先级最高是接口注解 clusterRouter属性定义的名称，其次是传入的名称，最后是ebatis.properties中配置的名称
+     * 有好几个地方，可以获取集群路由名称，优先级最高是传入的名称，其次是接口注解 clusterRouter属性定义的名称，最后是ebatis.properties中配置的名称
      *
      * @param name 手动传入名字
      * @return 集群路由名称
      */
     private String getClusterRouterName(String name) {
+        // 传入的名称优先级最高，不为空的话，直接返回
         if (StringUtils.isNotBlank(name)) {
             return name;
         }
 
+        // 其次是注解在接口的属性定义
         String n = mapperInterface.getClusterRouterName();
         if (StringUtils.isNotBlank(n)) {
             return n;
         }
 
+        // 最后从配置文件中读取
         return Env.getClusterRouterName();
     }
 
