@@ -23,7 +23,7 @@ import java.util.Optional;
  * @since 2020/5/27 18:27
  */
 @Slf4j
-public class DefaultMapperMethodMeta implements MapperMethod {
+class DefaultMapperMethodMeta implements MapperMethod {
     private final Method method;
     private final List<ParameterMeta> parameterMetas;
 
@@ -40,7 +40,7 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     private ParameterMeta pageableParameter;
     private ParameterMeta responseExtractorParameter;
 
-    public DefaultMapperMethodMeta(MapperInterface mapperInterface, Method method) {
+    DefaultMapperMethodMeta(MapperInterface mapperInterface, Method method) {
         this.method = method;
         this.returnType = method.getReturnType();
 
@@ -60,21 +60,21 @@ public class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     private String[] getIncludeFields(Method method) {
+        log.info("{}", method);
         return new String[0];
     }
 
     private HttpConfig getHttpConfig(MapperInterface mapperInterface) {
-        Http http = findAnnotation(Http.class).orElse(null);
+        return findAnnotation(Http.class)
+                .map(this::createHttpConfig)
+                .orElse(mapperInterface.getHttpConfig());
+    }
 
-        if (http == null) {
-            return mapperInterface.getHttpConfig();
-        }
-
+    private HttpConfig createHttpConfig(Http http) {
         return new HttpConfig()
                 .connectionRequestTimeout(http.connectionRequestTimeout())
                 .connectTimeout(http.connectTimeout())
                 .socketTimeout(http.socketTimeout());
-
     }
 
     private List<ParameterMeta> getParameterMetas(Method method) {
