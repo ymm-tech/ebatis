@@ -57,7 +57,7 @@ public class AggResponseExtractorProvider extends AbstractResponseExtractorProvi
 
 
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(ResolvableType resolvedResultType) {
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
         Class<?> resultClass = resolvedResultType.resolve();
 
         if (SearchResponse.class == resultClass) {

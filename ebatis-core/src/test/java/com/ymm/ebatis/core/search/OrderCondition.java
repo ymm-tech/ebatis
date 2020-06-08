@@ -5,13 +5,16 @@ import com.ymm.ebatis.core.annotation.Field;
 import com.ymm.ebatis.core.annotation.Filter;
 import com.ymm.ebatis.core.annotation.MustNot;
 import com.ymm.ebatis.core.annotation.QueryType;
+import com.ymm.ebatis.core.provider.DefaultScrollProvider;
 import com.ymm.ebatis.core.provider.SourceProvider;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
 @Data
-public class OrderCondition implements SourceProvider {
+@EqualsAndHashCode(callSuper = false)
+public class OrderCondition extends DefaultScrollProvider implements SourceProvider {
     private static final String[] INCLUDE_FIELDS = {"order_id", "order_date", "products"};
     @MustNot
     @JsonProperty("order_id")

@@ -76,6 +76,10 @@ public interface ConditionMeta {
      */
     String getName();
 
+    default boolean isAssignableTo(Class<?> superType) {
+        return superType.isAssignableFrom(getType());
+    }
+
     /**
      * 查找指定类型的属性注解
      *

@@ -14,6 +14,28 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UpdateByQuery {
+    String preference() default "";
+
+    String expandWildcards() default "open";
+
+    int from() default 0;
+
+    boolean requestCache() default false;
+
+    boolean ignoreUnavailable() default false;
+
+    boolean analyzeWildcard() default false;
+
+    String df() default "";
+
+    String analyzer() default "";
+
+    boolean lenient() default false;
+
+    boolean allowNoIndices() default true;
+
+    float requestsPerSecond() default Float.POSITIVE_INFINITY;
+
     int maxDocs() default -1;
 
     int batchSize() default 1000;
@@ -23,6 +45,10 @@ public @interface UpdateByQuery {
     int slices() default 1;
 
     String timeout() default "1m";
+
+    String masterTimeout() default "30s";
+
+    boolean version() default false;
 
     boolean refresh() default false;
 

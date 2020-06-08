@@ -37,7 +37,12 @@ public abstract class AbstractResponseExtractorProvider implements ResponseExtra
             resolvedResultType = ResolvableType.forMethodReturnType(method);
         }
 
-        return getResponseExtractor(resolvedResultType);
+        ResponseExtractor<?> extractor = getResponseExtractor(meta, resolvedResultType);
+        if (extractor == null) {
+            throw new UnsupportedOperationException("can not find response extractor for " + meta);
+        }
+
+        return extractor;
     }
 
     /**
@@ -53,8 +58,9 @@ public abstract class AbstractResponseExtractorProvider implements ResponseExtra
     /**
      * 获取指定类型返回值提取器
      *
+     * @param meta               方法元数据
      * @param resolvedResultType 解析后的返回值类型，已经却掉包装类型
      * @return 响应提取器
      */
-    protected abstract ResponseExtractor<?> getResponseExtractor(ResolvableType resolvedResultType); // NOSONAR
+    protected abstract ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType); // NOSONAR
 }

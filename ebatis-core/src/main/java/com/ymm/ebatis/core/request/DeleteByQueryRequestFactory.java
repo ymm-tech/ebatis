@@ -1,7 +1,6 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.DeleteByQuery;
-import com.ymm.ebatis.core.common.DslUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.support.ActiveShardCount;
@@ -34,9 +33,9 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
             request.setMaxDocs(maxDocs);
         }
 
-        TimeValue keepAlive = DslUtils.getScrollKeepAlive(deleteByQuery.scrollKeepAlive());
-        if (keepAlive != null) {
-            request.setScroll(keepAlive);
+        long keepAlive = deleteByQuery.scrollKeepAlive();
+        if (keepAlive > 0) {
+            request.setScroll(TimeValue.timeValueMillis(keepAlive));
         }
     }
 

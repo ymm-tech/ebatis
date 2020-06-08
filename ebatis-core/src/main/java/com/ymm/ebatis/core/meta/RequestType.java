@@ -9,9 +9,11 @@ import com.ymm.ebatis.core.annotation.Get;
 import com.ymm.ebatis.core.annotation.Index;
 import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.Search;
+import com.ymm.ebatis.core.annotation.SearchScroll;
 import com.ymm.ebatis.core.annotation.Update;
 import com.ymm.ebatis.core.annotation.UpdateByQuery;
 import com.ymm.ebatis.core.executor.RequestExecutor;
+import com.ymm.ebatis.core.provider.ScrollProvider;
 import lombok.Getter;
 
 import java.lang.annotation.Annotation;
@@ -57,6 +59,20 @@ public enum RequestType {
      * 查询请求
      */
     SEARCH(Search.class, RequestExecutor.search()),
+    /**
+     * search scroll request
+     */
+    SEARCH_SCROLL(SearchScroll.class, RequestExecutor.searchScroll()) {
+        @Override
+        public boolean validate(MethodMeta meta) {
+            SearchScroll scroll = meta.getAnnotation(SearchScroll.class);
+            if (scroll.clearScroll()) {
+                return true;
+            }
+
+            return meta.getConditionParameter().isAssignableTo(ScrollProvider.class);
+        }
+    },
     MULTI_SEARCH(MultiSearch.class, RequestExecutor.multiSearch()),
     /**
      * 聚合查询
@@ -97,8 +113,11 @@ public enum RequestType {
         return Optional.empty();
     }
 
-
     public static Optional<RequestType> valueOf(Class<?> annotationClass) {
         return Optional.ofNullable(ANNOTATION_EXECUTOR_TYPES.get(annotationClass));
+    }
+
+    public boolean validate(MethodMeta meta) {
+        return true;
     }
 }

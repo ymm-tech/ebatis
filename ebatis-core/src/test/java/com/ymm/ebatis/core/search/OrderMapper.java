@@ -5,8 +5,11 @@ import com.ymm.ebatis.core.annotation.Http;
 import com.ymm.ebatis.core.annotation.Mapper;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Search;
+import com.ymm.ebatis.core.annotation.SearchScroll;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
+import com.ymm.ebatis.core.domain.ScrollResponse;
+import com.ymm.ebatis.core.response.ResponseExtractor;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +29,10 @@ public interface OrderMapper {
 
     @Search
     Page<Order> search(OrderCondition condition, Pageable pageable);
+
+    @SearchScroll(keepAlive = "5s")
+    ScrollResponse<Order> searchScroll(OrderCondition condition, Pageable pageable);
+
+    @SearchScroll(clearScroll = true)
+    boolean clearSearchScroll(String scrollId, ResponseExtractor<Boolean> extractor);
 }

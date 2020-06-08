@@ -8,6 +8,10 @@ import org.elasticsearch.action.ActionResponse;
  */
 @FunctionalInterface
 public interface ResponseExtractor<T> {
+    default <R extends ActionResponse> R narrow(ActionResponse response, Class<R> responseClass) {
+        return responseClass.cast(response);
+    }
+
     /**
      * 提取响应，转为是业务实体
      *
