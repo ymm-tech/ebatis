@@ -12,10 +12,13 @@ import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.ClearScrollRequest;
+import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -299,12 +302,32 @@ public interface Cluster extends Closeable {
     void catAsync(CatRequest request, ActionListener<CatResponse> listener);
 
     /**
-     *
+     * 异步GET请求
      *
      * @param request  Get请求
      * @param listener 响应监听器
      */
     default void getAsync(GetRequest request, ActionListener<GetResponse> listener) {
         highLevelClient().getAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    /**
+     * 异步游标搜索请求
+     *
+     * @param request  游标请求
+     * @param listener 响应监听器
+     */
+    default void scrollAsync(SearchScrollRequest request, ActionListener<SearchResponse> listener) {
+        highLevelClient().scrollAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    /**
+     * 异步执清除游标操作
+     *
+     * @param request  clear scroll request
+     * @param listener response listener
+     */
+    default void clearScrollAsync(ClearScrollRequest request, ActionListener<ClearScrollResponse> listener) {
+        highLevelClient().clearScrollAsync(request, RequestOptions.DEFAULT, listener);
     }
 }

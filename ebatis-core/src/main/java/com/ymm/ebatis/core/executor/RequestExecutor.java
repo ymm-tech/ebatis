@@ -98,6 +98,10 @@ public interface RequestExecutor {
         return GetRequestExecutor.INSTANCE;
     }
 
+    static RequestExecutor searchScroll() {
+        return SearchScrollRequestExecutor.INSTANCE;
+    }
+
     /**
      * 执行实际的ES操作
      *

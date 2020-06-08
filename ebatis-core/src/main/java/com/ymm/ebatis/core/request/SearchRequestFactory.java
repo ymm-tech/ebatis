@@ -3,7 +3,9 @@ package com.ymm.ebatis.core.request;
 import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Search;
+import com.ymm.ebatis.core.annotation.SearchScroll;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
+import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.domain.Collapse;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Pageable;
@@ -22,6 +24,10 @@ import org.elasticsearch.client.Requests;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
+import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +40,17 @@ import java.util.concurrent.ConcurrentHashMap;
 class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest> {
     static final SearchRequestFactory INSTANCE = new SearchRequestFactory();
     private static final Map<MethodMeta, QueryBuilderFactory> QUERY_BUILDER_FACTORIES = new ConcurrentHashMap<>();
+    private static final List<Class<? extends Annotation>> SEARCH_ANNOTATION_CLASSES;
+
+    static {
+        // search request annotation list
+        List<Class<? extends Annotation>> annotationClasses = new LinkedList<>();
+        annotationClasses.add(Search.class);
+        annotationClasses.add(MultiSearch.class);
+        annotationClasses.add(SearchScroll.class);
+
+        SEARCH_ANNOTATION_CLASSES = Collections.unmodifiableList(annotationClasses);
+    }
 
     private SearchRequestFactory() {
     }
@@ -86,9 +103,17 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
     }
 
     private QueryBuilderFactory getQueryBuilderFactory(MethodMeta meta) {
-        return QUERY_BUILDER_FACTORIES.computeIfAbsent(meta, m -> m.findAnnotation(Search.class).map(Search::queryType)
-                .orElseGet(() -> m.findAnnotation(MultiSearch.class).map(MultiSearch::queryType).orElse(QueryType.AUTO))
-                .getQueryBuilderFactory());
+        return QUERY_BUILDER_FACTORIES.computeIfAbsent(meta, m -> SEARCH_ANNOTATION_CLASSES.stream()
+                .map(meta::findAnnotation)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(this::fromAnnotation)
+                .findFirst().orElseThrow(IllegalArgumentException::new));
+    }
+
+    private QueryBuilderFactory fromAnnotation(Annotation searchAnnotation) {
+        Optional<QueryType> queryType = AnnotationUtils.findAttribute(searchAnnotation, "queryType");
+        return queryType.orElse(QueryType.AUTO).getQueryBuilderFactory();
     }
 
     private void setProviderMeta(Object condition, SearchSourceBuilder searchSource) {

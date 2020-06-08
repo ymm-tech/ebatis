@@ -9,8 +9,10 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
@@ -18,6 +20,7 @@ import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import java.util.concurrent.CompletableFuture;
 
 /**
+ * todo copyright license description readme  英文注解
  * 会话管理
  *
  * @author 章多亮
@@ -281,6 +284,26 @@ public interface ClusterSession extends Cloneable {
     }
 
     /**
+     * 异步游标搜索请求
+     *
+     * @param request   游标搜索请求
+     * @param extractor 结果提取器
+     * @param <T>       结果类型
+     * @return 异步结果
+     */
+    <T> CompletableFuture<T> scrollAsync(SearchScrollRequest request, ResponseExtractor<T> extractor);
+
+    /**
+     * 异步清楚游标
+     *
+     * @param request   清除游标
+     * @param extractor 结果提取器
+     * @param <T>       结果类型
+     * @return 异步结果
+     */
+    <T> CompletableFuture<T> clearScrollAsync(ClearScrollRequest request, ResponseExtractor<T> extractor);
+
+    /**
      * 创建或获取指定类型接口代理对象，
      *
      * @param mapperInterface Mapper接口，必须是接口类型
@@ -295,4 +318,5 @@ public interface ClusterSession extends Cloneable {
      * @return 集群
      */
     Cluster getCluster();
+
 }

@@ -4,9 +4,13 @@ package com.ymm.ebatis.core.search;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.domain.Range;
+import com.ymm.ebatis.core.domain.ScrollResponse;
 import com.ymm.ebatis.core.proxy.MapperProxyFactory;
+import com.ymm.ebatis.core.response.ResponseExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
+import org.elasticsearch.action.ActionResponse;
+import org.elasticsearch.action.search.ClearScrollResponse;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -94,5 +98,29 @@ public class SearchTest {
         Page<Order> orders = orderMapper.search(condition, Pageable.first(10));
         orders.stream().map(Objects::toString).forEach(log::info);
         Assert.assertTrue(orders.isEmpty());
+    }
+
+    @Test
+    public void searchScroll() {
+        OrderCondition condition = new OrderCondition();
+        condition.setCategory("Clothing");
+
+        Pageable first = Pageable.first(20);
+        ScrollResponse<Order> response;
+        do {
+            response = orderMapper.searchScroll(condition, first);
+            condition.setScrollId(response.getScrollId());
+            response.forEach(order -> log.info("{}", order));
+        } while (!response.isEmpty());
+
+        Assert.assertTrue(orderMapper.clearSearchScroll(response.getScrollId(), new ResponseExtractor<Boolean>() {
+            @Override
+            public Boolean extractData(ActionResponse response) {
+                ClearScrollResponse scrollResponse = narrow(response, ClearScrollResponse.class);
+                return scrollResponse.isSucceeded();
+            }
+        }));
+
+        Assert.assertTrue(response.isEmpty());
     }
 }

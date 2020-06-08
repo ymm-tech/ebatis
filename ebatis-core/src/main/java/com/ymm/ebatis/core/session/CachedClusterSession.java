@@ -18,8 +18,10 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
@@ -116,6 +118,16 @@ class CachedClusterSession implements ClusterSession {
     @Override
     public <T> CompletableFuture<T> catAsync(CatRequest request, ResponseExtractor<T> extractor) {
         return performRequestAsync(cluster::catAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> scrollAsync(SearchScrollRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::scrollAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> clearScrollAsync(ClearScrollRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::clearScrollAsync, request, extractor);
     }
 
 

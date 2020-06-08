@@ -3,6 +3,7 @@ package com.ymm.ebatis.core.response;
 import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.meta.MetaUtils;
+import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.search.SearchResponse;
 import org.springframework.core.ResolvableType;
@@ -19,8 +20,12 @@ public class SearchResponseExtractorProvider extends AbstractResponseExtractorPr
         super(RequestType.SEARCH);
     }
 
+    protected SearchResponseExtractorProvider(RequestType requestType) {
+        super(requestType);
+    }
+
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(ResolvableType resolvedResultType) {
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
         Class<?> resultClass = resolvedResultType.resolve();
 
         if (SearchResponse.class == resultClass) {

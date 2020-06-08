@@ -87,6 +87,10 @@ public interface RequestFactory<R extends ActionRequest> {
         return GetRequestFactory.INSTANCE;
     }
 
+    static RequestFactory<ActionRequest> searchScroll() {
+        return SearchScrollRequestFactory.INSTANCE;
+    }
+
     /**
      * 创建ES请求，根据注解对应创建不同的ES请求
      *

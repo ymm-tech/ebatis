@@ -3,6 +3,7 @@ package com.ymm.ebatis.core.response;
 import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.exception.DocumentDeserializeException;
+import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.get.GetResponse;
 import org.springframework.core.ResolvableType;
@@ -23,7 +24,7 @@ public class GetResponseExtractorProvider extends AbstractResponseExtractorProvi
     }
 
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(ResolvableType resolvedResultType) {
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
         Class<?> resultClass = resolvedResultType.resolve();
 
         if (resultClass == GetResponse.class) {

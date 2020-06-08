@@ -1,6 +1,8 @@
 package com.ymm.ebatis.core.meta;
 
+import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.HttpConfig;
+import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.response.ResponseExtractor;
 
 import java.lang.annotation.Annotation;
@@ -18,6 +20,12 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
     }
 
     Class<?> getReturnType();
+
+    default void setPageable(Object[] args) {
+        getPageableParameter()
+                .map(p -> (Pageable) p.getValue(args))
+                .ifPresent(ContextHolder::setPageable);
+    }
 
     /**
      * 获取接口要操作的所有索引

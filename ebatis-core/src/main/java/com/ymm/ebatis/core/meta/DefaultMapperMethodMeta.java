@@ -57,6 +57,15 @@ class DefaultMapperMethodMeta implements MapperMethod {
         this.parameterMetas = getParameterMetas(method);
 
         this.includeFields = getIncludeFields(method);
+
+        validate();
+    }
+
+    private void validate() {
+        boolean validated = this.requestType.validate(this);
+        if (!validated) {
+            throw new UnsupportedOperationException(this.toString());
+        }
     }
 
     private String[] getIncludeFields(Method method) {

@@ -4,6 +4,7 @@ import com.ymm.ebatis.core.meta.MethodMeta;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionRequest;
+import org.springframework.core.ResolvableType;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
@@ -13,11 +14,20 @@ import java.util.function.Consumer;
  * @since 2019/12/17 15:32
  */
 public abstract class AbstractRequestFactory<A extends Annotation, R extends ActionRequest> implements RequestFactory<R> {
+    private final Class<? extends Annotation> requestAnnotationClass;
+
+    @SuppressWarnings("unchecked")
+    protected AbstractRequestFactory() {
+        this.requestAnnotationClass = (Class<? extends Annotation>) ResolvableType.forClass(this.getClass()).as(AbstractRequestFactory.class).resolveGeneric(0);
+    }
 
     @Override
     public final R create(MethodMeta meta, Object... args) {
         R request = doCreate(meta, args);
-        setAnnotationMeta(request, meta.getRequestAnnotation());
+        Annotation requestAnnotation = meta.getRequestAnnotation();
+        if (requestAnnotationClass.isInstance(requestAnnotation)) {
+            setAnnotationMeta(request, meta.getRequestAnnotation());
+        }
         return request;
     }
 
