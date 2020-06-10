@@ -1,9 +1,7 @@
 package com.ymm.ebatis.spring.annotation;
 
-import com.ymm.ebatis.spring.cluster.ApplicationContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.annotation.AnnotationAttributes;
@@ -17,8 +15,6 @@ import java.util.stream.Stream;
 class EasyMapperRegistrar implements ImportBeanDefinitionRegistrar {
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionRegistry registry) {
-        registry.registerBeanDefinition(ApplicationContextHolder.class.getName(), BeanDefinitionBuilder.rootBeanDefinition(ApplicationContextHolder.class).getBeanDefinition());
-
         AnnotationAttributes mapperAttributes =
                 AnnotationAttributes.fromMap(metadata.getAnnotationAttributes(EnableEasyMapper.class.getName(), false));
         metadata.isIndependent();

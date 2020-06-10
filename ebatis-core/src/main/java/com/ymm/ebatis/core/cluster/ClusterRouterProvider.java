@@ -10,14 +10,6 @@ import com.ymm.ebatis.core.annotation.Mapper;
  */
 @FunctionalInterface
 public interface ClusterRouterProvider {
-    /**
-     * 集群路由名称
-     *
-     * @return 名称
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 
     /**
      * 找到对应集群提供方后，会回调此接口，默认啥都不干
@@ -29,7 +21,8 @@ public interface ClusterRouterProvider {
     /**
      * 获取指定名称的集群路由器
      *
+     * @param name 集群名称
      * @return 集群路由器
      */
-    ClusterRouter getClusterRouter();
+    ClusterRouter getClusterRouter(String name);
 }

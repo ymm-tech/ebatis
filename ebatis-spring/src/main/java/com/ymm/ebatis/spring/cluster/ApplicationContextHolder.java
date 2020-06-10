@@ -22,7 +22,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext context) {
         // 只设置一次
         if (ApplicationContextHolder.context == null) {
-            ApplicationContextHolder.context = context; // NOSONAR
+            ApplicationContextHolder.context = context;
         }
     }
 }

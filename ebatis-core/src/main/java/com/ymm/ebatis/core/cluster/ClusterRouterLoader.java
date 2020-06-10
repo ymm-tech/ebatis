@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.ServiceLoader;
 
 /**
@@ -44,12 +43,13 @@ public class ClusterRouterLoader {
         ServiceLoader<ClusterRouterProvider> providers = ServiceLoader.load(ClusterRouterProvider.class);
 
         for (ClusterRouterProvider provider : providers) {
-            if (Objects.equals(name, provider.getName())) {
+            ClusterRouter clusterRouter = provider.getClusterRouter(name);
+            if (clusterRouter != null) {
                 provider.init();
 
                 log.info("选定集群路由：[{}] {}", name, provider.getClass());
 
-                return provider.getClusterRouter();
+                return clusterRouter;
             }
         }
 
