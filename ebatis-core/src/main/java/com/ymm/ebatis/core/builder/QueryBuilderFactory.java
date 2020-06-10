@@ -72,7 +72,7 @@ public interface QueryBuilderFactory {
     }
 
     static QueryBuilderFactory wildCard() {
-        return WildCardQueryBuilderFactory.INSTANCE;
+        return WildcardQueryBuilderFactory.INSTANCE;
     }
 
     static QueryBuilderFactory field() {

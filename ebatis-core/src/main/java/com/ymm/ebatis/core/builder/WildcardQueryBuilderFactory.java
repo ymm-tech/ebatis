@@ -10,8 +10,8 @@ import org.elasticsearch.index.query.WildcardQueryBuilder;
  * @author weilong.hu
  * @since 2020/5/22 13:39
  */
-class WildCardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQueryBuilder, Wildcard> {
-    static final WildCardQueryBuilderFactory INSTANCE = new WildCardQueryBuilderFactory();
+class WildcardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQueryBuilder, Wildcard> {
+    static final WildcardQueryBuilderFactory INSTANCE = new WildcardQueryBuilderFactory();
 
     @Override
     protected void setAnnotationMeta(WildcardQueryBuilder builder, Wildcard wildcard) {
