@@ -2,7 +2,6 @@ package com.ymm.ebatis.core.domain;
 
 
 import com.ymm.ebatis.core.response.ResponseExtractor;
-import org.springframework.util.StopWatch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,6 @@ public class Context {
     private Pageable pageable;
     private Pageable[] pageables;
     private HttpConfig httpConfig;
-    private StopWatch stopWatch;
     private ResponseExtractor<?> responseExtractor;
     private Map<String, Object> contextMap;
 
@@ -26,14 +24,6 @@ public class Context {
 
     void setPageable(Pageable pageable) {
         this.pageable = pageable;
-    }
-
-    public Optional<StopWatch> getStopWatch() {
-        return Optional.ofNullable(stopWatch);
-    }
-
-    public void setStopWatch(StopWatch stopWatch) {
-        this.stopWatch = stopWatch;
     }
 
     public Optional<ResponseExtractor<?>> getResponseExtractor() { // NOSONAR

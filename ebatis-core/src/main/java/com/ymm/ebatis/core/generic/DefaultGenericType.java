@@ -58,6 +58,7 @@ class DefaultGenericType implements GenericType {
             if (rawType == type) {
                 return this;
             }
+            return GenericType.forType(rawType).as(type);
         } else if (currentType instanceof GenericArrayType) {
             Type genericComponentType = ((GenericArrayType) currentType).getGenericComponentType();
             if (genericComponentType == type) {
@@ -68,7 +69,7 @@ class DefaultGenericType implements GenericType {
     }
 
     @Override
-    public Optional<Class<?>> resolveGeneric(int... indices) {
+    public Optional<Class<?>> resolveGenericOptional(int... indices) {
         Type currentType = type;
 
         for (int index : indices) {
@@ -93,7 +94,7 @@ class DefaultGenericType implements GenericType {
     }
 
     @Override
-    public Optional<Class<?>> resolve() {
+    public Optional<Class<?>> resolveOptional() {
         if (type instanceof Class) {
             return Optional.of((Class<?>) type);
         } else if (type instanceof ParameterizedType) {

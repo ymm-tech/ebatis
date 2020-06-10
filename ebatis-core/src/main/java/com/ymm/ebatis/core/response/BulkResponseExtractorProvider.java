@@ -1,10 +1,10 @@
 package com.ymm.ebatis.core.response;
 
 import com.google.auto.service.AutoService;
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.bulk.BulkResponse;
-import org.springframework.core.ResolvableType;
 
 import java.util.List;
 
@@ -19,8 +19,8 @@ public class BulkResponseExtractorProvider extends AbstractResponseExtractorProv
     }
 
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
-        Class<?> resultClass = resolvedResultType.resolve();
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
+        Class<?> resultClass = genericType.resolve();
 
         if (Boolean.class == resultClass || boolean.class == resultClass) {
             return BooleanBulkResponseExtractor.INSTANCE;

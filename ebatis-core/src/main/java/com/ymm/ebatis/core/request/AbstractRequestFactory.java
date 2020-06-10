@@ -1,10 +1,10 @@
 package com.ymm.ebatis.core.request;
 
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionRequest;
-import org.springframework.core.ResolvableType;
 
 import java.lang.annotation.Annotation;
 import java.util.function.Consumer;
@@ -18,7 +18,7 @@ public abstract class AbstractRequestFactory<A extends Annotation, R extends Act
 
     @SuppressWarnings("unchecked")
     protected AbstractRequestFactory() {
-        this.requestAnnotationClass = (Class<? extends Annotation>) ResolvableType.forClass(this.getClass()).as(AbstractRequestFactory.class).resolveGeneric(0);
+        this.requestAnnotationClass = (Class<? extends Annotation>) GenericType.forType(this.getClass()).as(AbstractRequestFactory.class).resolveGeneric(0);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class GenericTypeTest {
             MethodGenericType methodGenericType = GenericType.forMethod(method);
             GenericType genericType = methodGenericType.returnType();
             if (genericType.isWrapped()) {
-                genericType.resolveGeneric(0).ifPresent(c -> System.out.printf("method: %20s, %s\n", method.getName(), c));
+                genericType.resolveGenericOptional(0).ifPresent(c -> System.out.printf("method: %20s, %s\n", method.getName(), c));
             }
         }
         Assert.assertNotNull(clazz);

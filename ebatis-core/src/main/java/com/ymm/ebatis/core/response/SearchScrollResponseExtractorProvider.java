@@ -3,11 +3,11 @@ package com.ymm.ebatis.core.response;
 import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.annotation.SearchScroll;
 import com.ymm.ebatis.core.domain.ScrollResponse;
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.search.ClearScrollResponse;
 import org.elasticsearch.action.search.SearchResponse;
-import org.springframework.core.ResolvableType;
 
 /**
  * @author 章多亮
@@ -20,10 +20,11 @@ public class SearchScrollResponseExtractorProvider extends AbstractResponseExtra
     }
 
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
-        Class<?> entityClass = resolvedResultType.resolve();
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
+        Class<?> entityClass = genericType.resolve();
         SearchScroll scroll = meta.getAnnotation(SearchScroll.class);
-        if (scroll.clearScroll()) { // 清除
+        // 清除
+        if (scroll.clearScroll()) {
             if (boolean.class == entityClass || Boolean.class == entityClass) {
                 return ClearScrollResponseExtractor.INSTANCE;
             } else if (ClearScrollResponse.class == entityClass) {
@@ -34,7 +35,7 @@ public class SearchScrollResponseExtractorProvider extends AbstractResponseExtra
         if (SearchResponse.class == entityClass) {
             return RawResponseExtractor.INSTANCE;
         } else if (ScrollResponse.class == entityClass) {
-            entityClass = resolvedResultType.resolveGeneric(0);
+            entityClass = genericType.resolveGeneric(0);
             return new ScrollResponseExtractor<>(new DocumentPageExtractor<>(DocumentMapper.of(entityClass)));
         }
 

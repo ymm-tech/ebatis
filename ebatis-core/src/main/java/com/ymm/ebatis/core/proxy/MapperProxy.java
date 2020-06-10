@@ -3,12 +3,14 @@ package com.ymm.ebatis.core.proxy;
 import com.ymm.ebatis.core.cluster.Cluster;
 import com.ymm.ebatis.core.cluster.ClusterRouter;
 import com.ymm.ebatis.core.cluster.ClusterRouterLoader;
+import com.ymm.ebatis.core.common.MethodUtils;
 import com.ymm.ebatis.core.config.Env;
 import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.meta.MapperInterface;
 import com.ymm.ebatis.core.meta.MapperMethod;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.ReflectionUtils;
+import org.apache.commons.lang3.concurrent.ConcurrentException;
+import org.apache.commons.lang3.concurrent.LazyInitializer;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -22,11 +24,17 @@ import java.lang.reflect.Method;
 class MapperProxy implements InvocationHandler {
     private final MapperInterface mapperInterface;
     private final String clusterRouterName;
-    private volatile ClusterRouter clusterRouter; // NOSONAR
+    private final LazyInitializer<ClusterRouter> clusterRouter;
 
     MapperProxy(Class<?> mapperType, String name) {
         this.mapperInterface = MapperInterface.of(mapperType);
         this.clusterRouterName = getClusterRouterName(name);
+        this.clusterRouter = new LazyInitializer<ClusterRouter>() {
+            @Override
+            protected ClusterRouter initialize() {
+                return ClusterRouterLoader.getClusterRouter(clusterRouterName);
+            }
+        };
     }
 
     /**
@@ -52,37 +60,25 @@ class MapperProxy implements InvocationHandler {
     }
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) {
-        if (ReflectionUtils.isObjectMethod(method)) {
+    public Object invoke(Object proxy, Method method, Object[] args) throws ConcurrentException {
+        if (MethodUtils.isObjectMethod(method)) {
             return invokeObjectMethod(method, args);
         }
 
         MapperMethod mapperMethod = mapperInterface.getMapperMethod(method);
         ContextHolder.setHttpConfig(mapperMethod.getHttpConfig());
 
-        Cluster cluster = getClusterRouter().route(mapperMethod);
+        Cluster cluster = clusterRouter.get().route(mapperMethod);
 
         return mapperMethod.invoke(cluster, args);
     }
 
-    private ClusterRouter getClusterRouter() {
-        if (clusterRouter == null) {
-            synchronized (this) {
-                if (clusterRouter == null) {
-                    clusterRouter = ClusterRouterLoader.getClusterRouter(clusterRouterName);
-                }
-            }
-        }
-
-        return clusterRouter;
-    }
-
     private Object invokeObjectMethod(Method method, Object[] args) {
-        if (ReflectionUtils.isToStringMethod(method)) {
+        if (MethodUtils.isToStringMethod(method)) {
             return mapperInterface.toString();
-        } else if (ReflectionUtils.isHashCodeMethod(method)) {
+        } else if (MethodUtils.isHashCodeMethod(method)) {
             return mapperInterface.hashCode();
-        } else if (ReflectionUtils.isEqualsMethod(method)) {
+        } else if (MethodUtils.isEqualsMethod(method)) {
             return mapperInterface.equals(args[0]);
         } else {
             return null;

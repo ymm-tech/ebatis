@@ -2,10 +2,10 @@ package com.ymm.ebatis.core.response;
 
 import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.domain.Page;
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.search.MultiSearchResponse;
-import org.springframework.core.ResolvableType;
 
 import java.util.List;
 
@@ -20,18 +20,18 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
     }
 
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
-        Class<?> resultType = resolvedResultType.resolve();
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
+        Class<?> resultType = genericType.resolve();
 
         if (List.class.isAssignableFrom(resultType)) {
-            Class<?> entityClass = resolvedResultType.resolveGeneric(0);
+            Class<?> entityClass = genericType.resolveGeneric(0);
             if (entityClass == Long.class) {
                 return TotalHitsListMultiSearchResponseExtractor.INSTANCE;
             } else if (List.class.isAssignableFrom(entityClass)) {
-                entityClass = resolvedResultType.resolveGeneric(0, 0);
+                entityClass = genericType.resolveGeneric(0, 0);
                 return new ListMultiSearchResponseExtractor<>(new DocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE));
             } else if (Page.class.isAssignableFrom(entityClass)) {
-                entityClass = resolvedResultType.resolveGeneric(0, 0);
+                entityClass = genericType.resolveGeneric(0, 0);
                 return new PageMultiSearchResponseExtractor<>(new DocumentPageExtractor<>(DocumentMapper.of(entityClass)));
             } else if (entityClass.isArray()) {
                 entityClass = entityClass.getComponentType();
