@@ -6,9 +6,9 @@ import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.exception.ReadMethodInvokeException;
 import com.ymm.ebatis.core.exception.ReadMethodNotFoundException;
+import com.ymm.ebatis.core.generic.GenericType;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.ResolvableType;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
@@ -56,7 +56,7 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
         if (isArray()) {
             type = getType().getComponentType();
         } else if (isCollection()) {
-            type = ResolvableType.forField(field).resolveGeneric(0);
+            type = GenericType.forField(field).resolveGeneric(0);
         } else {
             type = getType();
         }

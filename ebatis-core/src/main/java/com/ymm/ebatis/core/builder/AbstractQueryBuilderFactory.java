@@ -1,8 +1,8 @@
 package com.ymm.ebatis.core.builder;
 
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.ConditionMeta;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.springframework.core.ResolvableType;
 
 import java.lang.annotation.Annotation;
 
@@ -18,8 +18,7 @@ abstract class AbstractQueryBuilderFactory<B extends QueryBuilder, A extends Ann
 
     @SuppressWarnings("unchecked")
     protected AbstractQueryBuilderFactory() {
-        attributeAnnotationClass = (Class<A>) ResolvableType.forClass(getClass())
-                .as(AbstractQueryBuilderFactory.class).resolveGeneric(1);
+        attributeAnnotationClass = (Class<A>) GenericType.forType(getClass()).resolveGenericOptional(1).orElse(null);
     }
 
     @Override

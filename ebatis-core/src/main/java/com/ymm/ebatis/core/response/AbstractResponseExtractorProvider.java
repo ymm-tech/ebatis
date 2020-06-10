@@ -1,8 +1,8 @@
 package com.ymm.ebatis.core.response;
 
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
-import org.springframework.core.ResolvableType;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -27,17 +27,13 @@ public abstract class AbstractResponseExtractorProvider implements ResponseExtra
     @Override
     public ResponseExtractor<?> getResponseExtractor(MethodMeta meta) {
         Method method = meta.getElement();
-
         boolean wrapped = isWrapped(meta);
 
-        ResolvableType resolvedResultType;
-        if (wrapped) {
-            resolvedResultType = ResolvableType.forMethodReturnType(method).getGeneric(0);
-        } else {
-            resolvedResultType = ResolvableType.forMethodReturnType(method);
-        }
+        GenericType genericType = wrapped ?
+                GenericType.forMethod(method).returnType().resolveType(0) :
+                GenericType.forMethod(method).returnType();
 
-        ResponseExtractor<?> extractor = getResponseExtractor(meta, resolvedResultType);
+        ResponseExtractor<?> extractor = getResponseExtractor(meta, genericType);
         if (extractor == null) {
             throw new UnsupportedOperationException("can not find response extractor for " + meta);
         }
@@ -58,9 +54,9 @@ public abstract class AbstractResponseExtractorProvider implements ResponseExtra
     /**
      * 获取指定类型返回值提取器
      *
-     * @param meta               方法元数据
-     * @param resolvedResultType 解析后的返回值类型，已经却掉包装类型
+     * @param meta        方法元数据
+     * @param genericType 解析后的返回值类型，已经却掉包装类型
      * @return 响应提取器
      */
-    protected abstract ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType); // NOSONAR
+    protected abstract ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType); // NOSONAR
 }

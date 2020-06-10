@@ -5,15 +5,15 @@ import com.ymm.ebatis.core.annotation.Agg;
 import com.ymm.ebatis.core.annotation.AggType;
 import com.ymm.ebatis.core.annotation.Metric;
 import com.ymm.ebatis.core.annotation.MetricType;
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
-import org.springframework.core.ResolvableType;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -24,7 +24,7 @@ import java.util.function.Function;
  */
 @AutoService(ResponseExtractorProvider.class)
 public class AggResponseExtractorProvider extends AbstractResponseExtractorProvider {
-    private static final Map<AggType, Function<MethodMeta, SearchResponseExtractor<?>>> RESPONSE_EXTRACTORS = new HashMap<>();
+    private static final Map<AggType, Function<MethodMeta, SearchResponseExtractor<?>>> RESPONSE_EXTRACTORS = new EnumMap<>(AggType.class);
 
     static {
         RESPONSE_EXTRACTORS.put(AggType.METRIC, AggResponseExtractorProvider::createMetricAggSearchResponseExtractor);
@@ -57,20 +57,20 @@ public class AggResponseExtractorProvider extends AbstractResponseExtractorProvi
 
 
     @Override
-    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, ResolvableType resolvedResultType) {
-        Class<?> resultClass = resolvedResultType.resolve();
+    protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
+        Class<?> resultClass = genericType.resolve();
 
         if (SearchResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
         } else if (Aggregations.class == resultClass) {
             return AggregationsResponseExtractor.INSTANCE;
         } else if (List.class.isAssignableFrom(resultClass)) {
-            if (Aggregation.class == resolvedResultType.resolveGeneric(0)) {
+            if (Aggregation.class == genericType.resolveGeneric(0)) {
                 return AggregationListResponseExtractor.INSTANCE;
             }
         } else if (Map.class.isAssignableFrom(resultClass)) {
-            Class<?> keyClass = resolvedResultType.resolveGeneric(0);
-            Class<?> valueClass = resolvedResultType.resolveGeneric(1);
+            Class<?> keyClass = genericType.resolveGeneric(0);
+            Class<?> valueClass = genericType.resolveGeneric(1);
 
             if (String.class == keyClass && Aggregation.class == valueClass) {
                 return AggregationMapResponseExtractor.INSTANCE;

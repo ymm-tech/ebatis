@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.generic;
 
 import com.ymm.ebatis.core.domain.Page;
+import com.ymm.ebatis.core.exception.GenericTypeException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -57,7 +58,7 @@ public interface GenericType {
      * @see Page
      */
     default boolean isPage() {
-        return resolve().map(c -> c == Page.class).orElse(false);
+        return resolveOptional().map(c -> c == Page.class).orElse(false);
     }
 
     /**
@@ -66,7 +67,7 @@ public interface GenericType {
      * @return 如果是 {@link CompletableFuture} 类型，返回<code>true</code>
      */
     default boolean isCompletableFuture() {
-        return resolve().map(c -> c == CompletableFuture.class).orElse(false);
+        return resolveOptional().map(c -> c == CompletableFuture.class).orElse(false);
     }
 
     /**
@@ -75,7 +76,7 @@ public interface GenericType {
      * @return 如果是 {@link Collection 集合}类型或者其子类，返回<code>true</code>
      */
     default boolean isCollection() {
-        return resolve().map(Collection.class::isAssignableFrom).orElse(false);
+        return resolveOptional().map(Collection.class::isAssignableFrom).orElse(false);
     }
 
     /**
@@ -84,7 +85,7 @@ public interface GenericType {
      * @return 如果是 {@link Optional 可选}类型，返回<code>true</code>
      */
     default boolean isOptional() {
-        return resolve().map(c -> c == Optional.class).orElse(false);
+        return resolveOptional().map(c -> c == Optional.class).orElse(false);
     }
 
     /**
@@ -93,7 +94,7 @@ public interface GenericType {
      * @return 如果是数组，返回<code>true</code>
      */
     default boolean isArray() {
-        return resolve().map(Class::isArray).orElse(false);
+        return resolveOptional().map(Class::isArray).orElse(false);
     }
 
     /**
@@ -119,7 +120,17 @@ public interface GenericType {
      * @param indices 索引
      * @return 泛型实际类型
      */
-    Optional<Class<?>> resolveGeneric(int... indices);
+    Optional<Class<?>> resolveGenericOptional(int... indices);
+
+    /**
+     * 解析泛型类，如果指定位置泛型类型不存在，抛出异常
+     *
+     * @param indices 索引
+     * @return 泛型实际类型
+     */
+    default Class<?> resolveGeneric(int... indices) {
+        return resolveGenericOptional(indices).orElseThrow(GenericTypeException::new);
+    }
 
     /**
      * 只解析 {@link Class} / {@link java.lang.reflect.ParameterizedType}和 {@link java.lang.reflect.GenericArrayType}
@@ -127,7 +138,16 @@ public interface GenericType {
      *
      * @return 原始类型
      */
-    Optional<Class<?>> resolve();
+    Optional<Class<?>> resolveOptional();
+
+    /**
+     * 只解析 {@link Class} / {@link java.lang.reflect.ParameterizedType}和 {@link java.lang.reflect.GenericArrayType}，如果类型不存在，抛出异常
+     *
+     * @return 原始类型
+     */
+    default Class<?> resolve() {
+        return resolveOptional().orElseThrow(GenericTypeException::new);
+    }
 
     /**
      * 解析指定索引位置的泛型

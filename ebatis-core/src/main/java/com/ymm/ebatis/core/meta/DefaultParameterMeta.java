@@ -2,10 +2,10 @@ package com.ymm.ebatis.core.meta;
 
 import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.domain.Pageable;
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.response.ResponseExtractor;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.ResolvableType;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -48,7 +48,7 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
         if (isArray()) {
             type = getType().getComponentType();
         } else if (isCollection()) {
-            type = ResolvableType.forMethodParameter((Method) parameter.getDeclaringExecutable(), index).resolveGeneric(0);
+            type = GenericType.forMethod((Method) parameter.getDeclaringExecutable()).parameterType(index).resolveGeneric(0);
         } else {
             type = getType();
         }
