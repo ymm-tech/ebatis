@@ -12,14 +12,20 @@ import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.annotation.SearchScroll;
 import com.ymm.ebatis.core.annotation.Update;
 import com.ymm.ebatis.core.annotation.UpdateByQuery;
+import com.ymm.ebatis.core.domain.ScrollResponse;
 import com.ymm.ebatis.core.executor.RequestExecutor;
+import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.provider.ScrollProvider;
 import lombok.Getter;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.MultiSearchResponse;
+import org.elasticsearch.action.search.SearchResponse;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,7 +64,17 @@ public enum RequestType {
     /**
      * 查询请求
      */
-    SEARCH(Search.class, RequestExecutor.search()),
+    SEARCH(Search.class, RequestExecutor.search()) {
+        @Override
+        public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+            GenericType genericType = getReturnGenericType(meta);
+            if (genericType.is(SearchResponse.class)) {
+                return Optional.empty();
+            }
+
+            return genericType.resolveGenericOptional(0);
+        }
+    },
     /**
      * search scroll request
      */
@@ -72,15 +88,51 @@ public enum RequestType {
 
             return meta.getConditionParameter().isAssignableTo(ScrollProvider.class);
         }
+
+        @Override
+        public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+            GenericType genericType = RequestType.getReturnGenericType(meta);
+
+            if (genericType.is(SearchResponse.class)) {
+                return Optional.empty();
+            }
+
+            if (genericType.is(ScrollResponse.class)) {
+                return genericType.resolveGenericOptional(0);
+            }
+
+            return super.getEntityClass(meta);
+        }
     },
-    MULTI_SEARCH(MultiSearch.class, RequestExecutor.multiSearch()),
+    MULTI_SEARCH(MultiSearch.class, RequestExecutor.multiSearch()) {
+        @Override
+        public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+            GenericType genericType = getReturnGenericType(meta);
+            if (genericType.is(MultiSearchResponse.class)) {
+                return super.getEntityClass(meta);
+            }
+
+            return genericType.resolveGenericOptional(0, 0);
+        }
+    },
     /**
      * 聚合查询
      */
     AGG(Agg.class, RequestExecutor.agg()),
-    GET(Get.class, RequestExecutor.get()),
+    GET(Get.class, RequestExecutor.get()) {
+        @Override
+        public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+            GenericType genericType = RequestType.getReturnGenericType(meta);
+            if (genericType.is(GetResponse.class)) {
+                return super.getEntityClass(meta);
+            }
+
+            return Optional.ofNullable(genericType.resolve());
+        }
+    },
     CAT(Cat.class, RequestExecutor.cat()),
     ;
+
     private static final Map<Class<? extends Annotation>, RequestType> ANNOTATION_EXECUTOR_TYPES;
 
     static {
@@ -95,6 +147,16 @@ public enum RequestType {
         this.requestExecutor = requestExecutor;
     }
 
+    private static GenericType getReturnGenericType(MethodMeta meta) {
+        Method method = meta.getElement();
+        GenericType genericType = GenericType.forMethod(method).returnType();
+
+        Class<?> returnType = method.getReturnType();
+        if (CompletableFuture.class == returnType || Optional.class == returnType) {
+            genericType = genericType.resolveType(0);
+        }
+        return genericType;
+    }
 
     /**
      * 根据指定方法，获取方法的执行器；先通过注解获取，注解没有匹配的类型，换方法前缀匹配
@@ -118,6 +180,10 @@ public enum RequestType {
     }
 
     public boolean validate(MethodMeta meta) {
-        return true;
+        return meta != null;
+    }
+
+    public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+        return Optional.empty();
     }
 }

@@ -1,6 +1,6 @@
 package com.ymm.ebatis.core.generic;
 
-import com.ymm.ebatis.core.search.OrderMapper;
+import com.ymm.ebatis.core.domain.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author 章多亮
@@ -20,7 +21,7 @@ public class GenericTypeTest {
 
     @Test
     public void forMethod() {
-        Class<OrderMapper> clazz = OrderMapper.class;
+        Class<StringResponseConverter> clazz = StringResponseConverter.class;
 
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
@@ -47,6 +48,8 @@ public class GenericTypeTest {
         M toProtocol(P protocol);
 
         int compare();
+
+        CompletableFuture<Page<M>[]> multiSearch();
     }
 
     static class StringResponseConverter implements ResponseConverter<List<String>, Map<String, SearchResponse[]>> {
@@ -63,6 +66,11 @@ public class GenericTypeTest {
         @Override
         public int compare() {
             return 0;
+        }
+
+        @Override
+        public CompletableFuture<Page<List<String>>[]> multiSearch() {
+            return null;
         }
     }
 }

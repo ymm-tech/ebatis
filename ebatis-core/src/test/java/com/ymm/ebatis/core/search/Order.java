@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ymm.ebatis.core.annotation.Field;
+import com.ymm.ebatis.core.annotation.Ignore;
 import com.ymm.ebatis.core.annotation.Must;
 import com.ymm.ebatis.core.annotation.QueryType;
 import lombok.Data;
@@ -30,4 +31,6 @@ public class Order {
     private String customerFullName;
     @JsonProperty("customer_phone")
     private String customerPhone;
+    @Ignore
+    private String ignoreField;
 }

@@ -9,6 +9,7 @@ import com.ymm.ebatis.core.executor.RequestExecutor;
 import com.ymm.ebatis.core.response.ResponseExtractor;
 import com.ymm.ebatis.core.response.ResponseExtractorLoader;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -56,7 +57,7 @@ class DefaultMapperMethodMeta implements MapperMethod {
         this.requestExecutor = requestType.getRequestExecutor();
         this.parameterMetas = getParameterMetas(method);
 
-        this.includeFields = getIncludeFields(method);
+        this.includeFields = getIncludeFields(this);
 
         validate();
     }
@@ -68,9 +69,11 @@ class DefaultMapperMethodMeta implements MapperMethod {
         }
     }
 
-    private String[] getIncludeFields(Method method) {
-        log.info("{}", method);
-        return new String[0];
+    private String[] getIncludeFields(MethodMeta meta) {
+        return requestType.getEntityClass(meta)
+                .map(ClassMeta::of)
+                .map(c -> c.getFieldMetas().stream().map(FieldMeta::getName).toArray(String[]::new))
+                .orElse(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     private HttpConfig getHttpConfig(MapperInterface mapperInterface) {

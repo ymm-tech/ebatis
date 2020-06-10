@@ -1,11 +1,11 @@
 package com.ymm.ebatis.core.meta;
 
 import com.ymm.ebatis.core.exception.FieldMetaNotFoundException;
+import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,8 @@ public abstract class AbstractClassMeta implements ClassMeta {
     }
 
     private List<FieldMeta> getFieldMetas(Class<?> clazz) {
-        List<FieldMeta> metas = Arrays.stream(clazz.getDeclaredFields())
+        List<FieldMeta> metas = FieldUtils.getAllFieldsList(clazz)
+                .stream()
                 .filter(this::filterField)
                 .map(FieldMeta::of)
                 .collect(Collectors.toList());
