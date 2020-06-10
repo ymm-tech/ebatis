@@ -201,4 +201,24 @@ public interface GenericType {
     default GenericType asSet() {
         return as(Set.class);
     }
+
+    /**
+     * 判断当前的类是否可以赋值给指定类型类
+     *
+     * @param clazz 父类或者接口
+     * @return 如果可以，返回<code>true</code>
+     */
+    default boolean isAssignableTo(Class<?> clazz) {
+        return clazz.isAssignableFrom(resolve());
+    }
+
+    /**
+     * 判断当前类是否跟指定的类相同
+     *
+     * @param clazz 类或者接口
+     * @return 如果相同，返回<code>true</code>
+     */
+    default boolean is(Class<?> clazz) {
+        return clazz == resolve();
+    }
 }
