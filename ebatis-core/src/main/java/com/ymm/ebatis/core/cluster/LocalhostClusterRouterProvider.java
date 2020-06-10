@@ -8,13 +8,14 @@ import com.google.auto.service.AutoService;
  */
 @AutoService(ClusterRouterProvider.class)
 public class LocalhostClusterRouterProvider implements ClusterRouterProvider {
-    @Override
-    public String getName() {
-        return "localhost";
-    }
+    private static final String CLUSTER_ROUTER_NAME = "localhost";
 
     @Override
-    public ClusterRouter getClusterRouter() {
-        return ClusterRouter.localhost();
+    public ClusterRouter getClusterRouter(String name) {
+        if (CLUSTER_ROUTER_NAME.equalsIgnoreCase(name)) {
+            return ClusterRouter.localhost();
+        } else {
+            return null;
+        }
     }
 }
