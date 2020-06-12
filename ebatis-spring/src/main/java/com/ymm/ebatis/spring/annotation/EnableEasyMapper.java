@@ -1,6 +1,6 @@
 package com.ymm.ebatis.spring.annotation;
 
-import com.ymm.ebatis.spring.cluster.ApplicationContextHolder;
+import com.ymm.ebatis.spring.cluster.SpringClusterRouterProvider;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import({EasyMapperRegistrar.class, ApplicationContextHolder.class})
+@Import({EasyMapperRegistrar.class, SpringClusterRouterProvider.class})
 public @interface EnableEasyMapper {
     /**
      * 获取需要扫描的包路径

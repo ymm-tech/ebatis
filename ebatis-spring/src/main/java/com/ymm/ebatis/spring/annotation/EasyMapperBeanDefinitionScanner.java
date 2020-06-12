@@ -1,7 +1,7 @@
 package com.ymm.ebatis.spring.annotation;
 
 import com.ymm.ebatis.core.annotation.Mapper;
-import com.ymm.ebatis.spring.exception.ClusterNameNotFoundException;
+import com.ymm.ebatis.spring.exception.ClusterRouterNameNotSetException;
 import com.ymm.ebatis.spring.proxy.EasyMapperProxyFactoryBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -14,8 +14,14 @@ import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
+/**
+ * Mapper接口扫描器
+ *
+ * @author duoliang.zhang
+ */
 @Slf4j
 public class EasyMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
+    private static final String CLUSTER_ROUTER_ATTRIBUTE_NAME = "clusterRouter";
     private final String globalClusterRouter;
 
     public EasyMapperBeanDefinitionScanner(BeanDefinitionRegistry registry, String globalClusterRouter) {
@@ -31,26 +37,26 @@ public class EasyMapperBeanDefinitionScanner extends ClassPathBeanDefinitionScan
         AnnotatedBeanDefinition beanDefinition = (AnnotatedBeanDefinition) definitionHolder.getBeanDefinition();
         String beanClassName = beanDefinition.getBeanClassName();
 
-        String clusterRouter = AnnotationAttributes.fromMap(beanDefinition.getMetadata().getAnnotationAttributes(Mapper.class.getName())).getString("clusterRouter");
+        String clusterRouter = AnnotationAttributes.fromMap(beanDefinition.getMetadata().getAnnotationAttributes(Mapper.class.getName())).getString(CLUSTER_ROUTER_ATTRIBUTE_NAME);
 
-        // 实际的Bean对象是EsMapperProxyFactory，它是个FactoryBean，负责创建EsMapperProxy代理
+        // EasyMapperProxyFactoryBean，它是个FactoryBean，负责创建MapperProxy代理
         beanDefinition.setBeanClassName(EasyMapperProxyFactoryBean.class.getName());
         ConstructorArgumentValues constructorArgumentValues = beanDefinition.getConstructorArgumentValues();
         constructorArgumentValues.addGenericArgumentValue(beanClassName);
-        constructorArgumentValues.addGenericArgumentValue(getClusterRouterName(clusterRouter));
+        constructorArgumentValues.addGenericArgumentValue(getClusterRouter(clusterRouter));
 
         super.registerBeanDefinition(definitionHolder, registry);
     }
 
-    private String getClusterRouterName(String clusterRouterName) {
-        String name = StringUtils.isBlank(clusterRouterName) ? globalClusterRouter : clusterRouterName;
+    private String getClusterRouter(String clusterRouter) {
+        String name = StringUtils.isEmpty(clusterRouter) ? globalClusterRouter : clusterRouter;
 
-        if (StringUtils.isBlank(name)) {
-            throw new ClusterNameNotFoundException(clusterRouterName);
+        if (StringUtils.isEmpty(name)) {
+            throw new ClusterRouterNameNotSetException();
         }
+
         return name;
     }
-
 
     @Override
     protected boolean isCandidateComponent(AnnotatedBeanDefinition beanDefinition) {
