@@ -95,9 +95,11 @@ public enum QueryClauseType {
             if (!meta.isBasic()) {
                 // 动态组合语句，特殊处理，就是个坑
                 if (meta.isArray()) {
-                    Arrays.stream((Object[]) value).map(v -> QueryBuilderFactory.auto().create(meta, value)).collect(Collectors.toCollection(() -> builders));
+                    Arrays.stream((Object[]) value).map(v -> QueryBuilderFactory.auto().create(meta, v)).collect(Collectors.toCollection(() -> builders));
+                    continue;
                 } else if (meta.isCollection()) {
-                    ((Collection<?>) value).stream().map(v -> QueryBuilderFactory.auto().create(meta, value)).collect(Collectors.toCollection(() -> builders));
+                    ((Collection<?>) value).stream().map(v -> QueryBuilderFactory.auto().create(meta, v)).collect(Collectors.toCollection(() -> builders));
+                    continue;
                 }
             }
 
