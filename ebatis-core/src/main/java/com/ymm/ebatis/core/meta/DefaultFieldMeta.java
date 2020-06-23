@@ -35,7 +35,7 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     private final QueryBuilderFactory queryBuilderFactory;
 
     DefaultFieldMeta(Field field) {
-        super(field, field.getType());
+        super(field, field.getType(), field.getGenericType());
         this.field = field;
         this.readMethod = getReadMethod(field);
 

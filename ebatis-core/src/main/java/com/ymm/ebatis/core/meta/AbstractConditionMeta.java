@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ymm.ebatis.core.annotation.Field;
 import com.ymm.ebatis.core.domain.Range;
 import com.ymm.ebatis.core.domain.Script;
+import com.ymm.ebatis.core.generic.GenericType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
 import java.util.Collection;
 
 /**
@@ -21,15 +23,23 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
     private final boolean collection;
     private final boolean arrayOrCollection;
     private final String name;
+    private final Type genericType;
 
-    protected AbstractConditionMeta(E element, Class<?> type) {
+    protected AbstractConditionMeta(E element, Class<?> type, Type genericType) {
         this.type = type;
+        this.genericType = genericType;
         this.array = type.isArray();
         this.collection = Collection.class.isAssignableFrom(type);
-        this.range = Range.class.isAssignableFrom(type);
-        this.script = Script.class.isAssignableFrom(type);
-
         this.arrayOrCollection = array || collection;
+        if (arrayOrCollection) {
+            Class<?> clazz = GenericType.forType(genericType).resolveGeneric(0);
+            this.range = Range.class.isAssignableFrom(clazz);
+            this.script = Script.class.isAssignableFrom(clazz);
+        } else {
+            this.range = Range.class.isAssignableFrom(type);
+            this.script = Script.class.isAssignableFrom(type);
+        }
+
 
         this.name = getName(element);
     }
@@ -95,5 +105,10 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
     @Override
     public boolean isArrayOrCollection() {
         return arrayOrCollection;
+    }
+
+    @Override
+    public Type getGenericType() {
+        return genericType;
     }
 }
