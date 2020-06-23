@@ -18,6 +18,7 @@ import com.ymm.ebatis.core.provider.ScriptFieldProvider;
 import com.ymm.ebatis.core.provider.SortProvider;
 import com.ymm.ebatis.core.provider.SourceProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
@@ -95,7 +96,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                     searchSource.from(p.getFrom()).size(p.getSize());
                 });
 
-        setProviderMeta(condition, searchSource);
+        setProviderMeta(condition, searchSource, meta);
 
         request.source(searchSource);
 
@@ -116,7 +117,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         return queryType.orElse(QueryType.AUTO).getQueryBuilderFactory();
     }
 
-    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource) {
+    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource, MethodMeta meta) {
         if (condition instanceof ScriptFieldProvider) {
             ScriptField[] fields = ((ScriptFieldProvider) condition).getScriptFields();
             for (ScriptField field : fields) {
@@ -134,6 +135,8 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         if (condition instanceof SourceProvider) {
             SourceProvider sourceProvider = (SourceProvider) condition;
             searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
+        } else {
+            searchSource.fetchSource(meta.getIncludeFields(), ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
         if (condition instanceof CollapseProvider) {
