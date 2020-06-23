@@ -36,6 +36,8 @@ public class SearchResponseExtractorProvider extends AbstractResponseExtractorPr
             return new DocumentPageExtractor<>(DocumentMapper.of(genericType.resolveGeneric(0)));
         } else if (List.class.isAssignableFrom(resultClass)) {
             return new DocumentExtractor<>(DocumentMapper.of(genericType.resolveGeneric(0)), Integer.MAX_VALUE);
+        } else if (resultClass.isArray()) {
+            return new ArrayDocumentExtractor<>(DocumentMapper.of(genericType.resolveGeneric(0)), Integer.MAX_VALUE);
         } else if (!MetaUtils.isBasic(resultClass)) {
             return new SingleDocumentExtractor<>(DocumentMapper.of(resultClass));
         } else {
