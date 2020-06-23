@@ -30,7 +30,7 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
     private final Annotation requestAnnotation;
 
     DefaultParameterMeta(MethodMeta methodMeta, Parameter parameter, int index) {
-        super(parameter, parameter.getType());
+        super(parameter, parameter.getType(), parameter.getParameterizedType());
         this.parameter = parameter;
         this.index = index;
         this.name = parameter.getName();
