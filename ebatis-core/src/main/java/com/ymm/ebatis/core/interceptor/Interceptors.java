@@ -37,7 +37,7 @@ public class Interceptors implements Interceptor {
     }
 
     @Override
-    public <T extends ActionRequest, R extends ActionResponse> void preResponse(PreResponseInfo<T, R> preResponseInfo) {
+    public <T extends ActionRequest> void preResponse(PreResponseInfo<T> preResponseInfo) {
         interceptors.forEach(i -> i.preResponse(preResponseInfo));
     }
 
