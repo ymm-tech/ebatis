@@ -11,6 +11,7 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author 章多亮
@@ -60,17 +61,26 @@ class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearch, Mult
             conditions = new Object[]{arg};
         }
 
-        Pageable[] pageable = meta.getPageableParameter()
+        Optional<ParameterMeta> pageableParameter = meta.getPageableParameter();
+
+        Pageable[] pageables = pageableParameter
                 .map(p -> p.getValue(args))
                 .map(Pageable[].class::cast)
                 .orElse(new Pageable[conditions.length]);
 
-        ContextHolder.setPageables(pageable);
+        ContextHolder.setPageables(pageables);
+
+        int parameterLength = Math.max(parameterMeta.getIndex(), pageableParameter.map(ParameterMeta::getIndex).orElse(-1)) + 1;
 
         MultiSearchRequest request = new MultiSearchRequest();
         for (int i = 0; i < conditions.length; i++) {
-            ContextHolder.setPageable(pageable[i]);
-            request.add(SearchRequestFactory.INSTANCE.create(meta, conditions[i]));
+            Pageable pageable = pageables[i];
+            ContextHolder.setPageable(pageable);
+
+            Object[] parameters = new Object[parameterLength];
+            parameters[parameterMeta.getIndex()] = conditions[i];
+            pageableParameter.ifPresent(p -> parameters[p.getIndex()] = pageable);
+            request.add(SearchRequestFactory.INSTANCE.create(meta, parameters));
         }
 
         return request;
