@@ -44,6 +44,14 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
             } else {
                 throw new UnsupportedOperationException("暂不支持的返回值类型");
             }
+        } else if (resultType.isArray()) {
+            Class<?> entityClass = genericType.resolveGeneric(0);
+            if (Page.class.isAssignableFrom(entityClass)) {
+                entityClass = genericType.resolveGeneric(0, 0);
+                return new PageArrayMultiSearchResponseExtractor<>(new DocumentPageExtractor<>(DocumentMapper.of(entityClass)));
+            } else {
+                throw new UnsupportedOperationException("暂不支持的返回值类型");
+            }
         } else if (MultiSearchResponse.class == resultType) {
             return TotalHitsArrayMultiSearchResponseExtractor.INSTANCE;
         } else {
