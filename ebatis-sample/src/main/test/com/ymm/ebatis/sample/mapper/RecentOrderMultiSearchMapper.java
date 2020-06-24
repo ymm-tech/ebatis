@@ -30,4 +30,12 @@ public interface RecentOrderMultiSearchMapper {
     //MultiSearch List<Page<Entity>>
     @MultiSearch(queryType = QueryType.BOOL)
     Page<RecentOrder>[] queryRecentOrderPageArray(SampleRecentOrderCondition[] sampleRecentOrderConditions, Pageable[] pageables);
+
+    //MultiSearch List<Page<Entity>>
+    @MultiSearch(queryType = QueryType.BOOL)
+    List<List<RecentOrder>> queryRecentOrderListList(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch Entity[][]
+    @MultiSearch(queryType = QueryType.BOOL)
+    RecentOrder[][] queryRecentOrderArrayArray(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 }

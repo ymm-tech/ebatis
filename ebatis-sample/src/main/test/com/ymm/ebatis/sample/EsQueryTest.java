@@ -54,7 +54,7 @@ public class EsQueryTest {
     public void queryRecentOrderPage() {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292911L);
-        Page<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderPage(Pageable.of(2, 10), recentOrderCondition);
+        Page<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderPage(Pageable.of(1, 10), recentOrderCondition);
         String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
         log.info("result:{}", s);
     }
@@ -132,7 +132,7 @@ public class EsQueryTest {
     @Test
     public void multiSearchListPageWithSingle() {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
-        recentOrderCondition.setCargoId(10124512292966L);
+        recentOrderCondition.setCargoId(10124512292911L);
         List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
                 recentOrderCondition,
                 Pageable.of(0, 10));
@@ -151,6 +151,32 @@ public class EsQueryTest {
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition},
                 new Pageable[]{Pageable.of(0, 10), Pageable.of(1, 10)});
         String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void multiSearchListListWithArray() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        List<List<RecentOrder>> recentOrders = recentOrderMultiSearchMapper.queryRecentOrderListList(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void multiSearchArrayArrayWithArray() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        RecentOrder[][] recentOrders = recentOrderMultiSearchMapper.queryRecentOrderArrayArray(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
         log.info("result:{}", s);
     }
 
