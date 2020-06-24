@@ -63,10 +63,18 @@ class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearch, Mult
 
         Optional<ParameterMeta> pageableParameter = meta.getPageableParameter();
 
-        Pageable[] pageables = pageableParameter
-                .map(p -> p.getValue(args))
-                .map(Pageable[].class::cast)
-                .orElse(new Pageable[conditions.length]);
+        Pageable[] pageables = pageableParameter.map(p -> {
+            Object value = p.getValue(args);
+            if (p.isCollection()) {
+                @SuppressWarnings("unchecked")
+                Collection<Pageable> collection = (Collection<Pageable>) value;
+                return collection.toArray(new Pageable[0]);
+            } else if (p.isArray()) {
+                return (Pageable[]) value;
+            } else {
+                return new Pageable[]{(Pageable) value};
+            }
+        }).orElse(new Pageable[conditions.length]);
 
         ContextHolder.setPageables(pageables);
 
