@@ -1,5 +1,6 @@
 package com.ymm.ebatis.core.generic;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -101,9 +102,7 @@ class DefaultGenericType implements GenericType {
             return Optional.ofNullable((Class<?>) ((ParameterizedType) type).getRawType());
         } else if (type instanceof GenericArrayType) {
             Type genericComponentType = ((GenericArrayType) type).getGenericComponentType();
-            if (genericComponentType instanceof Class) {
-                return Optional.of((Class<?>) genericComponentType);
-            }
+            return GenericType.forType(genericComponentType).resolveOptional().map(clazz -> Array.newInstance(clazz, 0).getClass());
         }
 
         return Optional.empty();
