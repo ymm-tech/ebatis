@@ -1,8 +1,10 @@
 package com.ymm.ebatis.sample.condition;
 
 import com.google.common.collect.Lists;
+import com.ymm.ebatis.core.annotation.Exists;
 import com.ymm.ebatis.core.annotation.Field;
 import com.ymm.ebatis.core.annotation.Must;
+import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Should;
 import com.ymm.ebatis.core.domain.Range;
 import com.ymm.ebatis.core.domain.ScoreFunction;
@@ -84,6 +86,12 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
             shipperTelephoneMask(99918036666L).
             shipperUserId(66642L).
             build()};
+
+    @Must(queryType = QueryType.EXISTS, exists = @Exists(false))
+    private String startAreaCode;
+
+    @Must(queryType = QueryType.WILDCARD)
+    private String unloadAddress = "**沈阳市皇姑区**";
 
     @Override
     public ScoreFunction getFunction() {
