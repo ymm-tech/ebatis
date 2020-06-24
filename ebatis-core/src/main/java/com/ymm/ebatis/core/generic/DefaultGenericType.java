@@ -78,15 +78,13 @@ class DefaultGenericType implements GenericType {
                 currentType = ((ParameterizedType) currentType).getActualTypeArguments()[index];
             } else if (currentType instanceof GenericArrayType) {
                 currentType = ((GenericArrayType) currentType).getGenericComponentType();
+            } else if (currentType instanceof Class && ((Class<?>) currentType).isArray()) {
+                currentType = ((Class<?>) currentType).getComponentType();
             }
         }
 
         if (currentType instanceof Class) {
-            if (((Class<?>) currentType).isArray()) {
-                return Optional.ofNullable(((Class<?>) currentType).getComponentType());
-            } else {
-                return Optional.of((Class<?>) currentType);
-            }
+            return Optional.of((Class<?>) currentType);
         } else if (currentType instanceof ParameterizedType) {
             return Optional.ofNullable((Class<?>) ((ParameterizedType) currentType).getRawType());
         }
