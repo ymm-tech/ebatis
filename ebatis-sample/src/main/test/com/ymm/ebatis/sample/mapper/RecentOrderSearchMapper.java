@@ -16,14 +16,14 @@ import java.util.concurrent.CompletableFuture;
  * @author weilong.hu
  */
 @EasyMapper(indices = "recent_order_index")
-public interface RecentOrderMapper {
+public interface RecentOrderSearchMapper {
     //Search Entity[]测试
     @Search(queryType = QueryType.BOOL)
     RecentOrder[] queryRecentOrderArray(RecentOrderCondition recentOrderCondition);
 
     //Search Page<Entity>测试
     @Search(queryType = QueryType.BOOL)
-    Page<RecentOrder> queryRecentOrderPage(RecentOrderCondition recentOrderCondition, Pageable pageable);
+    Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition recentOrderCondition);
 
     //Search List<Entity>测试
     @Search(queryType = QueryType.BOOL)
@@ -37,7 +37,7 @@ public interface RecentOrderMapper {
     @Search(queryType = QueryType.BOOL)
     CompletableFuture<List<RecentOrder>> queryRecentOrderCompletableFutureList(RecentOrderCondition recentOrderCondition);
 
-    //Search Entity[]测试
+    //Search FUNCTION_SCORE测试
     @Search(queryType = QueryType.FUNCTION_SCORE)
     RecentOrder[] queryRecentOrderArrayScoreFunction(RecentOrderCondition recentOrderCondition);
 }
