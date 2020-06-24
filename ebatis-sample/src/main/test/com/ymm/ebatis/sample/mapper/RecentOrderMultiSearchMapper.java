@@ -15,9 +15,17 @@ import java.util.List;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderMultiSearchMapper {
-    //MultiSearch List<Page<Entity>>
+    //MultiSearch List<Page<Entity>>  形参数组
     @MultiSearch(queryType = QueryType.BOOL)
     List<Page<RecentOrder>> queryRecentOrderListPage(SampleRecentOrderCondition[] sampleRecentOrderConditions, Pageable[] pageables);
+
+    //MultiSearch List<Page<Entity>>  形参集合
+    @MultiSearch(queryType = QueryType.BOOL)
+    List<Page<RecentOrder>> queryRecentOrderListPage(List<SampleRecentOrderCondition> sampleRecentOrderConditions, List<Pageable> pageables);
+
+    //MultiSearch List<Page<Entity>>  非集合数组形参
+    @MultiSearch(queryType = QueryType.BOOL)
+    List<Page<RecentOrder>> queryRecentOrderListPage(SampleRecentOrderCondition sampleRecentOrderConditions, Pageable pageables);
 
     //MultiSearch List<Page<Entity>>
     @MultiSearch(queryType = QueryType.BOOL)

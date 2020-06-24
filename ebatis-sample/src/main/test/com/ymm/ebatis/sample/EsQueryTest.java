@@ -1,5 +1,6 @@
 package com.ymm.ebatis.sample;
 
+import com.google.common.collect.Lists;
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
@@ -101,7 +102,7 @@ public class EsQueryTest {
 
     @SneakyThrows
     @Test
-    public void multiSearchQueryRecentOrderListPage() {
+    public void multiSearchListPageWithArray() {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -109,6 +110,32 @@ public class EsQueryTest {
         List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition},
                 new Pageable[]{Pageable.of(0, 10), Pageable.of(1, 10)});
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void multiSearchListPageWithList() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
+                Lists.newArrayList(recentOrderCondition, sampleRecentOrderCondition),
+                Lists.newArrayList(Pageable.of(0, 10), Pageable.of(1, 10)));
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void multiSearchListPageWithSingle() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
+                recentOrderCondition,
+                Pageable.of(0, 10));
         String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
         log.info("result:{}", s);
     }
