@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.exception.GenericTypeException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,16 @@ public interface GenericType {
      */
     static GenericType forField(Field field) {
         return new DefaultGenericType(field.getGenericType());
+    }
+
+    /**
+     * 创建参数泛型解析器
+     *
+     * @param parameter 字段
+     * @return 泛型解析器
+     */
+    static GenericType forParameter(Parameter parameter) {
+        return new DefaultGenericType(parameter.getParameterizedType());
     }
 
     /**
