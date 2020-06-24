@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.response;
 
 import org.elasticsearch.action.search.MultiSearchResponse;
 
+import java.lang.reflect.Array;
 import java.util.stream.Stream;
 
 /**
@@ -11,9 +12,12 @@ import java.util.stream.Stream;
 public class ArrayMultiSearchResponseExtractor<T> implements MultiSearchResponseExtractor<T[][]> {
 
     private final ArrayDocumentExtractor<T> extractor;
+    private final Class<?> entityClass;
 
-    public ArrayMultiSearchResponseExtractor(ArrayDocumentExtractor<T> extractor) {
+
+    public ArrayMultiSearchResponseExtractor(ArrayDocumentExtractor<T> extractor, Class<?> entityClass) {
         this.extractor = extractor;
+        this.entityClass = entityClass;
     }
 
     @Override
@@ -22,7 +26,7 @@ public class ArrayMultiSearchResponseExtractor<T> implements MultiSearchResponse
         Object[][] result = Stream.of(response.getResponses())
                 .map(MultiSearchResponse.Item::getResponse)
                 .map(extractor::doExtractData)
-                .toArray(Object[][]::new);
+                .toArray(i -> (T[][]) Array.newInstance(entityClass, i));
 
         return (T[][]) result;
     }
