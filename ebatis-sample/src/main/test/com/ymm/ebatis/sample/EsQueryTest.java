@@ -13,6 +13,7 @@ import com.ymm.ebatis.sample.mapper.RecentOrderMultiSearchMapper;
 import com.ymm.ebatis.sample.mapper.RecentOrderSearchMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -193,4 +194,16 @@ public class EsQueryTest {
         log.info("result:{}", s);
     }
 
+    @SneakyThrows
+    @Test
+    public void multiSearchSearchResponse() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        MultiSearchResponse multiSearchResponse = recentOrderMultiSearchMapper.queryRecentOrderMultiSearchResponse(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(multiSearchResponse);
+        log.info("result:{}", s);
+    }
 }
