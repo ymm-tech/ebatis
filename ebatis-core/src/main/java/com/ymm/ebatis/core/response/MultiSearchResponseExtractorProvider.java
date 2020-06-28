@@ -60,7 +60,7 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
                 throw new UnsupportedOperationException("暂不支持的返回值类型");
             }
         } else if (MultiSearchResponse.class == resultType) {
-            return TotalHitsArrayMultiSearchResponseExtractor.INSTANCE;
+            return RawResponseExtractor.INSTANCE;
         } else {
             throw new UnsupportedOperationException("暂不支持的返回值类型");
         }

@@ -7,6 +7,7 @@ import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.sample.condition.SampleRecentOrderCondition;
 import com.ymm.ebatis.sample.entity.RecentOrder;
 import com.ymm.ebatis.spring.annotation.EasyMapper;
+import org.elasticsearch.action.search.MultiSearchResponse;
 
 import java.util.List;
 
@@ -42,4 +43,8 @@ public interface RecentOrderMultiSearchMapper {
     //MultiSearch List<Entity[]>
     @MultiSearch(queryType = QueryType.BOOL)
     List<RecentOrder[]> queryRecentOrderListArray(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch List<Entity[]>
+    @MultiSearch(queryType = QueryType.BOOL)
+    MultiSearchResponse queryRecentOrderMultiSearchResponse(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 }
