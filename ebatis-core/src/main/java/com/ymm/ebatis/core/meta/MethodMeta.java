@@ -4,6 +4,8 @@ import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.HttpConfig;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.response.ResponseExtractor;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -59,6 +61,9 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
     }
 
     default String getType() {
+        if (ArrayUtils.isEmpty(getTypes())) {
+            return StringUtils.EMPTY;
+        }
         return getTypes()[0];
     }
 
