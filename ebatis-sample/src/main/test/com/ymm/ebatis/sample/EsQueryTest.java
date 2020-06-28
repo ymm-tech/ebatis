@@ -20,6 +20,7 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author weilong.hu
@@ -204,6 +205,26 @@ public class EsQueryTest {
         MultiSearchResponse multiSearchResponse = recentOrderMultiSearchMapper.queryRecentOrderMultiSearchResponse(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
         String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(multiSearchResponse);
+        log.info("result:{}", s);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void multiSearchArrayArrayFuture() {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        CompletableFuture<RecentOrder[][]> completableFuture = recentOrderMultiSearchMapper.queryRecentOrderArrayArrayFuture(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        completableFuture.whenCompleteAsync((r, e) -> {
+            log.info("result length:{}", r.length);
+            countDownLatch.countDown();
+        });
+        countDownLatch.await();
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(completableFuture.join());
         log.info("result:{}", s);
     }
 }
