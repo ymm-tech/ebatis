@@ -1,0 +1,20 @@
+package com.ymm.ebatis.sample.entity;
+
+import com.ymm.ebatis.core.provider.IdProvider;
+import lombok.Data;
+
+/**
+ * @author weilong.hu
+ * @since 2020/6/28 18:43
+ */
+@Data
+public class RecentOrderModel implements IdProvider {
+    private Long cargoId = 10124512292666L;
+    private String driverUserName = "老铁6666";
+    private String loadAddress = "我的老家就住在这个屯";
+
+    @Override
+    public String getId() {
+        return String.valueOf(cargoId);
+    }
+}
