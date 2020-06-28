@@ -3,6 +3,7 @@ package com.ymm.ebatis.core.response;
 import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.generic.GenericType;
+import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.search.MultiSearchResponse;
@@ -38,6 +39,8 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
 
                 if (entityClass == Long.class || entityClass == long.class) {
                     return TotalHitsArrayMultiSearchResponseExtractor.INSTANCE;
+                } else if (!MetaUtils.isBasic(entityClass)) {
+                    return new ListArraySearchResponseExtractor<>(new ArrayDocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE));
                 } else {
                     throw new UnsupportedOperationException("不支持");
                 }

@@ -38,4 +38,8 @@ public interface RecentOrderMultiSearchMapper {
     //MultiSearch Entity[][]
     @MultiSearch(queryType = QueryType.BOOL)
     RecentOrder[][] queryRecentOrderArrayArray(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch List<Entity[]>
+    @MultiSearch(queryType = QueryType.BOOL)
+    List<RecentOrder[]> queryRecentOrderListArray(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 }
