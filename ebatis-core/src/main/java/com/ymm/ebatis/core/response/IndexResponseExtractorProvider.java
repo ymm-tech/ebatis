@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.rest.RestStatus;
 
 /**
  * @author 章多亮
@@ -22,8 +23,14 @@ public class IndexResponseExtractorProvider extends AbstractResponseExtractorPro
 
         if (Boolean.class == resultClass || boolean.class == resultClass) {
             return BooleanIndexResponseExtractor.INSTANCE;
+        } else if (String.class == resultClass) {
+            return StringIndexResponseExtractor.INSTANCE;
         } else if (IndexResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
+        } else if (RestStatus.class == resultClass) {
+            return RestStatusIndexResponseExtractor.INSTANCE;
+        } else if (void.class == resultClass) {
+            return VoidIndexResponseExtractor.INSTANCE;
         } else {
             throw new UnsupportedOperationException();
         }
