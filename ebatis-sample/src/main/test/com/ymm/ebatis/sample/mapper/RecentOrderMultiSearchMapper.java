@@ -10,6 +10,7 @@ import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.search.MultiSearchResponse;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author weilong.hu
@@ -47,4 +48,8 @@ public interface RecentOrderMultiSearchMapper {
     //MultiSearch List<Entity[]>
     @MultiSearch(queryType = QueryType.BOOL)
     MultiSearchResponse queryRecentOrderMultiSearchResponse(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch Entity[][]
+    @MultiSearch(queryType = QueryType.BOOL)
+    CompletableFuture<RecentOrder[][]> queryRecentOrderArrayArrayFuture(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 }
