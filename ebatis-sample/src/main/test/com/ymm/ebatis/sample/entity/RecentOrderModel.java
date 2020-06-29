@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 public class RecentOrderModel implements IdProvider {
     private Long cargoId = 10124512292666L;
-    private String driverUserName = "老铁6666";
-    private String loadAddress = "我的老家就住在这个屯";
+    private String driverUserName = "老铁666啊";
+    private String loadAddress = "我滴老家就住在这个屯";
 
     @Override
     public String getId() {
