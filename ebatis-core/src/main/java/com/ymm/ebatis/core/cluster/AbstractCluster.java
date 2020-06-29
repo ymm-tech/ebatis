@@ -30,7 +30,9 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -211,10 +213,14 @@ public abstract class AbstractCluster implements Cluster {
             HttpEntityEnclosingRequest enclosingRequest = (HttpEntityEnclosingRequest) request;
             HttpEntity entity = enclosingRequest.getEntity();
             if (entity != null) {
-                Map<?, ?> map = objectMapper().readValue(entity.getContent(), Map.class);
-
-                String body = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
-                sb.append(body);
+                try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(entity.getContent()))) {
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        Map<?, ?> map = objectMapper().readValue(line, Map.class);
+                        String body = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+                        sb.append(body);
+                    }
+                }
             }
         }
 
