@@ -29,8 +29,8 @@ public class IndexResponseExtractorProvider extends AbstractResponseExtractorPro
             return RawResponseExtractor.INSTANCE;
         } else if (RestStatus.class == resultClass) {
             return RestStatusResponseExtractor.INSTANCE;
-        } else if (void.class == resultClass) {
-            return VoidIndexResponseExtractor.INSTANCE;
+        } else if (Void.class == resultClass || void.class == resultClass) {
+            return VoidResponseExtractor.INSTANCE;
         } else {
             throw new UnsupportedOperationException();
         }

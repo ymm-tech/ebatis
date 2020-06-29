@@ -15,6 +15,7 @@ public class BooleanDeleteResponseExtractor implements DeleteResponseExtractor<B
 
     @Override
     public Boolean doExtractData(DeleteResponse response) {
+        //todo NOT_FOUND是否作为删除成功判断
         return response.status() == RestStatus.OK;
     }
 }

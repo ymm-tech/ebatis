@@ -27,6 +27,8 @@ public class DeleteResponseExtractorProvider extends AbstractResponseExtractorPr
             return RestStatusResponseExtractor.INSTANCE;
         } else if (Boolean.class == resultClass || boolean.class == resultClass) {
             return BooleanDeleteResponseExtractor.INSTANCE;
+        } else if (Void.class == resultClass || void.class == resultClass) {
+            return VoidResponseExtractor.INSTANCE;
         } else {
             throw new UnsupportedOperationException();
         }
