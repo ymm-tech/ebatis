@@ -1,8 +1,6 @@
 package com.ymm.ebatis.sample;
 
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
-import com.ymm.ebatis.core.proxy.MapperProxyFactory;
-import com.ymm.ebatis.sample.cluster.SampleClusterRouterProvider;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderIndexMapper;
 import lombok.SneakyThrows;
@@ -22,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @since 2020/6/28 18:49
  */
 @Slf4j
-public class EsIndexTest {
+public class EsIndexTest extends ESAbstractTest {
     private RecentOrderIndexMapper recentOrderIndexMapper;
 
     @Before
@@ -88,9 +86,5 @@ public class EsIndexTest {
         countDownLatch.await();
         log.info("index success restStatus：{}", restStatusCompletableFuture.get());
         Assert.assertNull(ex.get());
-    }
-
-    protected <R> R createEsMapper(Class<R> mapperClass) {
-        return MapperProxyFactory.getMapperProxy(mapperClass, SampleClusterRouterProvider.SAMPLE_CLUSTER_NAME);
     }
 }
