@@ -37,4 +37,11 @@ public class ESDeleteTest extends ESAbstractTest {
         log.info("delete response:{}", result);
     }
 
+    @Test
+    @SneakyThrows
+    public void deleteRecentOrderBoolean() {
+        Boolean bool = recentOrderDeleteMapper.deleteRecentOrderBoolean(10124512292666L);
+        log.info("delete result:{}", bool);
+    }
+
 }
