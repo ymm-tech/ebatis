@@ -56,6 +56,9 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
                 entityClass = genericType.resolveGeneric(0, 0);
                 return new ArrayMultiSearchResponseExtractor<>(new ArrayDocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE),
                         genericType.resolveGeneric(0));
+            } else if (List.class.isAssignableFrom(entityClass)) {
+                entityClass = genericType.resolveGeneric(0, 0);
+                return new ArrayListSearchResponseExtractor<>(new DocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE));
             } else {
                 throw new UnsupportedOperationException("暂不支持的返回值类型");
             }
