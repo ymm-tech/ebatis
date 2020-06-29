@@ -5,6 +5,8 @@ import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.rest.RestStatus;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author weilong.hu
  */
@@ -29,4 +31,12 @@ public interface RecentOrderDeleteMapper {
     //delete void Long
     @Delete
     void deleteRecentOrderVoid(Long id);
+
+    //delete CompletableFuture<Boolean> Long
+    @Delete
+    CompletableFuture<Boolean> deleteRecentOrderBooleanFuture(Long id);
+
+    //delete CompletableFuture<Void> Long
+    @Delete
+    CompletableFuture<Void> deleteRecentOrderVoidFuture(Long id);
 }

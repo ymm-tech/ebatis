@@ -40,4 +40,8 @@ public interface RecentOrderIndexMapper {
     //CompletableFuture <RestStatus>
     @Index
     CompletableFuture<RestStatus> indexRecentOrderCompletableFuture(RecentOrderModel recentOrderModel);
+
+    //index CompletableFuture<Void>
+    @Index
+    CompletableFuture<Void> indexRecentOrderFutureVoid(RecentOrderModel recentOrderModel);
 }

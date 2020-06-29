@@ -80,11 +80,27 @@ public class EsIndexTest extends ESAbstractTest {
         CompletableFuture<RestStatus> restStatusCompletableFuture = recentOrderIndexMapper.indexRecentOrderCompletableFuture(new RecentOrderModel());
         restStatusCompletableFuture.whenCompleteAsync((r, e) -> {
             log.info("index result:{}", r);
-            countDownLatch.countDown();
             ex.set(e);
+            countDownLatch.countDown();
         });
         countDownLatch.await();
         log.info("index success restStatus：{}", restStatusCompletableFuture.get());
+        Assert.assertNull(ex.get());
+    }
+
+    @SneakyThrows
+    @Test
+    public void indexRecentOrderFutureVoid() {
+        AtomicReference<Throwable> ex = new AtomicReference<>();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        CompletableFuture<Void> voidCompletableFuture = recentOrderIndexMapper.indexRecentOrderFutureVoid(new RecentOrderModel());
+        voidCompletableFuture.whenCompleteAsync((v, e) -> {
+            log.info("index over,result:{}", v, e);
+            ex.set(e);
+            countDownLatch.countDown();
+        });
+        countDownLatch.await();
+        log.info("index success");
         Assert.assertNull(ex.get());
     }
 }
