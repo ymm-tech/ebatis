@@ -6,6 +6,8 @@ import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.rest.RestStatus;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * @author weilong.hu
  */
@@ -34,4 +36,8 @@ public interface RecentOrderIndexMapper {
     //index RestStatus
     @Index
     RestStatus indexRecentOrderRestStatus(RecentOrderModel recentOrderModel);
+
+    //CompletableFuture <RestStatus>
+    @Index
+    CompletableFuture<RestStatus> indexRecentOrderCompletableFuture(RecentOrderModel recentOrderModel);
 }

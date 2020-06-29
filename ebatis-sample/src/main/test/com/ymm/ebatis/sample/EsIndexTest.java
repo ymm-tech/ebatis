@@ -9,8 +9,13 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.rest.RestStatus;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author weilong.hu
@@ -67,6 +72,22 @@ public class EsIndexTest {
     public void indexRecentOrderRestStatus() {
         RestStatus restStatus = recentOrderIndexMapper.indexRecentOrderRestStatus(new RecentOrderModel());
         log.info("index success restStatus：{}", restStatus);
+    }
+
+    @SneakyThrows
+    @Test
+    public void indexRecentOrderCompletableFuture() {
+        AtomicReference<Throwable> ex = new AtomicReference<>();
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        CompletableFuture<RestStatus> restStatusCompletableFuture = recentOrderIndexMapper.indexRecentOrderCompletableFuture(new RecentOrderModel());
+        restStatusCompletableFuture.whenCompleteAsync((r, e) -> {
+            log.info("index result:{}", r);
+            countDownLatch.countDown();
+            ex.set(e);
+        });
+        countDownLatch.await();
+        log.info("index success restStatus：{}", restStatusCompletableFuture.get());
+        Assert.assertNull(ex.get());
     }
 
     protected <R> R createEsMapper(Class<R> mapperClass) {
