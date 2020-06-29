@@ -49,7 +49,7 @@ public interface RecentOrderMultiSearchMapper {
     @MultiSearch(queryType = QueryType.BOOL)
     MultiSearchResponse queryRecentOrderMultiSearchResponse(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 
-    //MultiSearch List<Entity[]>
+    //MultiSearch List<Entity>[]
     @MultiSearch(queryType = QueryType.BOOL)
     List<RecentOrder>[] queryRecentOrderArrayList(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 
