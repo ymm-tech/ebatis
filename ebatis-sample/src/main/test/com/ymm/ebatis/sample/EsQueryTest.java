@@ -4,8 +4,6 @@ import com.google.common.collect.Lists;
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
-import com.ymm.ebatis.core.proxy.MapperProxyFactory;
-import com.ymm.ebatis.sample.cluster.SampleClusterRouterProvider;
 import com.ymm.ebatis.sample.condition.RecentOrderCondition;
 import com.ymm.ebatis.sample.condition.SampleRecentOrderCondition;
 import com.ymm.ebatis.sample.entity.RecentOrder;
@@ -27,7 +25,7 @@ import java.util.concurrent.CountDownLatch;
  * @since 2020/6/15 13:32
  */
 @Slf4j
-public class EsQueryTest {
+public class EsQueryTest extends ESAbstractTest {
     private RecentOrderSearchMapper recentOrderMapper;
     private RecentOrderMultiSearchMapper recentOrderMultiSearchMapper;
 
@@ -37,9 +35,6 @@ public class EsQueryTest {
         recentOrderMultiSearchMapper = createEsMapper(RecentOrderMultiSearchMapper.class);
     }
 
-    protected <R> R createEsMapper(Class<R> mapperClass) {
-        return MapperProxyFactory.getMapperProxy(mapperClass, SampleClusterRouterProvider.SAMPLE_CLUSTER_NAME);
-    }
 
     @SneakyThrows
     @Test

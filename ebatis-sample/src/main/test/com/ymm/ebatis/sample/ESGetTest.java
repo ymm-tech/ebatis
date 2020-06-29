@@ -1,8 +1,6 @@
 package com.ymm.ebatis.sample;
 
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
-import com.ymm.ebatis.core.proxy.MapperProxyFactory;
-import com.ymm.ebatis.sample.cluster.SampleClusterRouterProvider;
 import com.ymm.ebatis.sample.entity.RecentOrder;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderGetMapper;
@@ -20,16 +18,12 @@ import java.util.concurrent.CompletableFuture;
  * @since 2020/6/29 10:53
  */
 @Slf4j
-public class ESGetTest {
+public class ESGetTest extends ESAbstractTest {
     private RecentOrderGetMapper recentOrderGetMapper;
 
     @Before
     public void startup() {
         recentOrderGetMapper = createEsMapper(RecentOrderGetMapper.class);
-    }
-
-    protected <R> R createEsMapper(Class<R> mapperClass) {
-        return MapperProxyFactory.getMapperProxy(mapperClass, SampleClusterRouterProvider.SAMPLE_CLUSTER_NAME);
     }
 
     @Test
