@@ -1,6 +1,7 @@
 package com.ymm.ebatis.sample;
 
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
+import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderDeleteMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,14 @@ public class ESDeleteTest extends ESAbstractTest {
     @SneakyThrows
     public void deleteRecentOrder() {
         RestStatus restStatus = recentOrderDeleteMapper.deleteRecentOrder(10124512292666L);
-        log.info("recentOrder:{}", restStatus);
+        log.info("restStatus:{}", restStatus);
+    }
+
+    @Test
+    @SneakyThrows
+    public void deleteRecentOrderModel() {
+        RestStatus restStatus = recentOrderDeleteMapper.deleteRecentOrder(new RecentOrderModel());
+        log.info("delete restStatus:{}", restStatus);
     }
 
     @Test
