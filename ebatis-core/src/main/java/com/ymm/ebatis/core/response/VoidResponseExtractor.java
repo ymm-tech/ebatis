@@ -12,7 +12,6 @@ public class VoidResponseExtractor implements ConcreteResponseExtractor<Void, Ac
     private VoidResponseExtractor() {
     }
 
-
     @Override
     public Void doExtractData(ActionResponse response) {
         return null;
