@@ -227,4 +227,17 @@ public class EsQueryTest {
         String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(completableFuture.join());
         log.info("result:{}", s);
     }
+
+    @SneakyThrows
+    @Test
+    public void multiSearchArrayListy() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        List<RecentOrder>[] recentOrders = recentOrderMultiSearchMapper.queryRecentOrderArrayList(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        log.info("result:{}", s);
+    }
 }
