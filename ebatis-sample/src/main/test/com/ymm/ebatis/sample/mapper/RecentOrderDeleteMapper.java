@@ -1,6 +1,7 @@
 package com.ymm.ebatis.sample.mapper;
 
 import com.ymm.ebatis.core.annotation.Delete;
+import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.rest.RestStatus;
@@ -15,6 +16,10 @@ public interface RecentOrderDeleteMapper {
     //delete RestStatus Long
     @Delete
     RestStatus deleteRecentOrder(Long id);
+
+    //delete RestStatus RecentOrderModel
+    @Delete
+    RestStatus deleteRecentOrder(RecentOrderModel recentOrderModel);
 
     //delete DeleteResponse Long
     @Delete
