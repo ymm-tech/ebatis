@@ -151,8 +151,8 @@ public enum RequestType {
         Method method = meta.getElement();
         GenericType genericType = GenericType.forMethod(method).returnType();
 
-        Class<?> returnType = method.getReturnType();
-        if (CompletableFuture.class == returnType || Optional.class == returnType) {
+        Class<?> returnType;
+        while (CompletableFuture.class == (returnType = genericType.resolve()) || Optional.class == returnType) {
             genericType = genericType.resolveType(0);
         }
         return genericType;
