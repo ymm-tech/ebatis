@@ -2,6 +2,7 @@ package com.ymm.ebatis.sample.mapper;
 
 import com.ymm.ebatis.core.annotation.Update;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
+import com.ymm.ebatis.sample.entity.RecentOrderModelScript;
 import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -18,6 +19,10 @@ public interface RecentOrderUpdateMapper {
     //update UpdateResponse
     @Update(docAsUpsert = true)
     UpdateResponse updateRecentOrder(RecentOrderModel recentOrderModel);
+
+    //update UpdateResponse
+    @Update
+    UpdateResponse updateRecentOrder(RecentOrderModelScript recentOrderModelScript);
 
     //update GetResult
     //todo 返回为null 是否保留

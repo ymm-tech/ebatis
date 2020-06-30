@@ -1,6 +1,7 @@
 package com.ymm.ebatis.sample;
 
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
+import com.ymm.ebatis.sample.entity.RecentOrderModelScript;
 import com.ymm.ebatis.sample.mapper.RecentOrderUpdateMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,14 @@ public class ESUpdateTest extends ESAbstractTest {
         UpdateResponse updateResponse = recentOrderUpdateMapper.updateRecentOrder(new RecentOrderModel());
         log.info("update result:{}", updateResponse);
     }
+
+    @Test
+    @SneakyThrows
+    public void updateRecentOrderScript() {
+        UpdateResponse updateResponse = recentOrderUpdateMapper.updateRecentOrder(new RecentOrderModelScript());
+        log.info("update result:{}", updateResponse);
+    }
+
 
     @Test
     @SneakyThrows
