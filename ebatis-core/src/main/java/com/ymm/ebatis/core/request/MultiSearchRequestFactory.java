@@ -88,7 +88,7 @@ class MultiSearchRequestFactory extends AbstractRequestFactory<MultiSearch, Mult
             Object[] parameters = new Object[parameterLength];
             parameters[parameterMeta.getIndex()] = conditions[i];
             pageableParameter.ifPresent(p -> parameters[p.getIndex()] = pageable);
-            request.add(SearchRequestFactory.INSTANCE.create(meta, parameters));
+            request.add(RequestFactory.search().create(meta, parameters));
         }
 
         return request;
