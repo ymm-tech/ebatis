@@ -26,7 +26,7 @@ public class ArrayMultiSearchResponseExtractor<T> implements MultiSearchResponse
         Object[][] result = Stream.of(response.getResponses())
                 .map(MultiSearchResponse.Item::getResponse)
                 .map(extractor::doExtractData)
-                .toArray(i -> (T[][]) Array.newInstance(entityClass, i));
+                .toArray(i -> (T[][]) Array.newInstance(entityClass, i, 0));
 
         return (T[][]) result;
     }

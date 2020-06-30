@@ -55,7 +55,7 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
             } else if (entityClass.isArray()) {
                 entityClass = genericType.resolveGeneric(0, 0);
                 return new ArrayMultiSearchResponseExtractor<>(new ArrayDocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE),
-                        genericType.resolveGeneric(0));
+                        entityClass);
             } else if (List.class.isAssignableFrom(entityClass)) {
                 entityClass = genericType.resolveGeneric(0, 0);
                 return new ArrayListSearchResponseExtractor<>(new DocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE));
