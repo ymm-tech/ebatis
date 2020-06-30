@@ -37,7 +37,7 @@ public class GetResponseExtractorProvider extends AbstractResponseExtractorProvi
                         return Optional.ofNullable(ObjectMapperHolder.objectMapper().readValue(response.getSourceAsBytes(),
                                 genericType.resolveGeneric(0)));
                     } else {
-                        return null;
+                        return Optional.empty();
                     }
                 } catch (IOException e) {
                     throw new DocumentDeserializeException(e);
