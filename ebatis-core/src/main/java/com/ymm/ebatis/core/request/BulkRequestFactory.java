@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.Bulk;
 import com.ymm.ebatis.core.annotation.BulkType;
+import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +10,6 @@ import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Requests;
 
@@ -34,7 +34,7 @@ public class BulkRequestFactory extends AbstractRequestFactory<Bulk, BulkRequest
     protected void setAnnotationMeta(BulkRequest request, Bulk bulk) {
         request.setRefreshPolicy(bulk.refreshPolicy())
                 .timeout(bulk.timeout())
-                .waitForActiveShards(ActiveShardCount.parseString(bulk.waitForActiveShards()));
+                .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(bulk.waitForActiveShards()));
         BulkType type = bulk.bulkType();
 
         switch (type) {

@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.response;
 
 import com.google.auto.service.AutoService;
+import com.google.common.collect.Lists;
 import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
@@ -27,7 +28,9 @@ public class BulkResponseExtractorProvider extends AbstractResponseExtractorProv
         } else if (BulkResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
         } else if (List.class.isAssignableFrom(resultClass)) {
-            return response -> response;
+            return response -> Lists.newArrayList(((BulkResponse) response).getItems());
+        } else if (resultClass.isArray()) {
+            return response -> ((BulkResponse) response).getItems();
         } else {
             throw new UnsupportedOperationException();
         }
