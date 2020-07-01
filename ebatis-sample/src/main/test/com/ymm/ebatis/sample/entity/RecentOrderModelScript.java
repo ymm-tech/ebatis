@@ -3,6 +3,7 @@ package com.ymm.ebatis.sample.entity;
 import com.ymm.ebatis.core.domain.Script;
 import com.ymm.ebatis.core.provider.IdProvider;
 import com.ymm.ebatis.core.provider.ScriptProvider;
+import lombok.Data;
 
 import java.util.Collections;
 
@@ -10,6 +11,7 @@ import java.util.Collections;
  * @author weilong.hu
  * @since 2020/6/30 18:21
  */
+@Data
 public class RecentOrderModelScript implements IdProvider, ScriptProvider {
     public static final Script SCRIPT = Script.inline("ctx._source.shipperUserId += params.count", Collections.singletonMap("count", 1024));
     private Long cargoId = 10124512292666L;

@@ -1,7 +1,6 @@
 package com.ymm.ebatis.sample;
 
 import com.google.common.collect.Lists;
-import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.sample.condition.RecentOrderCondition;
@@ -42,7 +41,7 @@ public class EsQueryTest extends ESAbstractTest {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292911L);
         RecentOrder[] recentOrders = recentOrderMapper.queryRecentOrderArray(recentOrderCondition);
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -52,7 +51,7 @@ public class EsQueryTest extends ESAbstractTest {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292911L);
         Page<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderPage(Pageable.of(1, 10), recentOrderCondition);
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -62,7 +61,7 @@ public class EsQueryTest extends ESAbstractTest {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292911L);
         List<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderList(recentOrderCondition);
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -72,7 +71,7 @@ public class EsQueryTest extends ESAbstractTest {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292911L);
         SearchResponse searchResponse = recentOrderMapper.queryRecentOrderSearchResponse(recentOrderCondition);
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(searchResponse);
+        String s = getJsonResult(searchResponse);
         log.info("result:{}", s);
     }
 
@@ -83,7 +82,7 @@ public class EsQueryTest extends ESAbstractTest {
         recentOrderCondition.setCargoId(10124512292911L);
         CompletableFuture<List<RecentOrder>> listCompletableFuture = recentOrderMapper.queryRecentOrderCompletableFutureList(recentOrderCondition);
         List<RecentOrder> recentOrders = listCompletableFuture.get();
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -93,7 +92,7 @@ public class EsQueryTest extends ESAbstractTest {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292911L);
         RecentOrder[] recentOrders = recentOrderMapper.queryRecentOrderArrayScoreFunction(recentOrderCondition);
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -107,7 +106,7 @@ public class EsQueryTest extends ESAbstractTest {
         List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition},
                 new Pageable[]{Pageable.of(0, 10), Pageable.of(1, 10)});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        String s = getJsonResult(pages);
         log.info("result:{}", s);
     }
 
@@ -121,7 +120,7 @@ public class EsQueryTest extends ESAbstractTest {
         List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
                 Lists.newArrayList(recentOrderCondition, sampleRecentOrderCondition),
                 Lists.newArrayList(Pageable.of(0, 10), Pageable.of(1, 10)));
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        String s = getJsonResult(pages);
         log.info("result:{}", s);
     }
 
@@ -133,7 +132,7 @@ public class EsQueryTest extends ESAbstractTest {
         List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
                 recentOrderCondition,
                 Pageable.of(0, 10));
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        String s = getJsonResult(pages);
         log.info("result:{}", s);
     }
 
@@ -147,7 +146,7 @@ public class EsQueryTest extends ESAbstractTest {
         Page<RecentOrder>[] pages = recentOrderMultiSearchMapper.queryRecentOrderPageArray(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition},
                 new Pageable[]{Pageable.of(0, 10), Pageable.of(1, 10)});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(pages);
+        String s = getJsonResult(pages);
         log.info("result:{}", s);
     }
 
@@ -160,7 +159,7 @@ public class EsQueryTest extends ESAbstractTest {
         sampleRecentOrderCondition.setCargoId(10124512292911L);
         List<List<RecentOrder>> recentOrders = recentOrderMultiSearchMapper.queryRecentOrderListList(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -173,7 +172,7 @@ public class EsQueryTest extends ESAbstractTest {
         sampleRecentOrderCondition.setCargoId(10124512292911L);
         RecentOrder[][] recentOrders = recentOrderMultiSearchMapper.queryRecentOrderArrayArray(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -186,7 +185,7 @@ public class EsQueryTest extends ESAbstractTest {
         sampleRecentOrderCondition.setCargoId(10124512292911L);
         List<RecentOrder[]> recentOrders = recentOrderMultiSearchMapper.queryRecentOrderListArray(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 
@@ -199,7 +198,7 @@ public class EsQueryTest extends ESAbstractTest {
         sampleRecentOrderCondition.setCargoId(10124512292911L);
         MultiSearchResponse multiSearchResponse = recentOrderMultiSearchMapper.queryRecentOrderMultiSearchResponse(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(multiSearchResponse);
+        String s = getJsonResult(multiSearchResponse);
         log.info("result:{}", s);
     }
 
@@ -219,7 +218,7 @@ public class EsQueryTest extends ESAbstractTest {
             countDownLatch.countDown();
         });
         countDownLatch.await();
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(completableFuture.join());
+        String s = getJsonResult(completableFuture.join());
         log.info("result:{}", s);
     }
 
@@ -232,7 +231,7 @@ public class EsQueryTest extends ESAbstractTest {
         sampleRecentOrderCondition.setCargoId(10124512292911L);
         List<RecentOrder>[] recentOrders = recentOrderMultiSearchMapper.queryRecentOrderArrayList(
                 new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
-        String s = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrders);
+        String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
 }
