@@ -20,7 +20,7 @@ public @interface Bulk {
 
     String waitForActiveShards() default "-2";
 
-    String refreshPolicy() default "NONE";
+    String refreshPolicy() default "false";
 
     Index[] index() default {};
 
