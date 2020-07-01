@@ -1,6 +1,5 @@
 package com.ymm.ebatis.sample;
 
-import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.sample.entity.RecentOrder;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderGetMapper;
@@ -30,7 +29,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderLong() {
         RecentOrder recentOrder = recentOrderGetMapper.getRecentOrder(10124512292666L);
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrder);
+        String result = getJsonResult(recentOrder);
         log.info("recentOrder:{}", result);
     }
 
@@ -38,7 +37,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderString() {
         RecentOrder recentOrder = recentOrderGetMapper.getRecentOrder("10124512292666");
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrder);
+        String result = getJsonResult(recentOrder);
         log.info("recentOrder:{}", result);
     }
 
@@ -46,7 +45,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderModel() {
         RecentOrder recentOrder = recentOrderGetMapper.getRecentOrder(new RecentOrderModel());
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrder);
+        String result = getJsonResult(recentOrder);
         log.info("recentOrder:{}", result);
     }
 
@@ -54,7 +53,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderOptional() {
         Optional<RecentOrder> recentOrder = recentOrderGetMapper.getRecentOrderOptional(10124512292666L);
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrder.orElse(null));
+        String result = getJsonResult(recentOrder.orElse(null));
         log.info("recentOrder:{}", result);
     }
 
@@ -62,7 +61,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderGetResponse() {
         GetResponse getResponse = recentOrderGetMapper.getRecentOrderGetResponse(10124512292666L);
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(getResponse);
+        String result = getJsonResult(getResponse);
         log.info("recentOrder:{}", result);
     }
 
@@ -71,7 +70,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderCompletableFutureWithOption() {
         CompletableFuture<Optional<RecentOrder>> recentOrder = recentOrderGetMapper.getRecentOrderCompletableFuture(10124512292666L);
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrder.get().orElse(null));
+        String result = getJsonResult(recentOrder.get().orElse(null));
         log.info("recentOrder:{}", result);
     }
 
@@ -79,7 +78,7 @@ public class ESGetTest extends ESAbstractTest {
     @SneakyThrows
     public void getRecentOrderCompletableFuture() {
         CompletableFuture<RecentOrder> recentOrder = recentOrderGetMapper.getRecentOrderCompletableFuture("10124512292666");
-        String result = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(recentOrder.get());
+        String result = getJsonResult(recentOrder.get());
         log.info("recentOrder:{}", result);
     }
 }

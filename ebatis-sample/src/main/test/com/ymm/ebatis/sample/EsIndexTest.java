@@ -1,6 +1,5 @@
 package com.ymm.ebatis.sample;
 
-import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderIndexMapper;
 import lombok.SneakyThrows;
@@ -61,7 +60,7 @@ public class EsIndexTest extends ESAbstractTest {
     @Test
     public void indexRecentOrderIndexResponse() {
         IndexResponse indexResponse = recentOrderIndexMapper.indexRecentOrderIndexResponse(new RecentOrderModel());
-        String response = ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(indexResponse);
+        String response = getJsonResult(indexResponse);
         log.info("indexResponse success ：{}", response);
     }
 

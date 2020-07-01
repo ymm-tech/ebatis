@@ -20,7 +20,7 @@ public interface RecentOrderUpdateMapper {
     @Update(docAsUpsert = true)
     UpdateResponse updateRecentOrder(RecentOrderModel recentOrderModel);
 
-    //update UpdateResponse
+    //update UpdateResponse script
     @Update
     UpdateResponse updateRecentOrder(RecentOrderModelScript recentOrderModelScript);
 
