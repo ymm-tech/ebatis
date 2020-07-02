@@ -4,6 +4,7 @@ import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.annotation.SearchScroll;
+import com.ymm.ebatis.core.annotation.UpdateByQuery;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.domain.Collapse;
@@ -49,6 +50,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         annotationClasses.add(Search.class);
         annotationClasses.add(MultiSearch.class);
         annotationClasses.add(SearchScroll.class);
+        annotationClasses.add(UpdateByQuery.class);
 
         SEARCH_ANNOTATION_CLASSES = Collections.unmodifiableList(annotationClasses);
     }
