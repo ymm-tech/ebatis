@@ -1,9 +1,9 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.DeleteByQuery;
+import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -23,7 +23,7 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setRefresh(deleteByQuery.refresh())
                 .setTimeout(deleteByQuery.timeout())
                 .setMaxRetries(deleteByQuery.maxRetries())
-                .setWaitForActiveShards(ActiveShardCount.parseString(deleteByQuery.waitForActiveShards()))
+                .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(deleteByQuery.waitForActiveShards()))
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
                 .setConflicts(deleteByQuery.conflicts());
