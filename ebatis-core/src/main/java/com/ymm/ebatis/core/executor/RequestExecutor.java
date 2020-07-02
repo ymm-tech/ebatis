@@ -103,6 +103,15 @@ public interface RequestExecutor {
     }
 
     /**
+     * 获取多get请求执行器
+     *
+     * @return 多get请求执行器
+     */
+    static RequestExecutor multiGet() {
+        return MultiGetExecutor.INSTANCE;
+    }
+
+    /**
      * 执行实际的ES操作
      *
      * @param cluster ES客户端
