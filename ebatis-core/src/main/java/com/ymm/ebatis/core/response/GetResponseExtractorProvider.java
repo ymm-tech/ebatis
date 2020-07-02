@@ -31,11 +31,12 @@ public class GetResponseExtractorProvider extends AbstractResponseExtractorProvi
         if (resultClass == GetResponse.class) {
             return RawResponseExtractor.INSTANCE;
         } else if (resultClass == Optional.class) {
+            Class<?> entityClass = genericType.resolveGeneric(0);
             return (ConcreteResponseExtractor<?, GetResponse>) response -> {
                 try {
                     if (response.isExists()) {
                         return Optional.ofNullable(ObjectMapperHolder.objectMapper().readValue(response.getSourceAsBytes(),
-                                genericType.resolveGeneric(0)));
+                                entityClass));
                     } else {
                         return Optional.empty();
                     }

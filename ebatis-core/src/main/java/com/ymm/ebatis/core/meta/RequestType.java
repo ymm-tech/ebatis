@@ -7,6 +7,7 @@ import com.ymm.ebatis.core.annotation.Delete;
 import com.ymm.ebatis.core.annotation.DeleteByQuery;
 import com.ymm.ebatis.core.annotation.Get;
 import com.ymm.ebatis.core.annotation.Index;
+import com.ymm.ebatis.core.annotation.MultiGet;
 import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.annotation.SearchScroll;
@@ -18,6 +19,8 @@ import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.provider.ScrollProvider;
 import lombok.Getter;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
 
@@ -128,6 +131,27 @@ public enum RequestType {
             }
 
             return Optional.ofNullable(genericType.resolve());
+        }
+    },
+    /**
+     * 索引请求
+     */
+    MULTI_GET(MultiGet.class, RequestExecutor.multiGet()) {
+        @Override
+        public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+            GenericType genericType = RequestType.getReturnGenericType(meta);
+            if (genericType.is(MultiGetResponse.class)) {
+                return super.getEntityClass(meta);
+            }
+            if (genericType.isArray() || genericType.isCollection()) {
+                Class<?> clazz = genericType.resolveGeneric(0);
+                if (MultiGetItemResponse.class == clazz) {
+                    return super.getEntityClass(meta);
+                }
+                return genericType.resolveGenericOptional(0, 0);
+            } else {
+                return genericType.resolveGenericOptional();
+            }
         }
     },
     CAT(Cat.class, RequestExecutor.cat()),

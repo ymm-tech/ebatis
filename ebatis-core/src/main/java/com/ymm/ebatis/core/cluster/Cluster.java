@@ -10,6 +10,8 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.ClearScrollRequest;
@@ -329,5 +331,15 @@ public interface Cluster extends Closeable {
      */
     default void clearScrollAsync(ClearScrollRequest request, ActionListener<ClearScrollResponse> listener) {
         highLevelClient().clearScrollAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    /**
+     * 异步多GET请求
+     *
+     * @param request  multi get request
+     * @param listener response listener
+     */
+    default void mgetAsync(MultiGetRequest request, ActionListener<MultiGetResponse> listener) {
+        highLevelClient().mgetAsync(request, RequestOptions.DEFAULT, listener);
     }
 }
