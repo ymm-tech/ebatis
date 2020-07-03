@@ -13,6 +13,7 @@ import com.ymm.ebatis.core.domain.Script;
 import com.ymm.ebatis.core.provider.ScoreFunctionProvider;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
  * @since 2020/6/15 17:21
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider {
 
     @Must
