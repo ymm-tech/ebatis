@@ -13,6 +13,7 @@ import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.domain.ScriptField;
 import com.ymm.ebatis.core.domain.Sort;
+import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.CollapseProvider;
@@ -135,14 +136,16 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                 searchSource.sort(sort.toSortBuilder());
             }
         }
-
-        if (condition instanceof SourceProvider) {
-            SourceProvider sourceProvider = (SourceProvider) condition;
-            searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
+        if (meta.unwrappedReturnType().map(MetaUtils::isBasic).orElse(false)) {
+            searchSource.fetchSource(false);
         } else {
-            searchSource.fetchSource(meta.getIncludeFields(), ArrayUtils.EMPTY_STRING_ARRAY);
+            if (condition instanceof SourceProvider) {
+                SourceProvider sourceProvider = (SourceProvider) condition;
+                searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
+            } else {
+                searchSource.fetchSource(meta.getIncludeFields(), ArrayUtils.EMPTY_STRING_ARRAY);
+            }
         }
-
         if (condition instanceof CollapseProvider) {
             Collapse collapse = ((CollapseProvider) condition).getCollapse();
             searchSource.collapse(collapse.toCollapseBuilder());

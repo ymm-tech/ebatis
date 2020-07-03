@@ -2,6 +2,7 @@ package com.ymm.ebatis.core.generic;
 
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.exception.GenericTypeException;
+import com.ymm.ebatis.core.meta.MetaUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -115,6 +116,15 @@ public interface GenericType {
      */
     default boolean isWrapped() {
         return isPage() || isCompletableFuture() || isCollection() || isOptional();
+    }
+
+    /**
+     * 判断当前类型是的是基本类型
+     *
+     * @return 如果是基本类型，返回<code>true</code>
+     */
+    default boolean isBasic() {
+        return resolveOptional().map(MetaUtils::isBasic).orElse(false);
     }
 
     /**

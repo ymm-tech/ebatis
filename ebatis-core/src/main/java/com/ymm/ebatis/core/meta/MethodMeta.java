@@ -23,6 +23,8 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
 
     Class<?> getReturnType();
 
+    Optional<Class<?>> unwrappedReturnType();
+
     default void setPageable(Object[] args) {
         getPageableParameter()
                 .map(p -> (Pageable) p.getValue(args))

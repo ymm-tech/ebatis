@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.sample.condition.RecentOrderCondition;
+import com.ymm.ebatis.sample.condition.SampleRecentOrderCondition;
 import com.ymm.ebatis.sample.entity.RecentOrder;
 import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.search.SearchResponse;
@@ -19,25 +20,46 @@ import java.util.concurrent.CompletableFuture;
 public interface RecentOrderSearchMapper {
     //Search Entity[]测试
     @Search(queryType = QueryType.BOOL)
-    RecentOrder[] queryRecentOrderArray(RecentOrderCondition recentOrderCondition);
+    RecentOrder[] queryRecentOrderArray(RecentOrderCondition condition);
 
     //Search Page<Entity>测试
     @Search(queryType = QueryType.BOOL)
-    Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition recentOrderCondition);
+    Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition condition);
 
     //Search List<Entity>测试
     @Search(queryType = QueryType.BOOL)
-    List<RecentOrder> queryRecentOrderList(RecentOrderCondition recentOrderCondition);
+    List<RecentOrder> queryRecentOrderList(RecentOrderCondition condition);
 
     //Search SearchResponse测试
     @Search(queryType = QueryType.BOOL)
-    SearchResponse queryRecentOrderSearchResponse(RecentOrderCondition recentOrderCondition);
+    SearchResponse queryRecentOrderSearchResponse(RecentOrderCondition condition);
 
     //Search CompletableFuture<List<Entity>>
     @Search(queryType = QueryType.BOOL)
-    CompletableFuture<List<RecentOrder>> queryRecentOrderCompletableFutureList(RecentOrderCondition recentOrderCondition);
+    CompletableFuture<List<RecentOrder>> queryRecentOrderCompletableFutureList(RecentOrderCondition condition);
 
     //Search FUNCTION_SCORE测试
     @Search(queryType = QueryType.FUNCTION_SCORE)
-    RecentOrder[] queryRecentOrderArrayScoreFunction(RecentOrderCondition recentOrderCondition);
+    RecentOrder[] queryRecentOrderArrayScoreFunction(RecentOrderCondition condition);
+
+    //Search Entity 测试
+    @Search(queryType = QueryType.BOOL)
+    RecentOrder queryRecentOrder(SampleRecentOrderCondition condition);
+
+    //Search Long 测试
+    @Search(queryType = QueryType.BOOL)
+    Long queryRecentOrderCount(SampleRecentOrderCondition condition);
+
+    //Search long 测试
+    @Search(queryType = QueryType.BOOL)
+    long queryRecentOrderCount();
+
+    //Search Boolean 测试
+    @Search(queryType = QueryType.BOOL)
+    Boolean queryRecentOrderCountWithBoolean(SampleRecentOrderCondition condition);
+
+    //Search Boolean 测试
+    @Search(queryType = QueryType.BOOL)
+    boolean queryRecentOrderCountWithBool(SampleRecentOrderCondition condition);
+
 }

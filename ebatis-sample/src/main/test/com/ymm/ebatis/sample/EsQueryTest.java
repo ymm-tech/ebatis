@@ -98,6 +98,47 @@ public class EsQueryTest extends ESAbstractTest {
 
     @SneakyThrows
     @Test
+    public void queryRecentOrder() {
+        RecentOrder recentOrder = recentOrderMapper.queryRecentOrder(new SampleRecentOrderCondition());
+        String s = getJsonResult(recentOrder);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderCount() {
+        Long count = recentOrderMapper.queryRecentOrderCount(new SampleRecentOrderCondition());
+        String s = getJsonResult(count);
+        log.info("RecentOrder count:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderCountWithBase() {
+        long count = recentOrderMapper.queryRecentOrderCount();
+        String s = getJsonResult(count);
+        log.info("RecentOrder count:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderCountWithBoolean() {
+        Boolean bool = recentOrderMapper.queryRecentOrderCountWithBoolean(new SampleRecentOrderCondition());
+        String s = getJsonResult(bool);
+        log.info("RecentOrder exist:{}", s);
+    }
+
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderCountWithBool() {
+        boolean bool = recentOrderMapper.queryRecentOrderCountWithBool(new RecentOrderCondition());
+        String s = getJsonResult(bool);
+        log.info("RecentOrder exist:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
     public void multiSearchListPageWithArray() {
         RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
         recentOrderCondition.setCargoId(10124512292966L);
