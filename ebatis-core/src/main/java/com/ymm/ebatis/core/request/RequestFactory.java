@@ -32,22 +32,6 @@ public interface RequestFactory<R extends ActionRequest> {
         return MultiSearchRequestFactory.INSTANCE;
     }
 
-    static RequestFactory<SearchRequest> metric() {
-        return MetricAggRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> bucket() {
-        return BucketAggRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> pipeline() {
-        return PipelineAggRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> matrix() {
-        return MatrixAggRequestFactory.INSTANCE;
-    }
-
     static RequestFactory<BulkRequest> bulk() {
         return BulkRequestFactory.INSTANCE;
     }
