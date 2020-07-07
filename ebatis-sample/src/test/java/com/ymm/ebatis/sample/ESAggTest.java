@@ -1,5 +1,6 @@
 package com.ymm.ebatis.sample;
 
+import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.sample.condition.RecentOrderAggCondition;
 import com.ymm.ebatis.sample.mapper.RecentOrderAggMapper;
 import lombok.SneakyThrows;
@@ -29,7 +30,7 @@ public class ESAggTest extends ESAbstractTest {
     @Test
     @SneakyThrows
     public void aggRecentOrder() {
-        SearchResponse searchResponse = recentOrderAggMapper.aggRecentOrder(new RecentOrderAggCondition());
+        SearchResponse searchResponse = recentOrderAggMapper.aggRecentOrder(Pageable.of(0, 10), new RecentOrderAggCondition());
         String result = getJsonResult(searchResponse);
         log.info("result:{}", result);
     }
