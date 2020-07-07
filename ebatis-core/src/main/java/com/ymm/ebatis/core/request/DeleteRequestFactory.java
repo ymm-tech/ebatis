@@ -4,6 +4,7 @@ import com.ymm.ebatis.core.annotation.Delete;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.support.ActiveShardCount;
@@ -47,6 +48,10 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
 
         if (parameterMeta.isBasic()) {
             request.id(String.valueOf(condition));
+        }
+
+        if (condition instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) condition).getRouting());
         }
 
         return request;

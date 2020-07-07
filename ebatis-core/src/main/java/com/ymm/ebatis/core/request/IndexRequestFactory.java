@@ -6,6 +6,7 @@ import com.ymm.ebatis.core.annotation.Index;
 import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +65,10 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
         if (doc instanceof VersionProvider) {
             request.version(((VersionProvider) doc).getVersion());
+        }
+
+        if (doc instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) doc).getRouting());
         }
 
         return request;

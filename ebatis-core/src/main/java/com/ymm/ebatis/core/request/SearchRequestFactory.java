@@ -18,6 +18,7 @@ import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.CollapseProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScriptFieldProvider;
 import com.ymm.ebatis.core.provider.SortProvider;
 import com.ymm.ebatis.core.provider.SourceProvider;
@@ -103,7 +104,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                     searchSource.from(p.getFrom()).size(p.getSize());
                 });
 
-        setProviderMeta(condition, searchSource, meta);
+        setProviderMeta(condition, searchSource, meta, request);
 
         request.source(searchSource);
 
@@ -124,7 +125,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         return queryType.orElse(QueryType.AUTO).getQueryBuilderFactory();
     }
 
-    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource, MethodMeta meta) {
+    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource, MethodMeta meta, SearchRequest request) {
         if (condition instanceof ScriptFieldProvider) {
             ScriptField[] fields = ((ScriptFieldProvider) condition).getScriptFields();
             for (ScriptField field : fields) {
@@ -151,6 +152,9 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         if (condition instanceof CollapseProvider) {
             Collapse collapse = ((CollapseProvider) condition).getCollapse();
             searchSource.collapse(collapse.toCollapseBuilder());
+        }
+        if (condition instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) condition).getRouting());
         }
     }
 }

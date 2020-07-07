@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.exception.ConditionNotSupportException;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
@@ -42,6 +43,10 @@ class GetRequestFactory extends AbstractRequestFactory<Get, GetRequest> {
 
             if (value instanceof VersionProvider) {
                 request.version(((VersionProvider) value).getVersion());
+            }
+
+            if (value instanceof RoutingProvider) {
+                request.routing(((RoutingProvider) value).getRouting());
             }
         }
 

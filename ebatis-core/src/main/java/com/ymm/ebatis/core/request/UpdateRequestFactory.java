@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScriptProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
@@ -72,6 +73,10 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
                 // Partial Document 更新
                 IndexRequest indexRequest = RequestFactory.index().create(meta, args);
                 request.doc(indexRequest);
+            }
+
+            if (doc instanceof RoutingProvider) {
+                request.routing(((RoutingProvider) doc).getRouting());
             }
         }
 
