@@ -1,10 +1,10 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.Agg;
+import com.ymm.ebatis.core.domain.Aggregation;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.AggProvider;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -40,17 +40,17 @@ class AggRequestFactory extends AbstractRequestFactory<Agg, SearchRequest> {
 
         SearchRequest request;
         if (condition != null) {
-            request = SearchRequestFactory.INSTANCE.create(meta, condition);
+            request = RequestFactory.search().create(meta, args);
         } else {
             request = new SearchRequest(ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
         if (condition instanceof AggProvider) {
             AggProvider aggProvider = (AggProvider) condition;
-            if (CollectionUtils.isNotEmpty(aggProvider.getAggregations())) {
-                aggProvider.getAggregations().forEach(agg -> {
+            if (ArrayUtils.isNotEmpty(aggProvider.getAggregations())) {
+                for (Aggregation agg : aggProvider.getAggregations()) {
                     request.source().aggregation(agg.toAggBuilder());
-                });
+                }
             }
         }
         return request;

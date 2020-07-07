@@ -1,6 +1,7 @@
 package com.ymm.ebatis.sample.mapper;
 
 import com.ymm.ebatis.core.annotation.Agg;
+import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.sample.condition.RecentOrderAggCondition;
 import com.ymm.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.search.SearchResponse;
@@ -16,11 +17,11 @@ import java.util.Map;
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderAggMapper {
     // agg SearchResponse
-    @Agg(aggOnly = true)
-    SearchResponse aggRecentOrder(RecentOrderAggCondition agg);
+    @Agg
+    SearchResponse aggRecentOrder(Pageable pageable, RecentOrderAggCondition agg);
 
     //agg Aggregations
-    @Agg
+    @Agg(aggOnly = true)
     Aggregations aggsRecentOrder(RecentOrderAggCondition agg);
 
     //agg List<Aggregation>
