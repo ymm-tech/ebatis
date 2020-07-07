@@ -275,4 +275,82 @@ public class EsQueryTest extends ESAbstractTest {
         String s = getJsonResult(recentOrders);
         log.info("result:{}", s);
     }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderCounts() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        List<Long> count = recentOrderMultiSearchMapper.queryRecentOrderCount(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = getJsonResult(count);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderArrayCounts() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        Long[] count = recentOrderMultiSearchMapper.queryRecentOrderCounts(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = getJsonResult(count);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderBasicCounts() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        long[] count = recentOrderMultiSearchMapper.queryRecentOrderBasicCounts(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = getJsonResult(count);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderBooleanCounts() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        List<Boolean> bool = recentOrderMultiSearchMapper.queryRecentOrderBooleanCounts(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = getJsonResult(bool);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderBooleanArrayCounts() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        Boolean[] bool = recentOrderMultiSearchMapper.queryRecentOrderBooleanArrayCounts(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = getJsonResult(bool);
+        log.info("result:{}", s);
+    }
+
+    @SneakyThrows
+    @Test
+    public void queryRecentOrderBoolArrayCounts() {
+        RecentOrderCondition recentOrderCondition = new RecentOrderCondition();
+        recentOrderCondition.setCargoId(10124512292966L);
+        SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
+        sampleRecentOrderCondition.setCargoId(10124512292911L);
+        boolean[] bool = recentOrderMultiSearchMapper.queryRecentOrderBoolArrayCounts(
+                new SampleRecentOrderCondition[]{recentOrderCondition, sampleRecentOrderCondition});
+        String s = getJsonResult(bool);
+        log.info("result:{}", s);
+    }
 }

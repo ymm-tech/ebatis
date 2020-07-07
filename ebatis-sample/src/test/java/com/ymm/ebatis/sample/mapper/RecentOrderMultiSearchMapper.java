@@ -56,4 +56,28 @@ public interface RecentOrderMultiSearchMapper {
     //MultiSearch Entity[][]
     @MultiSearch(queryType = QueryType.BOOL)
     CompletableFuture<RecentOrder[][]> queryRecentOrderArrayArrayFuture(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch List<Long>
+    @MultiSearch(queryType = QueryType.BOOL)
+    List<Long> queryRecentOrderCount(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch  Long[]
+    @MultiSearch(queryType = QueryType.BOOL)
+    Long[] queryRecentOrderCounts(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch long[]
+    @MultiSearch(queryType = QueryType.BOOL)
+    long[] queryRecentOrderBasicCounts(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch List<Boolean>
+    @MultiSearch(queryType = QueryType.BOOL)
+    List<Boolean> queryRecentOrderBooleanCounts(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch Boolean[]
+    @MultiSearch(queryType = QueryType.BOOL)
+    Boolean[] queryRecentOrderBooleanArrayCounts(SampleRecentOrderCondition[] sampleRecentOrderConditions);
+
+    //MultiSearch boolean[]
+    @MultiSearch(queryType = QueryType.BOOL)
+    boolean[] queryRecentOrderBoolArrayCounts(SampleRecentOrderCondition[] sampleRecentOrderConditions);
 }
