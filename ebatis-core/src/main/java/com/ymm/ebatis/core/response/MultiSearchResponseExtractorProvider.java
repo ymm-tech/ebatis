@@ -28,6 +28,8 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
             Class<?> entityClass = genericType.resolveGeneric(0);
             if (entityClass == Long.class) {
                 return TotalHitsListMultiSearchResponseExtractor.INSTANCE;
+            } else if (entityClass == Boolean.class) {
+                return BooleanListMultiSearchResponseExtractor.INSTANCE;
             } else if (List.class.isAssignableFrom(entityClass)) {
                 entityClass = genericType.resolveGeneric(0, 0);
                 return new ListMultiSearchResponseExtractor<>(new DocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE));
@@ -59,6 +61,14 @@ public class MultiSearchResponseExtractorProvider extends AbstractResponseExtrac
             } else if (List.class.isAssignableFrom(entityClass)) {
                 entityClass = genericType.resolveGeneric(0, 0);
                 return new ArrayListSearchResponseExtractor<>(new DocumentExtractor<>(DocumentMapper.of(entityClass), Integer.MAX_VALUE));
+            } else if (entityClass == Long.class) {
+                return TotalHitsArrayMultiSearchResponseExtractor.INSTANCE;
+            } else if (entityClass == long.class) {
+                return TotalHitsBasicArrayMultiSearchResponseExtractor.INSTANCE;
+            } else if (entityClass == Boolean.class) {
+                return BooleanArrayMultiSearchResponseExtractor.INSTANCE;
+            } else if (entityClass == boolean.class) {
+                return BoolArrayMultiSearchResponseExtractor.INSTANCE;
             } else {
                 throw new UnsupportedOperationException("暂不支持的返回值类型");
             }
