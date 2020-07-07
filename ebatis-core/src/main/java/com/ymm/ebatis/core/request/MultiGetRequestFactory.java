@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.exception.ConditionNotSupportException;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.MultiGetRequest;
@@ -53,6 +54,9 @@ class MultiGetRequestFactory extends AbstractRequestFactory<MultiGet, MultiGetRe
                     Item item = new Item(meta.getIndex(), StringUtils.trimToNull(meta.getType()), ((IdProvider) condition).getId());
                     if (condition instanceof VersionProvider) {
                         item.version(((VersionProvider) condition).getVersion());
+                    }
+                    if (condition instanceof RoutingProvider) {
+                        item.routing(((RoutingProvider) condition).getRouting());
                     }
                     request.add(item);
                 } else {

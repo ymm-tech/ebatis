@@ -3,6 +3,7 @@ package com.ymm.ebatis.core.request;
 import com.ymm.ebatis.core.annotation.UpdateByQuery;
 import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScriptProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -59,6 +60,9 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
 
         if (condition instanceof ScriptProvider) {
             request.setScript(((ScriptProvider) condition).getScript().toEsScript());
+        }
+        if (condition instanceof RoutingProvider) {
+            request.setRouting(((RoutingProvider) condition).getRouting());
         }
         searchRequest.source(source);
         return request;

@@ -46,7 +46,7 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
 
         DeleteByQueryRequest request = new DeleteByQueryRequest(meta.getIndices());
         request.getSearchRequest().source(source);
-
+        request.setRouting(searchRequest.routing());
         searchRequest.source(source);
         return request;
     }

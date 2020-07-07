@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.domain.Aggregation;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.AggProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -52,6 +53,9 @@ class AggRequestFactory extends AbstractRequestFactory<Agg, SearchRequest> {
                     request.source().aggregation(agg.toAggBuilder());
                 }
             }
+        }
+        if (condition instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) condition).getRouting());
         }
         return request;
     }
