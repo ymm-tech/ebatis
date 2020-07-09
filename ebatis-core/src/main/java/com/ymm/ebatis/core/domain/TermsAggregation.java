@@ -9,6 +9,7 @@ import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilde
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -45,6 +46,8 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
      * 子聚合
      */
     private List<Aggregation> subAggregations;
+
+    private Map<String, Object> metaData;
 
     private int shardSize = -1;
 
@@ -155,6 +158,15 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         return this;
     }
 
+    public Map<String, Object> getMetaData() {
+        return metaData;
+    }
+
+    public TermsAggregation metaData(Map<String, Object> metaData) {
+        this.metaData = metaData;
+        return this;
+    }
+
     @Override
     public AggregationBuilder toAggBuilder() {
         TermsAggregationBuilder agg = AggregationBuilders.terms(name)
@@ -162,6 +174,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
                 .showTermDocCountError(showTermDocCountError)
                 .minDocCount(minDocCount)
                 .shardMinDocCount(shardMinDocCount);
+        if (Objects.nonNull(metaData)) {
+            agg.setMetaData(metaData);
+        }
 
         if (Objects.nonNull(fieldName)) {
             agg.field(fieldName);
