@@ -174,9 +174,6 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
                 .showTermDocCountError(showTermDocCountError)
                 .minDocCount(minDocCount)
                 .shardMinDocCount(shardMinDocCount);
-        if (Objects.nonNull(metaData)) {
-            agg.setMetaData(metaData);
-        }
 
         if (Objects.nonNull(fieldName)) {
             agg.field(fieldName);
@@ -193,8 +190,13 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         if (CollectionUtils.isNotEmpty(orders)) {
             orders.forEach(order -> agg.order(order.order()));
         }
+
         if (CollectionUtils.isNotEmpty(subAggregations)) {
             subAggregations.forEach(subAgg -> agg.subAggregation(subAgg.toAggBuilder()));
+        }
+
+        if (Objects.nonNull(metaData)) {
+            agg.setMetaData(metaData);
         }
         return agg;
     }
