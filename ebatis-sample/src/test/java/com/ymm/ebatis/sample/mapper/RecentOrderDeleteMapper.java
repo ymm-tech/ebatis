@@ -13,35 +13,74 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderDeleteMapper {
-    //delete RestStatus Long
+    /**
+     * 删除订单
+     *
+     * @param id 订单id
+     * @return RestStatus
+     */
     @Delete
     RestStatus deleteRecentOrder(Long id);
 
-    //delete RestStatus RecentOrderModel
+    /**
+     * 删除订单
+     *
+     * @param model model
+     * @return RestStatus
+     */
     @Delete
-    RestStatus deleteRecentOrder(RecentOrderModel recentOrderModel);
+    RestStatus deleteRecentOrder(RecentOrderModel model);
 
-    //delete DeleteResponse Long
+    /**
+     * 删除订单
+     *
+     * @param id 订单id
+     * @return DeleteResponse
+     */
     @Delete
     DeleteResponse deleteRecentOrderDeleteResponse(Long id);
 
-    //delete Boolean Long
+    /**
+     * 删除订单
+     *
+     * @param id 订单id
+     * @return 删除成功，返回<code>true</code>
+     */
     @Delete
     Boolean deleteRecentOrderBoolean(Long id);
 
-    //delete boolean Long
+    /**
+     * 删除订单
+     *
+     * @param id 订单id
+     * @return 删除成功，返回<code>true</code>
+     */
     @Delete
     boolean deleteRecentOrderBool(Long id);
 
-    //delete void Long
+    /**
+     * 删除订单
+     *
+     * @param id 订单id
+     */
     @Delete
     void deleteRecentOrderVoid(Long id);
 
-    //delete CompletableFuture<Boolean> Long
+    /**
+     * 异步删除订单
+     *
+     * @param id 订单id
+     * @return 异步结果
+     */
     @Delete
     CompletableFuture<Boolean> deleteRecentOrderBooleanFuture(Long id);
 
-    //delete CompletableFuture<Void> Long
+    /**
+     * 异步删除订单
+     *
+     * @param id 订单id
+     * @return 异步结果
+     */
     @Delete
     CompletableFuture<Void> deleteRecentOrderVoidFuture(Long id);
 }
