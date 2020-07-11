@@ -13,35 +13,74 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderIndexMapper {
-    //index Boolean
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回<code>true</code>
+     */
     @Index
-    Boolean indexRecentOrderBoolean(RecentOrderModel recentOrderModel);
+    Boolean indexRecentOrderBoolean(RecentOrderModel order);
 
-    //index boolean
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回<code>true</code>
+     */
     @Index
-    boolean indexRecentOrderBool(RecentOrderModel recentOrderModel);
+    boolean indexRecentOrderBool(RecentOrderModel order);
 
-    //index String
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回文档id
+     */
     @Index
-    String indexRecentOrderString(RecentOrderModel recentOrderModel);
+    String indexRecentOrderString(RecentOrderModel order);
 
-    //index void
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     */
     @Index
-    void indexRecentOrderVoid(RecentOrderModel recentOrderModel);
+    void indexRecentOrderVoid(RecentOrderModel order);
 
-    //index IndexResponse
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回文档response
+     */
     @Index
-    IndexResponse indexRecentOrderIndexResponse(RecentOrderModel recentOrderModel);
+    IndexResponse indexRecentOrderIndexResponse(RecentOrderModel order);
 
-    //index RestStatus
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回RestStatus状态码
+     */
     @Index
-    RestStatus indexRecentOrderRestStatus(RecentOrderModel recentOrderModel);
+    RestStatus indexRecentOrderRestStatus(RecentOrderModel order);
 
-    //CompletableFuture <RestStatus>
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回异步RestStatus状态码
+     */
     @Index
-    CompletableFuture<RestStatus> indexRecentOrderCompletableFuture(RecentOrderModel recentOrderModel);
+    CompletableFuture<RestStatus> indexRecentOrderCompletableFuture(RecentOrderModel order);
 
-    //index CompletableFuture<Void>
+    /**
+     * 创建一笔订单
+     *
+     * @param order order 订单
+     * @return 创建成功，返回异步结果
+     */
     @Index
-    CompletableFuture<Void> indexRecentOrderFutureVoid(RecentOrderModel recentOrderModel);
+    CompletableFuture<Void> indexRecentOrderFutureVoid(RecentOrderModel order);
 }
