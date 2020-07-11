@@ -16,44 +16,95 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderMultiGetMapper {
-    //MultiGet MultiGetResponse
+    /**
+     * 多订单查询
+     *
+     * @param ids 文档id
+     * @return MultiGetResponse
+     */
     @MultiGet
     MultiGetResponse getRecentOrdersResponse(Long... ids);
 
-    //MultiGet MultiGetResponse
+
+    /**
+     * 单订单查询
+     *
+     * @param id 文档id
+     * @return MultiGetResponse
+     */
     @MultiGet
     MultiGetResponse getRecentOrdersResponse(Long id);
 
-    //MultiGet MultiGetResponse
+    /**
+     * 单订单查询
+     *
+     * @param order 订单
+     * @return MultiGetResponse
+     */
     @MultiGet
-    MultiGetResponse getRecentOrdersResponse(RecentOrderModel recentOrderModel);
+    MultiGetResponse getRecentOrdersResponse(RecentOrderModel order);
 
-    //MultiGet List<Entity>
+    /**
+     * 多订单查询
+     *
+     * @param ids 订单id
+     * @return 订单集合
+     */
     @MultiGet
     List<RecentOrder> getRecentOrders(Long... ids);
 
-    //MultiGet Entity[]
+    /**
+     * 多订单查询
+     *
+     * @param orders 订单
+     * @return 订单数组
+     */
     @MultiGet
-    RecentOrder[] getRecentOrders(List<RecentOrderModel> recentOrderModel);
+    RecentOrder[] getRecentOrders(List<RecentOrderModel> orders);
 
-    //MultiGet MultiGetItemResponse[]
+    /**
+     * 多订单查询
+     *
+     * @param ids 订单id
+     * @return MultiGetItemResponse[]
+     */
     @MultiGet
     MultiGetItemResponse[] getRecentOrdersItemResponse(Long... ids);
 
-    //MultiGet  List<MultiGetItemResponse>
+    /**
+     * 多订单查询
+     *
+     * @param orders 订单id
+     * @return List<MultiGetItemResponse>
+     */
     @MultiGet
-    List<MultiGetItemResponse> getRecentOrdersItemResponse(List<RecentOrderModel> recentOrderModel);
+    List<MultiGetItemResponse> getRecentOrdersItemResponse(List<RecentOrderModel> orders);
 
-    //MultiGet  List<Optional<Entity>>
+    /**
+     * 多订单查询
+     *
+     * @param ids 订单id
+     * @return List<Optional < RecentOrder>>
+     */
     @MultiGet
     List<Optional<RecentOrder>> getRecentOrdersOptional(Long... ids);
 
-    //MultiGet Optional<Entity>[]
+    /**
+     * 多订单查询
+     *
+     * @param orders 订单
+     * @return Optional<RecentOrder>[]
+     */
     @MultiGet
-    Optional<RecentOrder>[] getRecentOrdersOptional(List<RecentOrderModel> recentOrderModel);
+    Optional<RecentOrder>[] getRecentOrdersOptional(List<RecentOrderModel> orders);
 
-    //MultiGet CompletableFuture<Optional<Entity>[]>
+    /**
+     * 多订单异步查询
+     *
+     * @param orders 订单
+     * @return 异步订单查询结果
+     */
     @MultiGet
-    CompletableFuture<Optional<RecentOrder>[]> getRecentOrdersOptionalFuture(List<RecentOrderModel> recentOrderModel);
+    CompletableFuture<Optional<RecentOrder>[]> getRecentOrdersOptionalFuture(List<RecentOrderModel> orders);
 
 }

@@ -16,44 +16,92 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderUpdateMapper {
-    //update UpdateResponse
-    @Update(docAsUpsert = true)
-    UpdateResponse updateRecentOrder(RecentOrderModel recentOrderModel);
-
-    //update UpdateResponse script
+    /**
+     * 使用脚本更新订单，支持部分更新
+     *
+     * @param orderScript 订单
+     * @return UpdateResponse
+     */
     @Update
-    UpdateResponse updateRecentOrder(RecentOrderModelScript recentOrderModelScript);
+    UpdateResponse updateRecentOrder(RecentOrderModelScript orderScript);
 
-    //update GetResult
-    //todo 返回为null 是否保留
+    /**
+     * 更新订单，支持部分更新，如果文档不存在，则将部分更新文档建立索引
+     *
+     * @param order 订单
+     * @return UpdateResponse
+     */
     @Update(docAsUpsert = true)
-    GetResult updateRecentOrderGetResult(RecentOrderModel recentOrderModel);
+    UpdateResponse updateRecentOrder(RecentOrderModel order);
 
-    //update RestStatus
-    @Update(docAsUpsert = true)
-    RestStatus updateRecentOrderRestStatus(RecentOrderModel recentOrderModel);
+    /**
+     * 更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return GetResult
+     */
+    @Update
+    GetResult updateRecentOrderGetResult(RecentOrderModel order);
 
-    //update Boolean
-    @Update(docAsUpsert = true)
-    Boolean updateRecentOrderBoolean(RecentOrderModel recentOrderModel);
+    /**
+     * 更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return RestStatus状态码
+     */
+    @Update
+    RestStatus updateRecentOrderRestStatus(RecentOrderModel order);
 
-    //update boolean
-    @Update(docAsUpsert = true)
-    boolean updateRecentOrderBool(RecentOrderModel recentOrderModel);
+    /**
+     * 更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return 更新成功，返回<code>true</code>
+     */
+    @Update
+    Boolean updateRecentOrderBoolean(RecentOrderModel order);
 
-    //update Result
-    @Update(docAsUpsert = true)
-    Result updateRecentOrderResult(RecentOrderModel recentOrderModel);
+    /**
+     * 更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return 更新成功，返回<code>true</code>
+     */
+    @Update
+    boolean updateRecentOrderBool(RecentOrderModel order);
 
-    //update void
-    @Update(docAsUpsert = true)
-    void updateRecentOrderVoid(RecentOrderModel recentOrderModel);
+    /**
+     * 更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return Result
+     */
+    @Update
+    Result updateRecentOrderResult(RecentOrderModel order);
 
-    //update CompletableFuture<Result>
-    @Update(docAsUpsert = true)
-    CompletableFuture<Result> updateRecentOrderFuture(RecentOrderModel recentOrderModel);
+    /**
+     * 更新订单，支持部分更新
+     *
+     * @param order 订单
+     */
+    @Update
+    void updateRecentOrderVoid(RecentOrderModel order);
 
-    //update CompletableFuture<Void>
-    @Update(docAsUpsert = true)
-    CompletableFuture<Void> updateRecentOrderFutureVoid(RecentOrderModel recentOrderModel);
+    /**
+     * 异步更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return 异步结果
+     */
+    @Update
+    CompletableFuture<Result> updateRecentOrderFuture(RecentOrderModel order);
+
+    /**
+     * 异步更新订单，支持部分更新
+     *
+     * @param order 订单
+     * @return 异步结果
+     */
+    @Update
+    CompletableFuture<Void> updateRecentOrderFutureVoid(RecentOrderModel order);
 }
