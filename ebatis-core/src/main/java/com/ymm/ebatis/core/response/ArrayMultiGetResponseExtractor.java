@@ -23,7 +23,7 @@ public class ArrayMultiGetResponseExtractor<T> implements MultiGetResponseExtrac
         return (ArrayMultiGetResponseExtractor<T>) MAPPERS.computeIfAbsent(entityClass, ArrayMultiGetResponseExtractor::new);
     }
 
-    public ArrayMultiGetResponseExtractor(Class<T> entityClass) {
+    private ArrayMultiGetResponseExtractor(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
 
