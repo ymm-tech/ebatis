@@ -7,7 +7,7 @@
 > 创建索引
 
 ```json
-PUT /cargo_index
+PUT /recent_order_index
 {
   "settings": {
     "number_of_replicas": 0,
@@ -15,17 +15,20 @@ PUT /cargo_index
   },
   "mappings": {
     "properties": {
-      "id": {
+      "cargoId": {
         "type": "long"
       },
-      "name": {
+      "driverUserName": {
         "type": "keyword"
+      },
+      "loadAddress": {
+        "type": "text"
       },
       "searchable": {
         "type": "boolean"
       },
-      "channel": {
-        "type": "integer"
+      "companyId": {
+        "type": "long"
       }
     }
   }
@@ -35,17 +38,17 @@ PUT /cargo_index
 > 增加测试数据
 
 ```json
-POST /cargo_index/_bulk
+POST /recent_order_index/_bulk
 {"index":{}}
-{"id": 1, "name":"蔬菜", "searchable": true, "channel": 10}
+{"cargoId": 1, "driverUserName":"张三", "loadAddress": "南京市玄武区", "searchable": true,"companyId": 666}
 {"index":{}}
-{"id": 2, "name":"水果", "searchable": false, "channel": 10}
+{"cargoId": 2, "driverUserName":"李四", "loadAddress": "南京市秦淮区", "searchable": false,"companyId": 667}
 {"index":{}}
-{"id": 3, "name":"鱼肉", "searchable": true, "channel": 20}
+{"cargoId": 3, "driverUserName":"王五", "loadAddress": "南京市六合区", "searchable": true,"companyId": 668}
 {"index":{}}
-{"id": 4, "name":"山珍", "searchable": false, "channel": 30}
+{"cargoId": 4, "driverUserName":"赵六", "loadAddress": "南京市建邺区", "searchable": true,"companyId": 669}
 {"index":{}}
-{"id": 5, "name":"海鲜", "searchable": true, "channel": 20}
+{"cargoId": 5, "driverUserName":"钱七", "loadAddress": "南京市鼓楼区", "searchable": true,"companyId": 665}
 ```
 
 > POM依赖
@@ -69,27 +72,29 @@ ClusterRouter router = ClusterRouter.single(cluster);
 
 ```java
 @Data
-public class Cargo {
-    private Long id;
-    private String name;
-    private Integer channel;
+public class RecentOrder {
+    private Long cargoId
+    private String driverUserName;
+    private String loadAddress;
     private Boolean searchable;
+    private Integer companyId;
 }
 
 @Data
-public class CargoCondition {
+public class RecentOrderCondition {
     private Boolean searchable;
-    @Field(name = "channel")
-    private Integer[] channels;
+    
+    private String driverUserName;
 }
 ```
 
 > 定义Mapper接口
 
 ```java
-@EasyMapper(indices = "cargo_index")
-public interface CargoRepository {
-    List<Cargo> search(CargoCondition condition);
+@EasyMapper(indices = "recent_order_index")
+public interface RecentOrderRepository {
+    @Search
+    List<RecentOrder> search(RecentOrderCondition condition);
 }
 ```
 
@@ -114,26 +119,26 @@ public class SampleClusterRouterProvider implements ClusterRouterProvider {
 
 
 @Slf4j
-public class CargoRepositoryTest {
+public class OrderRepositoryTest {
 
     @Test
     public void search() {
         // 组装查询条件
-        CargoCondition condition = new CargoCondition();
+        RecentOrderCondition condition = new RecentOrderCondition();
         condition.setSearchable(Boolean.TRUE);
-        condition.setChannels(new Integer[]{10, 20});
+        condition.setDriverUserName("张三");
 
         // 映射接口
-        CargoRepository repository = MapperProxyFactory.getMapperProxy(CargoRepository.class, SampleClusterRouterProvider.SAMPLE_CLUSTER_NAME);
+        RecentOrderRepository repository = MapperProxyFactory.getMapperProxy(RecentOrderRepository.class, SampleClusterRouterProvider.SAMPLE_CLUSTER_NAME);
 
         // 搜索货源
-        List<Cargo> cargoes = repository.search(condition);
+        List<RecentOrder> orders = repository.search(condition);
 
         // 断言
-        Assert.assertEquals(3, cargoes.size());
+        Assert.assertEquals(3, orders.size());
 
         // 打印输出
-        cargoes.forEach(cargo -> log.info("{}", cargo));
+        cargoes.forEach(order -> log.info("{}", order));
     }
 }
 ```
@@ -187,41 +192,126 @@ ClusterRouter router = ClusterRouter.single(cluster);
 ```
 
 # 创建Mapper对象
-创建`Mapper`对象，需要先定义`Mapper`接口，所有的`Mapper`都需要加上`@EsMapper`注解，然后通过`EsMapperFactory`来创建接口的代理。
-## @EsMapper
+创建`Mapper`对象，需要先定义`Mapper`接口，所有的`Mapper`都需要加上`@Mapper`或`@EasyMapper`注解，然后通过`MapperProxyFactory`来创建接口的代理。
+## @Mapper
 此注解用于标记接口定义类是Mapper对象，属性说明如下：
 
 |序号|属性名|默认值|说明|
 |---|---|---|---|
-|1|`index`|必填|`ebatis`只支持单索引的操作，多个索引暂不支持|
-|2|`type`|可选，默认为空|最新版的ES已经不支持`type`定义，一个`index`对应一个文档映射|
-|3|`clusterRouter`|可选，默认为空|结合Spring用的属性，每个Mapper对象可以绑定一个路由器|
+|1|`indices`|必填|`ebatis`只支持多个索引操作|
+|2|`types`|可选，默认为空|最新版的ES已经不支持`type`定义|
+|3|`clusterRouter`|可选，默认为空|为每个Mapper对象绑定一个路由器，当不配置时默认取ebatis.properties中ebatis.clusterRouter配置的集群名|
 ## Mapper接口定义
 ```java
-@EsMapper(index = "cargo_index", type = "cargo")
-public interface CargoRepository {
+@EasyMapper(indices = "recent_order_index", types = "order" , clusterRouter = "sampleCluster")
+public interface OrderRepository {
+    //通过注解定义搜索的类型，不同搜索类型支持的返回结果类型不一样
+    @Search
+    List<Order> search(OrderCondition condition);
+}
+```
+
+## 创建cluster对象
+
+集群的加载通过SPI方式。
+
+```java
+@AutoService(ClusterRouterProvider.class)
+public class SampleClusterRouterProvider implements ClusterRouterProvider {
+    public static final String SAMPLE_CLUSTER_NAME = "sampleCluster";
+
+    @Override
+    public ClusterRouter getClusterRouter(String name) {
+        if (SAMPLE_CLUSTER_NAME.equalsIgnoreCase(name)) {
+            Cluster cluster = Cluster.simple("127.0.0.1", 9200, Credentials.basic("admin", "123456"));
+            ClusterRouter clusterRouter = ClusterRouter.single(cluster);
+            return clusterRouter;
+        } else {
+            return null;
+        }
+    }
 }
 ```
 
 ## 创建Mapper对象
-```java
-Cluster cluster = Cluster.simple("127.0.0.1", 9200);
-ClusterRouter router = ClusterRouter.single(cluster);
 
-CargoRepository repository = EsMapperFactory.createMapper(CargoRepository.class, router);
+```java
+OrderRepository repository = MapperProxyFactory.getMapperProxy((OrderRepository.class);
 ```
 
-## Mapper方法返回值类型
-|序号|类型|备注|
-|---|---|---|
-|1|`CompletableFuture`|异步执行，其他类型的返回值，其实都是异步转的同步`CompletableFuture#get`|
-|2|`ActionResponse`|所有集成此响应的类型,`SearchResponse`/`IndexResponse` etc.|
-|3|`Page`|分页查询|
-|4|`List`|列表类型|
-|5|`Array`|数组类型|
-|7|`boolean`/`Boolean`|判断执行是否成功|
-|8|`Number`|数值类型，比如metric聚合查询|
-|9|`void`|无返回值|
+## Mapper搜索方法返回值类型
+| 请求类型                          | 接口声明返回值                                  | 备注                      |
+| --------------------------------- | ----------------------------------------------- | ------------------------- |
+| @Search | Page\<Entity>                                   |                           |
+|                                   | List\<Entity>                                   |                           |
+|                                   | Entity[]                                        |                           |
+|                                   | SearchResponse                                  |                           |
+|                                   | Entity                                          |                           |
+|                                   | Long                                            |                           |
+|                                   | long                                            |                           |
+|                                   | Boolean                                         |                           |
+|                                   | boolean                                         |                           |
+| @MultiSearch                      | List\<Page\<Entity>>                            |                           |
+|                                   | Page\<Entity>\[]                                |                           |
+|                                   | List\<List\<Entity>>                            |                           |
+|                                   | Entity\[]\[]                                    |                           |
+|                                   | List\<Entity\[]>                                |                           |
+|                                   | List\<Entity>[]                                  |                       |
+|                                   | MultiSearchResponse                             |                           |
+|                                   | List\<Long>                                      |                           |
+|                                   | Long[]                                          |                           |
+|                                   | long[]                                          |                           |
+|                                   | List\<Boolean>                                   |                           |
+|                                   | Boolean[]                                       |                           |
+|                                   | boolean[]                                       |                           |
+| @Index                            | IndexResponse                                   |                           |
+|                                   | RestStatus                                      |                   |
+|                                   | boolean                                         |                           |
+|                                   | Boolean                                         |               |
+|                                   | String                                          |                     |
+|                                   | void                                            |                           |
+| @Get                                 | GetResponse                                     |                           |
+|                                   | Entity                                          |                           |
+|                                   | Optional\<Entity>                               |                           |
+| @Delete                                 | RestStatus                                      |                           |
+|                                   | DeleteResponse                                  |                           |
+|                                   | boolean                                         |                           |
+|                                   | Boolean                                         |                           |
+|                                   | void                                            |                           |
+| @Update                                 | UpdateResponse                                  |                           |
+|                                   | GetResult                                       |  |
+|                                   | RestStatus                                      |                           |
+|                                   | boolean                                         |                           |
+|                                   | Boolean                                         |                           |
+|                                   | Result                                          |                           |
+|                                   | void                                            |                           |
+| @Bulk                                 | List\<BulkItemResponse>                         |                           |
+|                                   | BulkResponse                                    |                           |
+|                                   | BulkItemResponse\[]                             |                           |
+| @MultiGet                                 | MultiGetResponse                                |                           |
+|                                   | MultiGetItemResponse\[]                         |                           |
+|                                   | List\<MultiGetItemResponse>                     |                           |
+|                                   | List\<Entity>                                   |                       |
+|                                   | Entity[]                                        |                       |
+|                                   | List<Optional\<Entity>>                          |                           |
+|                                   | Optional\<Entity>[]                              |                           |
+| @UpdateByQuery                                 | BulkByScrollResponse                            |                           |
+|                                   | BulkByScrollTask.Status                         |                           |
+|@DeleteByQuery                                  | BulkByScrollResponse                            |                           |
+|                                   | BulkByScrollTask.Status                         |                           |
+| @SearchScroll                                 | SearchResponse                                  |                           |
+|                                   | ScrollResponse                                  |                           |
+| @ClearScroll                                 | ClearScrollResponse                             |                           |
+|                                   | boolean                                         |                           |
+|                                   | Boolean                                         |                           |
+| @Agg（暂时只支持桶聚合 terms查询） | SearchResponse                                  |                           |
+|                                   | Aggregations                                    |                           |
+|                                   | List\<Aggregation>                               |                           |
+|                                   | Map<String, Aggregation>                        |                           |
+
+## 返回类型异步支持
+
+Mapper搜索方法支持异步操作，只需要将Mapper接口返回结果定义为CompletableFuture<Page\<Entity>>，这样异步的调用不会阻塞并且立刻返回，业务方可以继续处理自己的业务逻辑，在需要获取结果时，提取结果。
 
 # 文档接口
 ## 单文档接口
@@ -229,47 +319,232 @@ CargoRepository repository = EsMapperFactory.createMapper(CargoRepository.class,
 #### 接口定义
 ```java
 /**
- * 创建一个商品文档
- *
- * @param product 产品
+ * 创建一笔订单
+ * @param order order 订单
  * @return 创建成功，返回<code>true</code>
  */
 @Index
-Boolean indexProduct(Product product);
+Boolean indexRecentOrderBoolean(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ * @return 创建成功，返回<code>true</code>
+ */
+@Index
+boolean indexRecentOrderBool(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ * @return 创建成功，返回文档id
+ */
+@Index
+String indexRecentOrderString(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ */
+@Index
+void indexRecentOrderVoid(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ * @return 创建成功，返回文档response
+ */
+@Index
+IndexResponse indexRecentOrderIndexResponse(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ * @return 创建成功，返回RestStatus状态码
+ */
+@Index
+RestStatus indexRecentOrderRestStatus(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ * @return 创建成功，返回异步RestStatus状态码
+ */
+@Index
+CompletableFuture<RestStatus> indexRecentOrderCompletableFuture(RecentOrderModel order);
+
+/**
+ * 创建一笔订单
+ * @param order order 订单
+ * @return 创建成功，返回异步结果
+ */
+@Index
+CompletableFuture<Void> indexRecentOrderFutureVoid(RecentOrderModel order);
 ```
-> `@Index` 注解标明，此方法是创建索引的方法，也可以不加此注解，`ebatis`会根据方法前缀来判断，比如此方法中的前缀`index`，即表名为索引方法。
+
+> 执行index操作时，如果想自定义文档 _id，入参实体需实现IdProvider接口。
+>
+> 如果想自定义文档的路由值，入参实体需实现RoutingProvider接口。
 
 #### @Index属性说明
+
 |序号|属性名|默认值|说明|
 |---|---|---|---|
-|1|`routing`|空字符串|空字符串表示无路由|
-|2|`timeout`|1m|数值+时间单位(ms/s/m/h/M/y)|
-|3|`refreshPolicy`|`RefreshPolicy.NONE`|默认不刷新|
-|4|`id`|可选|指定id字段名称|
-|5|`pipeline`|可选||
-|6|`versionType`|`VersionType.INTERNAL`||
-|7|`waitForActiveShards`|-2|ActiveShardCount.DEFAULT|
+|1|`timeout`|1m|数值+时间单位(ms/s/m/h/M/y)|
+|2|`refreshPolicy`|`RefreshPolicy.NONE`|默认不刷新|
+|4|`pipeline`|可选||
+|5|`versionType`|`VersionType.INTERNAL`||
+|6|`waitForActiveShards`|-2|ActiveShardCount.DEFAULT|
 ### Get API
-> **暂不支持**
+#### 接口定义
+
+```java
+/**
+ * 查询订单
+ *
+ * @param id 文档id
+ * @return 订单 可能为null
+ */
+@Get
+RecentOrder getRecentOrder(Long id);
+/**
+ * 查询订单
+ *
+ * @param id 文档id
+ * @return 订单 可能为null
+ */
+@Get
+RecentOrder getRecentOrder(String id);
+/**
+ * 查询订单
+ *
+ * @param order 订单，需实现IdProvider
+ * @return 订单 可能为null
+ */
+@Get
+RecentOrder getRecentOrder(RecentOrderModel order);
+/**
+ * 查询订单
+ *
+ * @param id 订单id
+ * @return Option
+ */
+@Get
+Optional<RecentOrder> getRecentOrderOptional(Long id);
+/**
+ * 查询订单
+ *
+ * @param id 订单id
+ * @return GetResponse
+ */
+@Get
+GetResponse getRecentOrderGetResponse(Long id);
+/**
+ * 查询订单
+ *
+ * @param id 订单id
+ * @return 异步Optional
+ */
+@Get
+CompletableFuture<Optional<RecentOrder>> getRecentOrderCompletableFuture(Long id);
+/**
+ * 查询订单
+ *
+ * @param id 订单id
+ * @return 异步订单结果
+ */
+@Get
+CompletableFuture<RecentOrder> getRecentOrderCompletableFuture(String id);
+```
+
+> 执行get操作时，如果入参非基本类型，入参实体需实现IdProvider接口。
+>
+> 如果想自定义文档的路由值，入参实体需实现RoutingProvider接口。
+
+#### @Get属性说明
+
+| 序号 | 属性名     | 默认值 | 说明                             |
+| ---- | ---------- | ------ | -------------------------------- |
+| 1    | preference | ""     | 设置查询偏好，影响查询的分片策略 |
+| 2    | refresh    | false  | 设置是否刷新，默认不刷新         |
+| 3    | realtime   | true   | 设置是否实时查询，默认实时       |
 
 ### Delete API
+
 #### 接口定义
 ```java
 /**
- * 根据商品Id删除商品
+ * 删除订单
  *
- * @param id 商品Id
- * @return 删除响应
+ * @param id 订单id
+ * @return RestStatus
  */
 @Delete
-CompletableFuture<DeleteResponse> deleteById(Long id);
+RestStatus deleteRecentOrder(Long id);
+/**
+ * 删除订单
+ *
+ * @param model model
+ * @return RestStatus
+ */
+@Delete
+RestStatus deleteRecentOrder(RecentOrderModel model);
+/**
+ * 删除订单
+ *
+ * @param id 订单id
+ * @return DeleteResponse
+ */
+@Delete
+DeleteResponse deleteRecentOrderDeleteResponse(Long id);
+/**
+ * 删除订单
+ *
+ * @param id 订单id
+ * @return 删除成功，返回<code>true</code>
+ */
+@Delete
+Boolean deleteRecentOrderBoolean(Long id);
+/**
+ * 删除订单
+ *
+ * @param id 订单id
+ * @return 删除成功，返回<code>true</code>
+ */
+@Delete
+boolean deleteRecentOrderBool(Long id);
+/**
+ * 删除订单
+ *
+ * @param id 订单id
+ */
+@Delete
+void deleteRecentOrderVoid(Long id);
+/**
+ * 异步删除订单
+ *
+ * @param id 订单id
+ * @return 异步结果
+ */
+@Delete
+CompletableFuture<Boolean> deleteRecentOrderBooleanFuture(Long id);
+/**
+ * 异步删除订单
+ *
+ * @param id 订单id
+ * @return 异步结果
+ */
+@Delete
+CompletableFuture<Void> deleteRecentOrderVoidFuture(Long id);
 ```
-> `@Delete` 注解标明，此方法是删除索引的方法，也可以不加此注解，`ebatis`会根据方法前缀来判断。
+> 执行delete操作时，如果入参非基本类型，入参实体需实现IdProvider接口。
+>
+> 如果想自定义文档的路由值，入参实体需实现RoutingProvider接口。
 
 #### @Delete属性说明
 |序号|属性名|默认值|说明|
 |---|---|---|---|
-|1|`routing`|空字符串|空字符串表示无路由|
+|1|`waitForActiveShards`|活动分片数量|默认-2，不指定分片数量，-1或all指定全部分片|
 |2|`timeout`|1m|数值+时间单位(ms/s/m/h/M/y)|
 |3|`refreshPolicy`|`RefreshPolicy.NONE`|默认不刷新|
 ### Update API
