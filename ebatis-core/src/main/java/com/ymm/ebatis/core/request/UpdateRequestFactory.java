@@ -7,7 +7,6 @@ import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
 import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScriptProvider;
-import com.ymm.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.single.instance.InstanceShardOperationRequest;
@@ -58,10 +57,6 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
         if (parameterMeta.isBasic()) {
             request.id(String.valueOf(doc));
         } else {
-            if (doc instanceof VersionProvider) {
-                request.version(((VersionProvider) doc).getVersion());
-            }
-
             if (doc instanceof IdProvider) {
                 request.id(((IdProvider) doc).getId());
             }
