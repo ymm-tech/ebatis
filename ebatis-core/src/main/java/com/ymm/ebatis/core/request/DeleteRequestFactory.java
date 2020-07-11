@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.Delete;
+import com.ymm.ebatis.core.exception.ConditionNotSupportException;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
@@ -37,21 +38,22 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
         ParameterMeta parameterMeta = meta.getConditionParameter();
 
         Object condition = parameterMeta.getValue(args);
-
-        if (condition instanceof VersionProvider) {
-            request.version(((VersionProvider) condition).getVersion());
-        }
-
-        if (condition instanceof IdProvider) {
-            request.id(((IdProvider) condition).getId());
-        }
-
         if (parameterMeta.isBasic()) {
             request.id(String.valueOf(condition));
-        }
+        } else {
+            if (condition instanceof IdProvider) {
+                request.id(((IdProvider) condition).getId());
+            } else {
+                throw new ConditionNotSupportException(meta.toString());
+            }
 
-        if (condition instanceof RoutingProvider) {
-            request.routing(((RoutingProvider) condition).getRouting());
+            if (condition instanceof VersionProvider) {
+                request.version(((VersionProvider) condition).getVersion());
+            }
+
+            if (condition instanceof RoutingProvider) {
+                request.routing(((RoutingProvider) condition).getRouting());
+            }
         }
 
         return request;
