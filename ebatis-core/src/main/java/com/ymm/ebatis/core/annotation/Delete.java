@@ -19,7 +19,7 @@ public @interface Delete {
     String pipeline() default "";
 
     /**
-     * 执行删除时，要求的分片副本数量，默认-2使用es集群默认配置，<code>all</code>表示全副本+主分片，其他数字
+     * 执行删除时，要求的分片副本数量，默认-2使用es集群默认配置，<code>all</code>或-1表示全副本+主分片，其他数字
      * <table>
      *     <thead>
      *         <tr>
@@ -41,12 +41,12 @@ public @interface Delete {
      *             <td>主分片和所有副本都要可用</td>
      *         </tr>
      *         <tr>
-     *             <td>其他正数（0 - number_of_replicas + 1）</td>
-     *             <td></td>
+     *             <td>其他正数</td>
+     *             <td>（0 ~ number_of_replicas + 1）</td>
      *         </tr>
      *     </tbody>
      * </table>
-     *
+     * @see <a href="https://www.elastic.co/guide/en/elasticsearch/reference/7.7/docs-index_.html#index-wait-for-active-shards">Active Shards</a>
      * @return 分片数量
      */
     String waitForActiveShards() default "-2";
