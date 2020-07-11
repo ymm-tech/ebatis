@@ -19,7 +19,7 @@ public @interface Delete {
     String pipeline() default "";
 
     /**
-     * 执行删除时，要求的分片副本数量，默认1，即只要主分片活跃即可，<code>all</code>表示全副本+主分片，其他数字
+     * 执行删除时，要求的分片副本数量，默认-2使用es集群默认配置，<code>all</code>表示全副本+主分片，其他数字
      * <table>
      *     <thead>
      *         <tr>
@@ -49,7 +49,7 @@ public @interface Delete {
      *
      * @return 分片数量
      */
-    String waitForActiveShards() default "1";
+    String waitForActiveShards() default "-2";
 
     /**
      * 链接master节点的超时间
