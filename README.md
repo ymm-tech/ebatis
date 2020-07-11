@@ -138,7 +138,7 @@ public class OrderRepositoryTest {
         Assert.assertEquals(3, orders.size());
 
         // 打印输出
-        cargoes.forEach(order -> log.info("{}", order));
+        orders.forEach(order -> log.info("{}", order));
     }
 }
 ```
@@ -304,7 +304,7 @@ OrderRepository repository = MapperProxyFactory.getMapperProxy((OrderRepository.
 | @ClearScroll                                 | ClearScrollResponse                             |                           |
 |                                   | boolean                                         |                           |
 |                                   | Boolean                                         |                           |
-| @Agg（暂时只支持桶聚合 terms查询） | SearchResponse                                  |                           |
+| @Agg | SearchResponse                                  | （暂时只支持桶聚合 terms查询） |
 |                                   | Aggregations                                    |                           |
 |                                   | List\<Aggregation>                               |                           |
 |                                   | Map<String, Aggregation>                        |                           |
@@ -390,11 +390,11 @@ CompletableFuture<Void> indexRecentOrderFutureVoid(RecentOrderModel order);
 
 |序号|属性名|默认值|说明|
 |---|---|---|---|
-|1|`timeout`|1m|数值+时间单位(ms/s/m/h/M/y)|
+|1|`timeout`|`1m`|数值+时间单位(ms/s/m/h/M/y)|
 |2|`refreshPolicy`|`RefreshPolicy.NONE`|默认不刷新|
 |4|`pipeline`|可选||
 |5|`versionType`|`VersionType.INTERNAL`||
-|6|`waitForActiveShards`|-2|ActiveShardCount.DEFAULT|
+|6|`waitForActiveShards`|`-2`|ActiveShardCount.DEFAULT|
 ### Get API
 #### 接口定义
 
@@ -463,11 +463,11 @@ CompletableFuture<RecentOrder> getRecentOrderCompletableFuture(String id);
 
 #### @Get属性说明
 
-| 序号 | 属性名     | 默认值 | 说明                             |
-| ---- | ---------- | ------ | -------------------------------- |
-| 1    | preference | ""     | 设置查询偏好，影响查询的分片策略 |
-| 2    | refresh    | false  | 设置是否刷新，默认不刷新         |
-| 3    | realtime   | true   | 设置是否实时查询，默认实时       |
+| 序号 | 属性名       | 默认值  | 说明                             |
+| ---- | ------------ | ------- | -------------------------------- |
+| 1    | `preference` | ""      | 设置查询偏好，影响查询的分片策略 |
+| 2    | `refresh`    | `false` | 设置是否刷新，默认不刷新         |
+| 3    | `realtime`   | `true`  | 设置是否实时查询，默认实时       |
 
 ### Delete API
 
@@ -551,25 +551,193 @@ CompletableFuture<Void> deleteRecentOrderVoidFuture(Long id);
 #### 接口定义
 ```java
 /**
- * 更新索引，支持部分更新
- * @param doc 文档
- * @return 更新响应
+ * 使用脚本更新订单，支持部分更新
+ *
+ * @param orderScript 订单
+ * @return UpdateResponse
  */
-CompletableFuture<UpdateResponse> update(ProductUpdateCondition doc);
-
+@Update
+UpdateResponse updateRecentOrder(RecentOrderModelScript orderScript);
 /**
- * 更新索引，支持部分更新，如果文档不存在，则将部分更新文档建立索引
- * @param doc 文档
- * @return 更新响应
+ * 更新订单，支持部分更新，如果文档不存在，则将部分更新文档建立索引
+ *
+ * @param order 订单
+ * @return UpdateResponse
  */
 @Update(docAsUpsert = true)
-CompletableFuture<UpdateResponse> doAsUpsert(ProductDocAsUpsertCondition doc);
+UpdateResponse updateRecentOrder(RecentOrderModel order);
+/**
+ * 更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return GetResult
+ */
+@Update
+GetResult updateRecentOrderGetResult(RecentOrderModel order);
+/**
+ * 更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return RestStatus状态码
+ */
+@Update
+RestStatus updateRecentOrderRestStatus(RecentOrderModel order);
+/**
+ * 更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return 更新成功，返回<code>true</code>
+ */
+@Update
+Boolean updateRecentOrderBoolean(RecentOrderModel order);
+/**
+ * 更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return 更新成功，返回<code>true</code>
+ */
+@Update
+boolean updateRecentOrderBool(RecentOrderModel order);
+/**
+ * 更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return Result
+ */
+@Update
+Result updateRecentOrderResult(RecentOrderModel order);
+/**
+ * 更新订单，支持部分更新
+ *
+ * @param order 订单
+ */
+@Update
+void updateRecentOrderVoid(RecentOrderModel order);
+/**
+ * 异步更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return 异步结果
+ */
+@Update
+CompletableFuture<Result> updateRecentOrderFuture(RecentOrderModel order);
+/**
+ * 异步更新订单，支持部分更新
+ *
+ * @param order 订单
+ * @return 异步结果
+ */
+@Update
+CompletableFuture<Void> updateRecentOrderFutureVoid(RecentOrderModel order);
 ```
-> `@Update` 注解标明，此方法是更新方法，也可以不加，`ebatis`会根据方法前缀来判断。
+> `@Update` 注解标明，此方法是更新方法。
+>
+> 设置docAsUpsert=true当文档不存在时，做插入操作。
+>
+> 如果想自定义文档 _id，入参实体需实现IdProvider接口。
+
+#### @Update属性说明
+
+| 序号 | 属性名                | 默认值               | 说明                                        |
+| ---- | --------------------- | -------------------- | ------------------------------------------- |
+| 1    | `docAsUpsert`         | `false`              | 设置true，当文档不存在时，做插入操作        |
+| 2    | `retryOnConflict`     | `0`                  | 设置版本冲突时，重试的次数                  |
+| 3    | `refreshPolicy`       | `RefreshPolicy.NONE` | 默认不刷新                                  |
+| 4    | `waitForActiveShards` | 活动分片数量         | 默认-2，不指定分片数量，-1或all指定全部分片 |
+| 5    | `scriptedUpsert`      | `false`              | 运行脚本，无论文档是否存在                  |
+
+
 
 ## 多文档接口
+
 ### Multi Get API
-> **暂不支持**
+
+#### 接口定义
+
+```java
+/**
+ * 多订单查询
+ *
+ * @param ids 文档id
+ * @return MultiGetResponse
+ */
+@MultiGet
+MultiGetResponse getRecentOrdersResponse(Long... ids);
+/**
+ * 单订单查询
+ *
+ * @param id 文档id
+ * @return MultiGetResponse
+ */
+@MultiGet
+MultiGetResponse getRecentOrdersResponse(Long id);
+/**
+ * 单订单查询
+ *
+ * @param order 订单
+ * @return MultiGetResponse
+ */
+@MultiGet
+MultiGetResponse getRecentOrdersResponse(RecentOrderModel order);
+/**
+ * 多订单查询
+ *
+ * @param ids 订单id
+ * @return 订单集合
+ */
+@MultiGet
+List<RecentOrder> getRecentOrders(Long... ids);
+/**
+ * 多订单查询
+ *
+ * @param orders 订单
+ * @return 订单数组
+ */
+@MultiGet
+RecentOrder[] getRecentOrders(List<RecentOrderModel> orders);
+/**
+ * 多订单查询
+ *
+ * @param ids 订单id
+ * @return MultiGetItemResponse[]
+ */
+@MultiGet
+MultiGetItemResponse[] getRecentOrdersItemResponse(Long... ids);
+/**
+ * 多订单查询
+ *
+ * @param orders 订单id
+ * @return List<MultiGetItemResponse>
+ */
+@MultiGet
+List<MultiGetItemResponse> getRecentOrdersItemResponse(List<RecentOrderModel> orders);
+/**
+ * 多订单查询
+ *
+ * @param ids 订单id
+ * @return List<Optional < RecentOrder>>
+ */
+@MultiGet
+List<Optional<RecentOrder>> getRecentOrdersOptional(Long... ids);
+/**
+ * 多订单查询
+ *
+ * @param orders 订单
+ * @return Optional<RecentOrder>[]
+ */
+@MultiGet
+Optional<RecentOrder>[] getRecentOrdersOptional(List<RecentOrderModel> orders);
+/**
+ * 多订单异步查询
+ *
+ * @param orders 订单
+ * @return 异步订单查询结果
+ */
+@MultiGet
+CompletableFuture<Optional<RecentOrder>[]> getRecentOrdersOptionalFuture(List<RecentOrderModel> orders);
+```
+
+
 
 ### Bulk API
 Bulk接口目前只支持但类型批量操作，也即是要全全部是索引操作，要不全部是删除操作等等。
