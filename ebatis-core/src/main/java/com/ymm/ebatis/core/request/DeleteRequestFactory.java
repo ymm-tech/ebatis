@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.Delete;
+import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.exception.ConditionNotSupportException;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
@@ -8,7 +9,6 @@ import com.ymm.ebatis.core.provider.IdProvider;
 import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import org.elasticsearch.action.delete.DeleteRequest;
-import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.client.Requests;
 
 /**
@@ -25,7 +25,7 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
     protected void setAnnotationMeta(DeleteRequest request, Delete delete) {
         // TODO 还有很多参数没有设置
         request.setRefreshPolicy(delete.refreshPolicy())
-                .waitForActiveShards(ActiveShardCount.parseString(delete.waitForActiveShards()))
+                .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(delete.waitForActiveShards()))
                 .versionType(delete.versionType())
                 .timeout(delete.timeout());
     }
