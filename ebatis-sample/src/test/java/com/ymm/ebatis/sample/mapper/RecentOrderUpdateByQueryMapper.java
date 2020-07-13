@@ -35,7 +35,7 @@ public interface RecentOrderUpdateByQueryMapper {
      * 根据指定条件更新订单
      *
      * @param order 查询条件
-     * @return 更新响应
+     * @return 异步更新响应
      */
     @UpdateByQuery
     CompletableFuture<BulkByScrollResponse> updateByQueryRecentOrderFuture(SampleRecentOrderCondition order);
