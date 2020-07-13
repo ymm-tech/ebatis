@@ -18,7 +18,7 @@ class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
     }
 
     @Override
-    public QueryBuilder create(ConditionMeta meta, Object condition) {
+    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
         if (meta.isBasicArrayOrCollection()) {
             return QueryBuilderFactory.terms().create(meta, condition);
         } else if (meta.isBasic()) {
@@ -33,10 +33,5 @@ class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
         } else {
             return QueryBuilderFactory.bool().create(meta, condition);
         }
-    }
-
-    @Override
-    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        return null;
     }
 }
