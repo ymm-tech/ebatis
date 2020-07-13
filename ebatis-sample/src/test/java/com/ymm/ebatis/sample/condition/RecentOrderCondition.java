@@ -1,7 +1,5 @@
 package com.ymm.ebatis.sample.condition;
 
-import com.google.common.collect.Lists;
-import com.ymm.ebatis.core.annotation.Exists;
 import com.ymm.ebatis.core.annotation.Field;
 import com.ymm.ebatis.core.annotation.Must;
 import com.ymm.ebatis.core.annotation.QueryType;
@@ -11,7 +9,8 @@ import com.ymm.ebatis.core.domain.ScoreFunction;
 import com.ymm.ebatis.core.domain.ScoreFunctionMode;
 import com.ymm.ebatis.core.domain.Script;
 import com.ymm.ebatis.core.provider.ScoreFunctionProvider;
-import lombok.Builder;
+import com.ymm.ebatis.sample.condition.base.Protocol;
+import com.ymm.ebatis.sample.condition.base.SecurityTran;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
@@ -26,74 +25,78 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider {
 
+    /**
+     * 基本类型
+     */
     @Must
-    private Integer cargoType = 2;
+    private Integer cargoType;
     /**
      * 基本类型集合
      */
     @Must
-    private List<Integer> orderSource = Lists.newArrayList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+    private List<Integer> orderSource;
+
     /**
      * 基本类型集合
      */
     @Must
     @Field("orderType")
-    private Integer[] type = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+    private Integer[] type;
+
     /**
      * 嵌套条件
      */
     @Must
-    private Protocol condition = new Protocol();
-    /**
-     * 非基本类型集合
-     */
-    @Must
-    private List<SecurityTran> securityTranList = Lists.newArrayList(
-            SecurityTran.builder().securityTran(Lists.newArrayList(1, 2, 3)).build(),
-            SecurityTran.builder().securityTran(Lists.newArrayList(4, 5, 6)).build());
+    private Protocol protocol;
 
     /**
      * 非基本类型集合
      */
     @Must
-    private SecurityTran[] securityTrans = {
-            SecurityTran.builder().securityTran(Lists.newArrayList(7, 8, 9)).build(),
-            SecurityTran.builder().securityTran(Lists.newArrayList(10, 11, 12)).build()};
+    private List<SecurityTran> securityTranList;
 
+    /**
+     * 非基本类型集合
+     */
     @Must
-    private Range<Integer> channel = Range.of(1, 100).closeLeft();
+    private SecurityTran[] securityTrans;
 
+    /**
+     * 单范围查询
+     */
     @Must
-    private Script script = Script.stored("666");
+    private Range<Integer> channel;
 
-    //todo 是否支持 集合Range Script
+    /**
+     * 脚本查询
+     */
+    @Must
+    private Script script;
+
+    /**
+     * 多范围组合查询
+     */
     @Should
-    private List<Range<Integer>> channels = Lists.newArrayList(Range.of(100, 200).closeLeft(), Range.of(300, 500).closeLeft());
-    //todo 是否支持 数组Range Script
+    private List<Range<Integer>> channels;
+    /**
+     * 多脚本组合查询
+     */
     @Should(minimumShouldMatch = "2")
-    private Script[] scripts = new Script[]{Script.stored("888"), Script.stored("1024")};
+    private Script[] scripts;
     /**
      * 动态化计算实例类型
      */
     @Must
-    private Object shipperInfo = ShipperInfo.builder().
-            shipperTelephone(18704040001L).
-            shipperTelephoneMask(999187242798320001L).
-            shipperUserId(289912911L).
-            build();
+    private Object shipperInfo;
 
     @Must
-    private Object[] shipperInfos = {ShipperInfo.builder().
-            shipperTelephone(18036666725L).
-            shipperTelephoneMask(99918036666L).
-            shipperUserId(66642L).
-            build()};
+    private Object[] shipperInfos;
 
-    @Must(queryType = QueryType.EXISTS, exists = @Exists(false))
-    private String startAreaCode;
+    @Must(queryType = QueryType.EXISTS)
+    private boolean startAreaCode;
 
     @Must(queryType = QueryType.WILDCARD)
-    private String unloadAddress = "**沈阳市皇姑区**";
+    private String unloadAddress;
 
     @Override
     public ScoreFunction getFunction() {
@@ -106,33 +109,4 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
     }
 
 
-    @Data
-    public static class Protocol {
-
-        @Must
-        private Integer protocolStatus = 0;
-        @Must
-        private RateMode rateMode = new RateMode();
-
-    }
-
-    @Data
-    public static class RateMode {
-        private Integer rateModeFlag = 0;
-
-    }
-
-    @Data
-    @Builder
-    public static class SecurityTran {
-        private List<Integer> securityTran;
-    }
-
-    @Data
-    @Builder
-    public static class ShipperInfo {
-        private Long shipperUserId;
-        private Long shipperTelephone;
-        private Long shipperTelephoneMask;
-    }
 }
