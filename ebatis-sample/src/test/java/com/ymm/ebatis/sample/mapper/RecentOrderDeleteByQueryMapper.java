@@ -13,12 +13,30 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderDeleteByQueryMapper {
+    /**
+     * 根据指定条件删除订单
+     *
+     * @param order 查询条件
+     * @return 查询删除响应
+     */
     @DeleteByQuery
-    BulkByScrollResponse deleteByQueryRecentOrder(SampleRecentOrderCondition sampleRecentOrderCondition);
+    BulkByScrollResponse deleteByQueryRecentOrder(SampleRecentOrderCondition order);
 
+    /**
+     * 根据指定条件删除订单
+     *
+     * @param order 查询条件
+     * @return 查询删除状态
+     */
     @DeleteByQuery
-    Status deleteByQueryRecentOrderStatus(SampleRecentOrderCondition sampleRecentOrderCondition);
+    Status deleteByQueryRecentOrderStatus(SampleRecentOrderCondition order);
 
+    /**
+     * 根据指定条件删除订单
+     *
+     * @param order 查询条件
+     * @return 异步查询删除响应
+     */
     @DeleteByQuery
-    CompletableFuture<BulkByScrollResponse> deleteByQueryRecentOrderFuture(SampleRecentOrderCondition sampleRecentOrderCondition);
+    CompletableFuture<BulkByScrollResponse> deleteByQueryRecentOrderFuture(SampleRecentOrderCondition order);
 }
