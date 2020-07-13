@@ -34,7 +34,5 @@ public @interface Search {
 
     MatchPhrasePrefix[] matchPhrasePrefix() default {};
 
-    Exists[] exists() default {};
-
     boolean countOnly() default false;
 }
