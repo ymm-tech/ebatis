@@ -39,10 +39,11 @@ class FunctionScoreQueryBuilderFactory extends AbstractQueryBuilderFactory<Query
 
         ScoreFunctionProvider provider = (ScoreFunctionProvider) condition;
         //对于函数积分组合查询，如果没有提供ScoreFunction,则当作Bool查询
-        if (ArrayUtils.isEmpty(provider.getFunctions())) {
+        ScoreFunction[] functions = provider.getFunctions();
+        if (ArrayUtils.isEmpty(functions)) {
             return queryBuilder;
         }
-        FunctionScoreQueryBuilder.FilterFunctionBuilder[] functionBuilders = Stream.of(provider.getFunctions())
+        FunctionScoreQueryBuilder.FilterFunctionBuilder[] functionBuilders = Stream.of(functions)
                 .map(ScoreFunction::toFunctionBuilder)
                 .toArray(FunctionScoreQueryBuilder.FilterFunctionBuilder[]::new);
         FunctionScoreQueryBuilder functionScoreQueryBuilder = new FunctionScoreQueryBuilder(queryBuilder, functionBuilders);
