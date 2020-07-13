@@ -17,40 +17,85 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderBulkMapper {
-    // bulk index List<BulkItemResponse>
+    /**
+     * 批量创建订单
+     *
+     * @param orders 订单
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.INDEX)
-    List<BulkItemResponse> bulkIndexRecentOrderList(List<RecentOrderModel> recentOrderModels);
+    List<BulkItemResponse> bulkIndexRecentOrderList(List<RecentOrderModel> orders);
 
-    // bulk index List<BulkItemResponse>
+    /**
+     * 批量创建订单
+     *
+     * @param orders 订单
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.INDEX)
-    List<BulkItemResponse> bulkIndexRecentOrderList(RecentOrderModel... recentOrderModels);
+    List<BulkItemResponse> bulkIndexRecentOrderList(RecentOrderModel... orders);
 
-    //bulk index BulkItemResponse[]
+    /**
+     * 批量创建订单
+     *
+     * @param orders 订单
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.INDEX)
-    BulkItemResponse[] bulkIndexRecentOrderArray(RecentOrderModel... recentOrderModels);
+    BulkItemResponse[] bulkIndexRecentOrderArray(RecentOrderModel... orders);
 
-    //bulk index BulkResponse
+    /**
+     * 批量创建订单
+     *
+     * @param orders 订单
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.INDEX)
-    BulkResponse bulkIndexRecentOrderBulkResponse(RecentOrderModel... recentOrderModels);
+    BulkResponse bulkIndexRecentOrderBulkResponse(RecentOrderModel... orders);
 
-    //bulk delete List<BulkItemResponse>
+    /**
+     * 批量删除订单
+     *
+     * @param ids 订单id
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.DELETE)
     List<BulkItemResponse> bulkDeleteRecentOrderList(Long... ids);
 
-    //bulk delete List<BulkItemResponse>
+    /**
+     * 批量删除订单
+     *
+     * @param orders 订单
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.DELETE)
-    List<BulkItemResponse> bulkDeleteRecentOrderList(List<RecentOrderModel> recentOrderModels);
+    List<BulkItemResponse> bulkDeleteRecentOrderList(List<RecentOrderModel> orders);
 
-    //bulk update List<BulkItemResponse>
+    /**
+     * 批量更新订单，订单不存在时，则插入订单
+     *
+     * @param orders 订单
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.UPDATE, update = @Update(docAsUpsert = true))
-    List<BulkItemResponse> bulkUpdateRecentOrderList(RecentOrderModel... recentOrderModels);
+    List<BulkItemResponse> bulkUpdateRecentOrderList(RecentOrderModel... orders);
 
-    //bulk update List<BulkItemResponse>
+    /**
+     * 脚本批量更新订单
+     *
+     * @param orderScripts 脚本
+     * @return 响应
+     */
     @Bulk(bulkType = BulkType.UPDATE)
-    List<BulkItemResponse> bulkUpdateRecentOrderList(List<RecentOrderModelScript> recentOrderModelScript);
+    List<BulkItemResponse> bulkUpdateRecentOrderList(List<RecentOrderModelScript> orderScripts);
 
-    //bulk update CompletableFuture<List<BulkItemResponse>>
+    /**
+     * 脚本更新订单
+     *
+     * @param orderScripts 脚本
+     * @return 异步响应
+     */
     @Bulk(bulkType = BulkType.UPDATE)
-    CompletableFuture<List<BulkItemResponse>> bulkUpdateRecentOrderListFuture(List<RecentOrderModelScript> recentOrderModelScript);
+    CompletableFuture<List<BulkItemResponse>> bulkUpdateRecentOrderListFuture(List<RecentOrderModelScript> orderScripts);
 
 }
