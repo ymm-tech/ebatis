@@ -407,6 +407,7 @@ CompletableFuture<Void> indexRecentOrderFutureVoid(RecentOrderModel order);
  */
 @Get
 RecentOrder getRecentOrder(Long id);
+
 /**
  * 查询订单
  *
@@ -415,6 +416,7 @@ RecentOrder getRecentOrder(Long id);
  */
 @Get
 RecentOrder getRecentOrder(String id);
+
 /**
  * 查询订单
  *
@@ -423,6 +425,7 @@ RecentOrder getRecentOrder(String id);
  */
 @Get
 RecentOrder getRecentOrder(RecentOrderModel order);
+
 /**
  * 查询订单
  *
@@ -431,6 +434,7 @@ RecentOrder getRecentOrder(RecentOrderModel order);
  */
 @Get
 Optional<RecentOrder> getRecentOrderOptional(Long id);
+
 /**
  * 查询订单
  *
@@ -439,6 +443,7 @@ Optional<RecentOrder> getRecentOrderOptional(Long id);
  */
 @Get
 GetResponse getRecentOrderGetResponse(Long id);
+
 /**
  * 查询订单
  *
@@ -447,6 +452,7 @@ GetResponse getRecentOrderGetResponse(Long id);
  */
 @Get
 CompletableFuture<Optional<RecentOrder>> getRecentOrderCompletableFuture(Long id);
+
 /**
  * 查询订单
  *
@@ -481,6 +487,7 @@ CompletableFuture<RecentOrder> getRecentOrderCompletableFuture(String id);
  */
 @Delete
 RestStatus deleteRecentOrder(Long id);
+
 /**
  * 删除订单
  *
@@ -489,6 +496,7 @@ RestStatus deleteRecentOrder(Long id);
  */
 @Delete
 RestStatus deleteRecentOrder(RecentOrderModel model);
+
 /**
  * 删除订单
  *
@@ -497,6 +505,7 @@ RestStatus deleteRecentOrder(RecentOrderModel model);
  */
 @Delete
 DeleteResponse deleteRecentOrderDeleteResponse(Long id);
+
 /**
  * 删除订单
  *
@@ -505,6 +514,7 @@ DeleteResponse deleteRecentOrderDeleteResponse(Long id);
  */
 @Delete
 Boolean deleteRecentOrderBoolean(Long id);
+
 /**
  * 删除订单
  *
@@ -513,6 +523,7 @@ Boolean deleteRecentOrderBoolean(Long id);
  */
 @Delete
 boolean deleteRecentOrderBool(Long id);
+
 /**
  * 删除订单
  *
@@ -520,6 +531,7 @@ boolean deleteRecentOrderBool(Long id);
  */
 @Delete
 void deleteRecentOrderVoid(Long id);
+
 /**
  * 异步删除订单
  *
@@ -528,6 +540,7 @@ void deleteRecentOrderVoid(Long id);
  */
 @Delete
 CompletableFuture<Boolean> deleteRecentOrderBooleanFuture(Long id);
+
 /**
  * 异步删除订单
  *
@@ -558,6 +571,7 @@ CompletableFuture<Void> deleteRecentOrderVoidFuture(Long id);
  */
 @Update
 UpdateResponse updateRecentOrder(RecentOrderModelScript orderScript);
+
 /**
  * 更新订单，支持部分更新，如果文档不存在，则将部分更新文档建立索引
  *
@@ -566,6 +580,7 @@ UpdateResponse updateRecentOrder(RecentOrderModelScript orderScript);
  */
 @Update(docAsUpsert = true)
 UpdateResponse updateRecentOrder(RecentOrderModel order);
+
 /**
  * 更新订单，支持部分更新
  *
@@ -574,6 +589,7 @@ UpdateResponse updateRecentOrder(RecentOrderModel order);
  */
 @Update
 GetResult updateRecentOrderGetResult(RecentOrderModel order);
+
 /**
  * 更新订单，支持部分更新
  *
@@ -582,6 +598,7 @@ GetResult updateRecentOrderGetResult(RecentOrderModel order);
  */
 @Update
 RestStatus updateRecentOrderRestStatus(RecentOrderModel order);
+
 /**
  * 更新订单，支持部分更新
  *
@@ -590,6 +607,7 @@ RestStatus updateRecentOrderRestStatus(RecentOrderModel order);
  */
 @Update
 Boolean updateRecentOrderBoolean(RecentOrderModel order);
+
 /**
  * 更新订单，支持部分更新
  *
@@ -598,6 +616,7 @@ Boolean updateRecentOrderBoolean(RecentOrderModel order);
  */
 @Update
 boolean updateRecentOrderBool(RecentOrderModel order);
+
 /**
  * 更新订单，支持部分更新
  *
@@ -606,6 +625,7 @@ boolean updateRecentOrderBool(RecentOrderModel order);
  */
 @Update
 Result updateRecentOrderResult(RecentOrderModel order);
+
 /**
  * 更新订单，支持部分更新
  *
@@ -613,6 +633,7 @@ Result updateRecentOrderResult(RecentOrderModel order);
  */
 @Update
 void updateRecentOrderVoid(RecentOrderModel order);
+
 /**
  * 异步更新订单，支持部分更新
  *
@@ -621,6 +642,7 @@ void updateRecentOrderVoid(RecentOrderModel order);
  */
 @Update
 CompletableFuture<Result> updateRecentOrderFuture(RecentOrderModel order);
+
 /**
  * 异步更新订单，支持部分更新
  *
@@ -663,6 +685,7 @@ CompletableFuture<Void> updateRecentOrderFutureVoid(RecentOrderModel order);
  */
 @MultiGet
 MultiGetResponse getRecentOrdersResponse(Long... ids);
+
 /**
  * 单订单查询
  *
@@ -671,6 +694,7 @@ MultiGetResponse getRecentOrdersResponse(Long... ids);
  */
 @MultiGet
 MultiGetResponse getRecentOrdersResponse(Long id);
+
 /**
  * 单订单查询
  *
@@ -679,6 +703,7 @@ MultiGetResponse getRecentOrdersResponse(Long id);
  */
 @MultiGet
 MultiGetResponse getRecentOrdersResponse(RecentOrderModel order);
+
 /**
  * 多订单查询
  *
@@ -687,6 +712,7 @@ MultiGetResponse getRecentOrdersResponse(RecentOrderModel order);
  */
 @MultiGet
 List<RecentOrder> getRecentOrders(Long... ids);
+
 /**
  * 多订单查询
  *
@@ -695,6 +721,7 @@ List<RecentOrder> getRecentOrders(Long... ids);
  */
 @MultiGet
 RecentOrder[] getRecentOrders(List<RecentOrderModel> orders);
+
 /**
  * 多订单查询
  *
@@ -703,6 +730,7 @@ RecentOrder[] getRecentOrders(List<RecentOrderModel> orders);
  */
 @MultiGet
 MultiGetItemResponse[] getRecentOrdersItemResponse(Long... ids);
+
 /**
  * 多订单查询
  *
@@ -711,6 +739,7 @@ MultiGetItemResponse[] getRecentOrdersItemResponse(Long... ids);
  */
 @MultiGet
 List<MultiGetItemResponse> getRecentOrdersItemResponse(List<RecentOrderModel> orders);
+
 /**
  * 多订单查询
  *
@@ -719,6 +748,7 @@ List<MultiGetItemResponse> getRecentOrdersItemResponse(List<RecentOrderModel> or
  */
 @MultiGet
 List<Optional<RecentOrder>> getRecentOrdersOptional(Long... ids);
+
 /**
  * 多订单查询
  *
@@ -727,6 +757,7 @@ List<Optional<RecentOrder>> getRecentOrdersOptional(Long... ids);
  */
 @MultiGet
 Optional<RecentOrder>[] getRecentOrdersOptional(List<RecentOrderModel> orders);
+
 /**
  * 多订单异步查询
  *
@@ -737,22 +768,96 @@ Optional<RecentOrder>[] getRecentOrdersOptional(List<RecentOrderModel> orders);
 CompletableFuture<Optional<RecentOrder>[]> getRecentOrdersOptionalFuture(List<RecentOrderModel> orders);
 ```
 
-
+> 入参实体非基本类型时，需实现IdProvider接口。
 
 ### Bulk API
 Bulk接口目前只支持但类型批量操作，也即是要全全部是索引操作，要不全部是删除操作等等。
 #### 接口定义
 ```java
 /**
- * 批量创建商品文档
+ * 批量创建订单
  *
- * @param products 商品
+ * @param orders 订单
  * @return 响应
  */
-@Bulk(bulkType = BulkType.INDEX, index = @Index(id = "id"))
-CompletableFuture<BulkResponse> bulkIndexProducts(Product[] products);
+@Bulk(bulkType = BulkType.INDEX)
+List<BulkItemResponse> bulkIndexRecentOrderList(List<RecentOrderModel> orders);
+
+/**
+ * 批量创建订单
+ *
+ * @param orders 订单
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.INDEX)
+List<BulkItemResponse> bulkIndexRecentOrderList(RecentOrderModel... orders);
+
+/**
+ * 批量创建订单
+ *
+ * @param orders 订单
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.INDEX)
+BulkItemResponse[] bulkIndexRecentOrderArray(RecentOrderModel... orders);
+
+/**
+ * 批量创建订单
+ *
+ * @param orders 订单
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.INDEX)
+BulkResponse bulkIndexRecentOrderBulkResponse(RecentOrderModel... orders);
+
+/**
+ * 批量删除订单
+ *
+ * @param ids 订单id
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.DELETE)
+List<BulkItemResponse> bulkDeleteRecentOrderList(Long... ids);
+
+/**
+ * 批量删除订单
+ *
+ * @param orders 订单
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.DELETE)
+List<BulkItemResponse> bulkDeleteRecentOrderList(List<RecentOrderModel> orders);
+
+/**
+ * 批量更新订单，订单不存在时，则插入订单
+ *
+ * @param orders 订单
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.UPDATE, update = @Update(docAsUpsert = true))
+List<BulkItemResponse> bulkUpdateRecentOrderList(RecentOrderModel... orders);
+
+/**
+ * 脚本批量更新订单
+ *
+ * @param orderScripts 脚本
+ * @return 响应
+ */
+@Bulk(bulkType = BulkType.UPDATE)
+List<BulkItemResponse> bulkUpdateRecentOrderList(List<RecentOrderModelScript> orderScripts);
+
+/**
+ * 脚本更新订单
+ *
+ * @param orderScripts 脚本
+ * @return 异步响应
+ */
+@Bulk(bulkType = BulkType.UPDATE)
+CompletableFuture<List<BulkItemResponse>> bulkUpdateRecentOrderListFuture(List<RecentOrderModelScript> orderScripts);
 ```
-> `@Bulk` 注解标明，此方法是批量方法，必须要有此注解，同时必须要指定`BulkType`，标明是何种类型的批量操作
+> `@Bulk` 注解标明，此方法是批量方法，必须要有此注解，同时必须要指定`BulkType`，标明是何种类型的批量操作。
+>
+> 做批量更新操作时，如果想文档不存在则做插入操作，设置@Update(docAsUpsert=true)。
 
 #### @Bulk属性说明
 |序号|属性名|默认值|说明|
@@ -768,13 +873,29 @@ CompletableFuture<BulkResponse> bulkIndexProducts(Product[] products);
 #### 接口定义
 ```java
 /**
- * 根据指定条件删除文档
+ * 根据指定条件删除订单
  *
- * @param condition 查询条件
+ * @param order 查询条件
  * @return 查询删除响应
  */
 @DeleteByQuery
-BulkByScrollResponse deleteByQuery(ProductCondition condition);
+BulkByScrollResponse deleteByQueryRecentOrder(SampleRecentOrderCondition order);
+/**
+ * 根据指定条件删除订单
+ *
+ * @param order 查询条件
+ * @return 查询删除状态
+ */
+@DeleteByQuery
+Status deleteByQueryRecentOrderStatus(SampleRecentOrderCondition order);
+/**
+ * 根据指定条件删除订单
+ *
+ * @param order 查询条件
+ * @return 异步查询删除响应
+ */
+@DeleteByQuery
+CompletableFuture<BulkByScrollResponse> deleteByQueryRecentOrderFuture(SampleRecentOrderCondition order);
 ```
 > `@DeleteByQuery` 注解标明，此方法是查询删除方法，必须要有此注解
 
@@ -795,10 +916,34 @@ BulkByScrollResponse deleteByQuery(ProductCondition condition);
 ### Update By Query API
 #### 接口定义
 ```java
+/**
+ * 根据指定条件更新订单
+ *
+ * @param order 查询条件
+ * @return 更新响应
+ */
 @UpdateByQuery
-CompletableFuture<BulkByScrollResponse> updateByQuery(Product document);
+BulkByScrollResponse updateByQueryRecentOrder(SampleRecentOrderCondition order);
+/**
+ * 根据指定条件更新订单
+ *
+ * @param order 查询条件
+ * @return 更新响应
+ */
+@UpdateByQuery
+Status updateByQueryRecentOrderStatus(SampleRecentOrderCondition order);
+/**
+ * 根据指定条件更新订单
+ *
+ * @param order 查询条件
+ * @return 异步更新响应
+ */
+@UpdateByQuery
+CompletableFuture<BulkByScrollResponse> updateByQueryRecentOrderFuture(SampleRecentOrderCondition order);
 ```
-> `@UpdateByQuery` 注解标明，此方法是查询更新方法，必须要有此注解
+> `@UpdateByQuery` 注解标明，此方法是查询更新方法，必须要有此注解。
+>
+> 支持通过	脚本更新文档，入参实体需实现ScriptProvider。
 
 #### @UpdateByQuery属性说明
 |序号|属性名|默认值|说明|
@@ -841,296 +986,475 @@ CompletableFuture<BulkByScrollResponse> updateByQuery(Product document);
 |---|---|---|---|
 |1|`queryType`|`QueryType.BOOL`|默认Bool查询，可选类型：`BOOL`/`FUNCTION_SCORE`/`CONSTANT_SCORE`|
 |2|`searchType`|`SearchType.QUERY_THEN_FETCH`|默认就好|
-|3|`routing`|可选|默认无路由|
+## 路由说明
+
+入参实体实现需RoutingProvider。
+
 ## Bool查询
+
 ### 接口定义
 #### 条件定义
 ```java
-/**
-* @author 章多亮
-* @since 2019/12/25 14:12
-*/
 @Data
-public class DefaultStrategy {
-    private Integer expireTime;
-    private Integer refreshCycle;
-    private Integer startTime;
-}
-
-/**
- * @author 章多亮
- * @since 2019/12/25 14:11
- */
-@Data
-public class Display {
-    @Must(nested = true)
-    private DefaultStrategy defaultStrategy;
-}
-
-/**
- * @author 章多亮
- * @since 2019/12/25 14:16
- */
-@Data
-public class Coordinate {
-    private Double lat;
-    private Double lon;
-}
-
-/**
-* @author 章多亮
-* @since 2019/12/25 14:14
-*/
-@Data
-public class Location {
-    private String address;
-    private String[] h3Locations;
-    @Field("location")
-    @MustNot(nested = true)
-    private Coordinate coordinate;
-}
-
-/**
- * @author 章多亮
- * @since 2019/12/19 18:39
- */
-@Data
-public class CargoCondition implements ScriptFieldProvider {
-    @Field("cargoChannel")
-    private Integer[] cargoChannels;
-    @Exists
+public class SampleRecentOrderCondition {
+    @Must
     private Long cargoId;
-    private String[] cargoLines;
+}
+
+@Data
+@EqualsAndHashCode(callSuper = false)
+public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider {
+
+    /**
+     * 基本类型
+     */
+    @Must
+    private Integer cargoType;
+    /**
+     * 基本类型集合
+     */
+    @Must
+    private List<Integer> orderSource ;
+
+    /**
+     * 基本类型集合
+     */
+    @Must
+    @Field("orderType")
+    private Integer[] type ;
+
+    /**
+     * 嵌套条件
+     */
+    @Must
+    private Protocol protocol;
+
+    /**
+     * 非基本类型集合
+     */
+    @Must
+    private List<SecurityTran> securityTranList;
+
+    /**
+     * 非基本类型集合
+     */
+    @Must
+    private SecurityTran[] securityTrans ;
+
+    /**
+     * 单范围查询
+     */
+    @Must
+    private Range<Integer> channel;
+
+    /**
+     * 脚本查询
+     */
+    @Must
+    private Script script ;
+
+    /**
+     * 多范围组合查询
+     */
     @Should
-    private Long createTime;
-    @Must(nested = true)
-    private Display display;
-    @MustNot(nested = true)
-    private Location endLocation;
-    @Must(nested = true)
-    private Location startLocation;
+    private List<Range<Integer>> channels;
+    /**
+     * 多脚本组合查询
+     */
+    @Should(minimumShouldMatch = "2")
+    private Script[] scripts ;
+    /**
+     * 动态化计算实例类型
+     */
+    @Must
+    private Object shipperInfo;
+
+    @Must
+    private Object[] shipperInfos ;
+
+    @Must(queryType = QueryType.EXISTS, exists = @Exists(false))
+    private String startAreaCode;
+
+    @Must(queryType = QueryType.WILDCARD)
+    private String unloadAddress;
 
     @Override
-    public ScriptField[] getScriptFields() {
-        return new ScriptField[0];
+    public ScoreFunction getFunction() {
+        return ScoreFunction.fieldValueFactor("startCityId", 10, 10, FieldValueFactorFunction.Modifier.LN);
     }
-}
 
-/**
- * @author 章多亮
- * @since 2019/12/19 18:36
- */
-@Data
-public class Cargo {
-    private Long cargoId;
-    private Long cargoUserId;
-    private Date createTime;
-    private Integer cargoType;
+    @Override
+    public ScoreFunctionMode getFunctionMode() {
+        return null;
+    }
+
+
 }
 ```
 
 #### 接口定义
 ```java
 /**
- * 搜索货源
- *
- * @param searchable 是否可以搜索
- * @param condition  搜索条件
- * @param pageable   分页信息
- * @return 货源分页
+ * 搜索订单
+ * @param pageable 分页信息
+ * @param condition 搜索条件
+ * @return 订单分页
  */
 @Search(queryType = QueryType.BOOL)
-CompletableFuture<Page<Cargo>> search(Boolean searchable, CargoCondition condition, Pageable pageable);
+Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition condition);
 ```
 
 ### 接口使用示例
 ```java
-DefaultStrategy strategy = new DefaultStrategy();
-strategy.setExpireTime(-1);
-strategy.setRefreshCycle(1740000);
-strategy.setStartTime(0);
+public void queryRecentOrderPage() {
+    RecentOrderCondition condition = new RecentOrderCondition();
+    condition.setCargoId(10124512292911L);
+    condition.setCargoType(2);
+    condition.setOrderSource(Lists.newArrayList(2, 4, 6, 8));
+    condition.setType(new Integer[]{1, 3, 5, 7});
+    
+    Protocol protocol = new Protocol();
+    protocol.setProtocolStatus(0);
+    RateMode rateMode = new RateMode();
+    rateMode.setRateModeFlag(0);
+    protocol.setRateMode(rateMode);
+    condition.setProtocol(protocol);
+    
+    condition.setSecurityTranList(Lists.newArrayList(
+            SecurityTran.builder().securityTran(Lists.newArrayList(1, 2, 3)).build(),
+            SecurityTran.builder().securityTran(Lists.newArrayList(4, 5, 6)).build()));
+    condition.setSecurityTrans(new SecurityTran[]{
+            SecurityTran.builder().securityTran(Lists.newArrayList(7, 8, 9)).build(),
+            SecurityTran.builder().securityTran(Lists.newArrayList(10, 11, 12)).build()});
+    
+    condition.setChannel(Range.of(1, 100).closeLeft());
+    condition.setScript(Script.stored("666"));
+    condition.setChannels(Lists.newArrayList(Range.of(100, 200).closeLeft(), Range.of(300, 500).closeLeft()));
+    condition.setScripts(new Script[]{Script.stored("888"), Script.stored("1024")});
+    condition.setShipperInfo(ShipperInfo.builder().shipperTelephone(18030000725L).shipperTelephoneMask(999725L).shipperUserId(123321L).build());
+    condition.setShipperInfos(new Object[]{ShipperInfo.builder().shipperTelephone(18031111725L).shipperTelephoneMask(999726L).shipperUserId(456654L).build()});
+    condition.setUnloadAddress("**沈阳市皇姑区**");
 
-Display display = new Display();
-display.setDefaultStrategy(strategy);
+    Page<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderPage(Pageable.of(1, 10), condition);
+    log.info("result:{}", recentOrders);
+}
 
-Coordinate coordinate = new Coordinate();
-coordinate.setLng(115.03885);
-coordinate.setLat(36.769641);
-
-Location startLocation = new Location();
-startLocation.setH3Locations(new String[]{"833198fffffffff", "84319e3ffffffff", "85319e27fffffff", "86319e26fffffff"});
-startLocation.setCoordinate(coordinate);
-
-CargoCondition condition = new CargoCondition();
-condition.setCargoChannels(new Integer[]{20});
-condition.setCargoLines(new String[]{"220000_130000", "220000_130400"});
-condition.setCreateTime(1576636761249L);
-condition.setStartLocation(startLocation);
-condition.setDisplay(display);
-
-AtomicBoolean finished = new AtomicBoolean();
-CargoRepository repository = createEsMapper(CargoRepository.class);
-repository.search(true, condition, Pageable.of(0, 10)).whenComplete(((cargoes, throwable) -> {
-   if (throwable == null) {
-       cargoes.forEach(cargo -> log.info("{}", cargo));
-   } else {
-       log.error("查询失败", throwable);
-   }
-   finished.set(true);
-}));
-Awaitility.await().forever().untilTrue(finished);
 ```
 
 上面的POJO条件最终会被映射为如下DSL：
 
 ```json
 {
- "from": 0,
- "size": 10,
- "query": {
-   "bool": {
-     "must": [
-       {
-         "term": {
-           "searchable": {
-             "value": true,
-             "boost": 1
-           }
-         }
-       },
-       {
-         "bool": {
-           "must": [
-             {
-               "term": {
-                 "cargoChannel": {
-                   "value": 20,
-                   "boost": 1
-                 }
-               }
-             },
-             {
-               "terms": {
-                 "cargoLines": [
-                   "220000_130000",
-                   "220000_130400"
-                 ],
-                 "boost": 1
-               }
-             },
-             {
-               "term": {
-                 "createTime": {
-                   "value": 1576636761249,
-                   "boost": 1
-                 }
-               }
-             },
-             {
-               "bool": {
-                 "must": [
-                   {
-                     "bool": {
-                       "must": [
-                         {
-                           "term": {
-                             "display.defaultStrategy.expireTime": {
-                               "value": -1,
-                               "boost": 1
-                             }
-                           }
-                         },
-                         {
-                           "term": {
-                             "display.defaultStrategy.refreshCycle": {
-                               "value": 1740000,
-                               "boost": 1
-                             }
-                           }
-                         },
-                         {
-                           "term": {
-                             "display.defaultStrategy.startTime": {
-                               "value": 0,
-                               "boost": 1
-                             }
-                           }
-                         }
-                       ],
-                       "adjust_pure_negative": true,
-                       "boost": 1
-                     }
-                   }
-                 ],
-                 "adjust_pure_negative": true,
-                 "boost": 1
-               }
-             },
-             {
-               "bool": {
-                 "must": [
-                   {
-                     "terms": {
-                       "startLocation.h3Locations": [
-                         "833198fffffffff",
-                         "84319e3ffffffff",
-                         "85319e27fffffff",
-                         "86319e26fffffff"
-                       ],
-                       "boost": 1
-                     }
-                   }
-                 ],
-                 "must_not": [
-                   {
-                     "bool": {
-                       "must": [
-                         {
-                           "term": {
-                             "startLocation.location.lat": {
-                               "value": 36.769641,
-                               "boost": 1
-                             }
-                           }
-                         },
-                         {
-                           "term": {
-                             "startLocation.location.lng": {
-                               "value": 115.03885,
-                               "boost": 1
-                             }
-                           }
-                         }
-                       ],
-                       "adjust_pure_negative": true,
-                       "boost": 1
-                     }
-                   }
-                 ],
-                 "adjust_pure_negative": true,
-                 "boost": 1
-               }
-             }
-           ],
-           "adjust_pure_negative": true,
-           "boost": 1
-         }
-       }
-     ],
-     "adjust_pure_negative": true,
-     "boost": 1
-   }
- },
- "_source": {
-   "includes": [
-     "cargoId",
-     "cargoUserId",
-     "createTime",
-     "cargoType"
-   ],
-   "excludes": []
- }
+  "from": 10,
+  "size": 10,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "cargoType": {
+              "value": 2,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "terms": {
+            "orderSource": [
+              2,
+              4,
+              6,
+              8
+            ],
+            "boost": 1.0
+          }
+        },
+        {
+          "terms": {
+            "orderType": [
+              1,
+              3,
+              5,
+              7
+            ],
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "protocolStatus": {
+                    "value": 0,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "bool": {
+                  "must": [
+                    {
+                      "term": {
+                        "rateModeFlag": {
+                          "value": 0,
+                          "boost": 1.0
+                        }
+                      }
+                    }
+                  ],
+                  "adjust_pure_negative": true,
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "terms": {
+                  "securityTran": [
+                    1,
+                    2,
+                    3
+                  ],
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "terms": {
+                  "securityTran": [
+                    4,
+                    5,
+                    6
+                  ],
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "terms": {
+                  "securityTran": [
+                    7,
+                    8,
+                    9
+                  ],
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "terms": {
+                  "securityTran": [
+                    10,
+                    11,
+                    12
+                  ],
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "range": {
+            "channel": {
+              "from": 1,
+              "to": 100,
+              "include_lower": true,
+              "include_upper": false,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "script": {
+            "script": {
+              "id": "666"
+            },
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "shipper.shipperUserId": {
+                    "value": 123321,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "shipper.shipperTelephone": {
+                    "value": 18030000725,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "shipper.shipperTelephoneMask": {
+                    "value": 999725,
+                    "boost": 1.0
+                  }
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "shipper.shipperUserId": {
+                    "value": 456654,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "shipper.shipperTelephone": {
+                    "value": 18031111725,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "shipper.shipperTelephoneMask": {
+                    "value": 999726,
+                    "boost": 1.0
+                  }
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "bool": {
+            "must_not": [
+              {
+                "exists": {
+                  "field": "startAreaCode",
+                  "boost": 1.0
+                }
+              }
+            ],
+            "adjust_pure_negative": true,
+            "boost": 1.0
+          }
+        },
+        {
+          "wildcard": {
+            "unloadAddress": {
+              "wildcard": "**沈阳市皇姑区**",
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "cargoId": {
+              "value": 10124512292911,
+              "boost": 1.0
+            }
+          }
+        }
+      ],
+      "should": [
+        {
+          "range": {
+            "channels": {
+              "from": 100,
+              "to": 200,
+              "include_lower": true,
+              "include_upper": false,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "range": {
+            "channels": {
+              "from": 300,
+              "to": 500,
+              "include_lower": true,
+              "include_upper": false,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "script": {
+            "script": {
+              "id": "888"
+            },
+            "boost": 1.0
+          }
+        },
+        {
+          "script": {
+            "script": {
+              "id": "1024"
+            },
+            "boost": 1.0
+          }
+        }
+      ],
+      "adjust_pure_negative": true,
+      "minimum_should_match": "2",
+      "boost": 1.0
+    }
+  },
+  "_source": {
+    "includes": [
+      "cargoId",
+      "end_province_code",
+      "companyId",
+      "driverUserName",
+      "loadAddress"
+    ],
+    "excludes": []
+  }
 }
+
 ```
 
 ## Constant Score查询
