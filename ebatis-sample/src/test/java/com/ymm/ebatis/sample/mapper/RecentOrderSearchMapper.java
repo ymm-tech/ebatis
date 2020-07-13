@@ -18,11 +18,22 @@ import java.util.concurrent.CompletableFuture;
  */
 @EasyMapper(indices = "recent_order_index")
 public interface RecentOrderSearchMapper {
-    //Search Entity[]测试
+    /**
+     * 搜索订单
+     *
+     * @param condition 搜索条件
+     * @return 订单集合
+     */
     @Search(queryType = QueryType.BOOL)
     RecentOrder[] queryRecentOrderArray(RecentOrderCondition condition);
 
-    //Search Page<Entity>测试
+    /**
+     * 搜索订单
+     *
+     * @param pageable  分页信息
+     * @param condition 搜索条件
+     * @return 订单分页
+     */
     @Search(queryType = QueryType.BOOL)
     Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition condition);
 
