@@ -19,9 +19,7 @@ class AutoQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
 
     @Override
     protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        if (meta.isBasicArrayOrCollection()) {
-            return QueryBuilderFactory.terms().create(meta, condition);
-        } else if (meta.isBasic()) {
+        if (meta.isBasic()) {
             return QueryBuilderFactory.term().create(meta, condition);
         } else if (meta.isRange()) {
             Range<?> range = (Range<?>) condition;
