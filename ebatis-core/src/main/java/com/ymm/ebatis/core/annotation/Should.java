@@ -37,8 +37,6 @@ public @interface Should {
 
     DisMax[] disMax() default {};
 
-    Exists[] exists() default {};
-
     Fuzzy[] fuzzy() default {};
 
     FunctionScore[] functionScore() default {};
