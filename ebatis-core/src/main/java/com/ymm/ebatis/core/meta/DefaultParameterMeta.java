@@ -13,6 +13,7 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 章多亮
@@ -28,6 +29,7 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
     private final boolean basicArrayOrCollection;
     private final String name;
     private final Annotation requestAnnotation;
+    private final Map<Class<? extends Annotation>, Optional<? extends Annotation>> metas = new ConcurrentHashMap<>();
 
     DefaultParameterMeta(MethodMeta methodMeta, Parameter parameter, int index) {
         super(parameter, parameter.getType(), parameter.getParameterizedType());
@@ -103,8 +105,9 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass) {
-        return AnnotationUtils.findAttributeAnnotation(requestAnnotation, annotationClass);
+        return (Optional<A>) metas.computeIfAbsent(annotationClass, clazz -> AnnotationUtils.findAttributeAnnotation(requestAnnotation, clazz));
     }
 
     @Override
