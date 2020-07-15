@@ -771,7 +771,7 @@ CompletableFuture<Optional<RecentOrder>[]> getRecentOrdersOptionalFuture(List<Re
 > 入参实体非基本类型时，需实现IdProvider接口。
 
 ### Bulk API
-Bulk接口目前只支持但类型批量操作，也即是要全全部是索引操作，要不全部是删除操作等等。
+Bulk接口目前只支持单类型批量操作，也即是要全全部是索引操作，要不全部是删除操作等等。
 #### 接口定义
 ```java
 /**
