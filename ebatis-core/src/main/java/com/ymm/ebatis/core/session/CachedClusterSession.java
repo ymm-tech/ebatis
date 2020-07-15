@@ -146,7 +146,6 @@ class CachedClusterSession implements ClusterSession {
             ContextHolder.setContext(context);
 
             try {
-                interceptor.postResponse(new DefaultPostResponseInfo<>(request, response));
                 boolean validated = extractor.validate(response);
                 if (validated) {
                     future.complete(extractor.extractData(response));
@@ -157,6 +156,7 @@ class CachedClusterSession implements ClusterSession {
                         future.completeExceptionally(new InvalidResponseException(response.toString()));
                     }
                 }
+                interceptor.postResponse(new DefaultPostResponseInfo<>(request, response));
             } finally {
                 ContextHolder.remove();
             }
