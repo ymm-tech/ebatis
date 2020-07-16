@@ -1,9 +1,10 @@
 package com.ymm.ebatis.core.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.Properties;
 
 /**
  * @author 章多亮
@@ -11,24 +12,28 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
  */
 @Slf4j
 public class Env {
-    public static final Env INSTANCE = new Env();
     public static final String DEBUG_ENABLED = "ebatis.debugEnabled";
     public static final String OFFLINE_ENABLED = "ebatis.offlineEnabled";
     public static final String CLUSTER_ROUTER_NAME = "ebatis.clusterRouter";
-    private static final PropertiesConfiguration CONFIG;
+
+    public static boolean IS_DEBUG_ENABLED = false;
+    public static boolean IS_OFFLINE_ENABLED = false;
+    public static String DEFAULT_CLUSTER_ROUTER_NAME;
 
     static {
-        PropertiesConfiguration cfg;
-        Configurations configs = new Configurations();
-
-        try {
-            cfg = configs.properties("ebatis.properties");
-        } catch (ConfigurationException e) {
+        try (InputStream in = Env.class.getClassLoader().getResourceAsStream("ebatis.properties")) {
+            if (Objects.nonNull(in)) {
+                Properties cfg = new Properties();
+                cfg.load(in);
+                IS_DEBUG_ENABLED = Boolean.parseBoolean(cfg.getProperty(DEBUG_ENABLED));
+                IS_OFFLINE_ENABLED = Boolean.parseBoolean(cfg.getProperty(OFFLINE_ENABLED));
+                DEFAULT_CLUSTER_ROUTER_NAME = cfg.getProperty(CLUSTER_ROUTER_NAME);
+            } else {
+                log.info("未检测到ebatis.properties配置,默认不开启调试模式,离线模式.");
+            }
+        } catch (Exception e) {
             log.error("配置文件载入失败", e);
-            cfg = new PropertiesConfiguration();
-            cfg.addProperty(DEBUG_ENABLED, true);
         }
-        CONFIG = cfg;
     }
 
     private Env() {
@@ -40,7 +45,7 @@ public class Env {
      * @return 如果当前启用调试模式，返回<code>true</code>
      */
     public static boolean isDebugEnabled() {
-        return CONFIG.getBoolean(DEBUG_ENABLED, false);
+        return IS_DEBUG_ENABLED;
     }
 
     /**
@@ -49,7 +54,7 @@ public class Env {
      * @return 如果是离线模式，返回<code>true</code>
      */
     public static boolean isOfflineEnabled() {
-        return CONFIG.getBoolean(OFFLINE_ENABLED, false);
+        return IS_OFFLINE_ENABLED;
     }
 
     /**
@@ -58,6 +63,6 @@ public class Env {
      * @return 集群路由名称
      */
     public static String getClusterRouterName() {
-        return CONFIG.getString(CLUSTER_ROUTER_NAME);
+        return DEFAULT_CLUSTER_ROUTER_NAME;
     }
 }
