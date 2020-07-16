@@ -1,7 +1,6 @@
 package com.ymm.ebatis.core.domain;
 
 import com.ymm.ebatis.core.annotation.Order;
-import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -35,7 +34,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
     /**
      * 桶聚合顺序
      */
-    private List<Order> orders;
+    private List<Order> orders = new ArrayList<>();
 
     /**
      * 返回多少桶聚合结果
@@ -45,7 +44,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
     /**
      * 子聚合
      */
-    private List<Aggregation> subAggregations;
+    private List<Aggregation> subAggregations = new ArrayList<>();
 
     private Map<String, Object> metaData;
 
@@ -142,18 +141,12 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
     }
 
     public TermsAggregation order(Order... order) {
-        if (CollectionUtils.isEmpty(orders)) {
-            orders = new ArrayList<>();
-        }
         Collections.addAll(orders, order);
         return this;
     }
 
     @Override
     public TermsAggregation subAgg(Aggregation... aggs) {
-        if (CollectionUtils.isEmpty(subAggregations)) {
-            subAggregations = new ArrayList<>();
-        }
         Collections.addAll(subAggregations, aggs);
         return this;
     }
@@ -187,11 +180,10 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
             agg.shardSize(shardSize);
         }
 
-        if (CollectionUtils.isNotEmpty(orders)) {
+        if (!orders.isEmpty()) {
             orders.forEach(order -> agg.order(order.order()));
         }
-
-        if (CollectionUtils.isNotEmpty(subAggregations)) {
+        if (!subAggregations.isEmpty()) {
             subAggregations.forEach(subAgg -> agg.subAggregation(subAgg.toAggBuilder()));
         }
 
