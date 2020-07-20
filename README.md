@@ -1005,7 +1005,7 @@ public class SampleRecentOrderCondition {
 @EqualsAndHashCode(callSuper = false)
 public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider {
 
-    /**
+     /**
      * 基本类型
      */
     @Must
@@ -1014,14 +1014,14 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
      * 基本类型集合
      */
     @Must
-    private List<Integer> orderSource ;
+    private List<Integer> orderSource;
 
     /**
      * 基本类型集合
      */
     @Must
     @Field("orderType")
-    private Integer[] type ;
+    private Integer[] type;
 
     /**
      * 嵌套条件
@@ -1039,7 +1039,7 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
      * 非基本类型集合
      */
     @Must
-    private SecurityTran[] securityTrans ;
+    private SecurityTran[] securityTrans;
 
     /**
      * 单范围查询
@@ -1051,7 +1051,7 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
      * 脚本查询
      */
     @Must
-    private Script script ;
+    private Script script;
 
     /**
      * 多范围组合查询
@@ -1062,7 +1062,7 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
      * 多脚本组合查询
      */
     @Should(minimumShouldMatch = "2")
-    private Script[] scripts ;
+    private Script[] scripts;
     /**
      * 动态化计算实例类型
      */
@@ -1070,10 +1070,10 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
     private Object shipperInfo;
 
     @Must
-    private Object[] shipperInfos ;
+    private Object[] shipperInfos;
 
-    @Must(queryType = QueryType.EXISTS, exists = @Exists(false))
-    private String startAreaCode;
+    @Must(queryType = QueryType.EXISTS)
+    private boolean startAreaCode;
 
     @Must(queryType = QueryType.WILDCARD)
     private String unloadAddress;
@@ -1106,38 +1106,38 @@ Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition c
 
 ### 接口使用示例
 ```java
-public void queryRecentOrderPage() {
-    RecentOrderCondition condition = new RecentOrderCondition();
-    condition.setCargoId(10124512292911L);
-    condition.setCargoType(2);
-    condition.setOrderSource(Lists.newArrayList(2, 4, 6, 8));
-    condition.setType(new Integer[]{1, 3, 5, 7});
-    
-    Protocol protocol = new Protocol();
-    protocol.setProtocolStatus(0);
-    RateMode rateMode = new RateMode();
-    rateMode.setRateModeFlag(0);
-    protocol.setRateMode(rateMode);
-    condition.setProtocol(protocol);
-    
-    condition.setSecurityTranList(Lists.newArrayList(
-            SecurityTran.builder().securityTran(Lists.newArrayList(1, 2, 3)).build(),
-            SecurityTran.builder().securityTran(Lists.newArrayList(4, 5, 6)).build()));
-    condition.setSecurityTrans(new SecurityTran[]{
-            SecurityTran.builder().securityTran(Lists.newArrayList(7, 8, 9)).build(),
-            SecurityTran.builder().securityTran(Lists.newArrayList(10, 11, 12)).build()});
-    
-    condition.setChannel(Range.of(1, 100).closeLeft());
-    condition.setScript(Script.stored("666"));
-    condition.setChannels(Lists.newArrayList(Range.of(100, 200).closeLeft(), Range.of(300, 500).closeLeft()));
-    condition.setScripts(new Script[]{Script.stored("888"), Script.stored("1024")});
-    condition.setShipperInfo(ShipperInfo.builder().shipperTelephone(18030000725L).shipperTelephoneMask(999725L).shipperUserId(123321L).build());
-    condition.setShipperInfos(new Object[]{ShipperInfo.builder().shipperTelephone(18031111725L).shipperTelephoneMask(999726L).shipperUserId(456654L).build()});
-    condition.setUnloadAddress("**沈阳市皇姑区**");
+protected RecentOrderCondition getCondition() {
+        RecentOrderCondition condition = new RecentOrderCondition();
+        condition.setCargoId(10124512292911L);
+        condition.setCargoType(2);
+        condition.setOrderSource(Lists.newArrayList(2, 4, 6, 8));
+        condition.setType(new Integer[]{1, 3, 5, 7});
 
-    Page<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderPage(Pageable.of(1, 10), condition);
-    log.info("result:{}", recentOrders);
-}
+        Protocol protocol = new Protocol();
+        protocol.setProtocolStatus(0);
+        RateMode rateMode = new RateMode();
+        rateMode.setRateModeFlag(0);
+        protocol.setRateMode(rateMode);
+        condition.setProtocol(protocol);
+
+        condition.setSecurityTranList(Lists.newArrayList(
+                SecurityTran.builder().securityTran(Lists.newArrayList(1, 2, 3)).build(),
+                SecurityTran.builder().securityTran(Lists.newArrayList(4, 5, 6)).build()));
+
+        condition.setSecurityTrans(new SecurityTran[]{
+                SecurityTran.builder().securityTran(Lists.newArrayList(7, 8, 9)).build(),
+                SecurityTran.builder().securityTran(Lists.newArrayList(10, 11, 12)).build()});
+
+        condition.setStartAreaCode(false);
+        condition.setChannel(Range.of(1, 100).closeLeft());
+        condition.setScript(Script.stored("666"));
+        condition.setChannels(Lists.newArrayList(Range.of(100, 200).closeLeft(), Range.of(300, 500).closeLeft()));
+        condition.setScripts(new Script[]{Script.stored("888"), Script.stored("1024")});
+        condition.setShipperInfo(ShipperInfo.builder().shipperTelephone(18030000725L).shipperTelephoneMask(999725L).shipperUserId(123321L).build());
+        condition.setShipperInfos(new Object[]{ShipperInfo.builder().shipperTelephone(18031111725L).shipperTelephoneMask(999726L).shipperUserId(456654L).build()});
+        condition.setUnloadAddress("**沈阳市皇姑区**");
+        return condition;
+    }
 
 ```
 
@@ -1159,25 +1159,67 @@ public void queryRecentOrderPage() {
           }
         },
         {
-          "terms": {
-            "orderSource": [
-              2,
-              4,
-              6,
-              8
-            ],
-            "boost": 1.0
+          "term": {
+            "orderSource": {
+              "value": 2,
+              "boost": 1.0
+            }
           }
         },
         {
-          "terms": {
-            "orderType": [
-              1,
-              3,
-              5,
-              7
-            ],
-            "boost": 1.0
+          "term": {
+            "orderSource": {
+              "value": 4,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "orderSource": {
+              "value": 6,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "orderSource": {
+              "value": 8,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "orderType": {
+              "value": 1,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "orderType": {
+              "value": 3,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "orderType": {
+              "value": 5,
+              "boost": 1.0
+            }
+          }
+        },
+        {
+          "term": {
+            "orderType": {
+              "value": 7,
+              "boost": 1.0
+            }
           }
         },
         {
@@ -1216,13 +1258,27 @@ public void queryRecentOrderPage() {
           "bool": {
             "must": [
               {
-                "terms": {
-                  "securityTran": [
-                    1,
-                    2,
-                    3
-                  ],
-                  "boost": 1.0
+                "term": {
+                  "securityTran": {
+                    "value": 1,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 2,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 3,
+                    "boost": 1.0
+                  }
                 }
               }
             ],
@@ -1234,13 +1290,27 @@ public void queryRecentOrderPage() {
           "bool": {
             "must": [
               {
-                "terms": {
-                  "securityTran": [
-                    4,
-                    5,
-                    6
-                  ],
-                  "boost": 1.0
+                "term": {
+                  "securityTran": {
+                    "value": 4,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 5,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 6,
+                    "boost": 1.0
+                  }
                 }
               }
             ],
@@ -1252,13 +1322,27 @@ public void queryRecentOrderPage() {
           "bool": {
             "must": [
               {
-                "terms": {
-                  "securityTran": [
-                    7,
-                    8,
-                    9
-                  ],
-                  "boost": 1.0
+                "term": {
+                  "securityTran": {
+                    "value": 7,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 8,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 9,
+                    "boost": 1.0
+                  }
                 }
               }
             ],
@@ -1270,13 +1354,27 @@ public void queryRecentOrderPage() {
           "bool": {
             "must": [
               {
-                "terms": {
-                  "securityTran": [
-                    10,
-                    11,
-                    12
-                  ],
-                  "boost": 1.0
+                "term": {
+                  "securityTran": {
+                    "value": 10,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 11,
+                    "boost": 1.0
+                  }
+                }
+              },
+              {
+                "term": {
+                  "securityTran": {
+                    "value": 12,
+                    "boost": 1.0
+                  }
                 }
               }
             ],
@@ -1460,46 +1558,38 @@ public void queryRecentOrderPage() {
 ## Constant Score查询
 ### 接口定义
 ```java
-@Search(queryType = QueryType.CONSTANT_SCORE)
-CompletableFuture<List<Cargo>> constantSearch(CargoCondition condition);
+@Search(queryType = QueryType.FUNCTION_SCORE)
+List<RecentOrder> queryRecentOrderList(RecentOrderCondition condition);
 ```
 ## Function Score查询
 函数打分查询，允许我们修改文档的相关度分值，通过提供一个或多个函数来计算出查询出来的文档新分值。因此，Function Score查询条件必须要提供打分函数，`ebatis`要求，条件必须实现`ScoreFunctionProvider`接口。此接口，有两个接口方法，默认实现`getFunction`方法即可。
 ### 查询条件POJO定义
 ```java
 
-/**
- * @author 章多亮
- * @since 2019/12/25 17:37
- */
 @Data
-public class FunctionCargoCondition implements ScoreFunctionProvider, ScriptFieldProvider {
-    @Field("cargoChannel")
-    private Integer[] channels;
-    private Long createTime;
-    @Must(nested = true)
-    private Display display;
-    @MustNot(nested = true)
-    private Location endLocation;
-    @Must(nested = true)
-    private Location startLocation;
+@EqualsAndHashCode(callSuper = false)
+public class FunctionRecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider {
 
-    @Ignore
-    private DefaultStrategy strategy;
-    @Ignore
-    private Coordinate position;
+    /**
+     * 基本类型
+     */
+    @Must
+    private Integer cargoType;
+    /**
+     * 基本类型集合
+     */
+    @Must
+    private List<Integer> orderSource;
+
 
     @Override
     public ScoreFunction getFunction() {
-        return ScoreFunction.storedScript("score-script-id", strategy);
+        return ScoreFunction.fieldValueFactor("startCityId", 10, 10, FieldValueFactorFunction.Modifier.LN);
     }
 
     @Override
-    public ScriptField[] getScriptFields() {
-        Objects.requireNonNull(position);
-        return new ScriptField[]{
-                ScriptField.of("endPoint", Script.stored("searchCargoIdList-endLocation-script")),
-                ScriptField.of("startPoint", Script.inline("Hello World.", position))};
+    public ScoreFunctionMode getFunctionMode() {
+        return ScoreFunctionMode.of(FunctionScoreQuery.ScoreMode.MAX, CombineFunction.MAX, 1.0f, 1.0f);
     }
 
 }
@@ -1510,13 +1600,13 @@ public class FunctionCargoCondition implements ScoreFunctionProvider, ScriptFiel
 ### 接口定义
 ```java
 /**
- * 函数搜索货源
+ * 函数搜索订单
  *
  * @param condition 查询条件
  * @return 货源分页
  */
-@Search(queryType = QueryType.FUNCTION_SCORE, )
-CompletableFuture<List<Cargo>> functionSearch(FunctionCargoCondition condition);
+@Search(queryType = QueryType.FUNCTION_SCORE)
+List<RecentOrder> queryRecentOrderList(FunctionRecentOrderCondition condition);
 ```
 
 ## Boosting查询
@@ -1538,100 +1628,72 @@ Pageable pageale = Pageable.of(page, size);
 ### 分页查询接口定义
 
 ```java
-/**
- * 函数分页搜索货源
- *
- * @param condition 查询条件
- * @param pageable 分页信息
- * @return 货源分页
- */
-@Search(queryType = QueryType.FUNCTION_SCORE, functionScore = @FunctionScore(scoreType = ScoreType.SCRIPT_SCORE))
-CompletableFuture<Page<Cargo>> functionSearch(FunctionCargoCondition condition, Pageable pageable);
-
-/**
- * 分页搜索货源
- *
- * @param condition 查询条件
- * @param pageable 分页信息
- * @return 货源分页
- */
+ /**
+     * 搜索订单
+     *
+     * @param pageable  分页信息
+     * @param condition 搜索条件
+     * @return 订单分页
+     */
 @Search(queryType = QueryType.BOOL)
-Page<Cargo> boolSearch(CargoCondition condition, Pageable pageable);
+Page<RecentOrder> queryRecentOrderPage(Pageable pageable, RecentOrderCondition condition);
 ```
 
 > 分页查询，返回值必须是`Page`类型
 
 ## 各种Provider
 
-* `MissingProvider`
+* `AggProvider`
+* `CollapseProvider`
+* `IdProvider`
+* `MultiMatchFieldProvider`
 * `ScoreFunctionProvider`
 * `ScriptFieldProvider`
 * `ScriptProvider`
+* `ScrollProvider`
 * `SortProvider`
-* `SortScriptProvider`
-* `VersionProvider`
 * `SourceProvider`
+* `VersionProvider`
 
 ## 排序
 
-### 普通排序
-普通排序需要实现`SortProvider`接口。
-
-```java
-public class CargoCondition implements SortProvider {
-    private static final Sort[] SORTS = {Sort.asc("createTime", "cargoChannel")};
-
-    @Override
-    public Sort[] getSorts() {
-        return SORTS;
-    }
-}
-```
-
-### 脚本排序
-脚本排序需要实现`SortScriptProvider`接口。
+### 排序
+排序需要实现`SortProvider`接口。
 
 ```java
 @Data
-public class CargoCondition implements SortScriptProvider {
-    @Field(name = "cargoChannel")
-    private Integer[] channels;
-    private Boolean searchable;
-
-    @Ignore
-    private String cargoLabel;
+public class SampleRecentOrderCondition implements SortProvider {
+    private static final Sort[] SORTS = {
+            //字段升序
+            Sort.fieldAsc("createTime"),
+            //脚本降序
+            Sort.scriptStringDesc(Script.stored("order_script"))};
+    @Must
+    private Long cargoId;
 
     @Override
-    public SortScript[] getSortScripts() {
-        Script script = Script.inline("ctx._source.");
-        return new SortScript[]{SortScript.string(script)};
+    public Sort[] getSorts() {
+        return new Sort[0];
     }
-
 }
+
 ```
 
 ## Script Field 脚本字段
 脚本字段需要实现`ScriptFieldProvider`接口。
 
 ```java
-/**
- * @author 章多亮
- * @since 2019/12/19 18:39
- */
 @Data
-public class CargoCondition implements ScriptFieldProvider {
-    @Field("cargoChannel")
-    private Integer[] cargoChannels;
+public class SampleRecentOrderCondition implements ScriptFieldProvider {
+    private static final ScriptField[] SCRIPT_FIELDS = new ScriptField[]{
+            ScriptField.of("createTime", Script.stored("order_script"))
+    };
+    @Must
     private Long cargoId;
-    private String[] cargoLines;
-    private Long createTime;
-    @Ignore
-    private Display display;
 
     @Override
     public ScriptField[] getScriptFields() {
-        Script script = Script.stored("script-id", display);
-        return new ScriptField[]{ScriptField.of("display", script)};
+        return new ScriptField[0];
     }
 }
 ```
@@ -1681,20 +1743,44 @@ public class Product {
 
 > 此返回值类型，说明返回的字段为：`["id", "name"]`
 
-## 查询接口返回类型
+## 拦截器
 
-定义Mapper接口，对返回值类型有一定的要求，可以在一下指定的类型中，选择可以满足业务需求的类型返回，`T` 是业务对象类型。
+ebatis中拦截器的加载通过SPI方式实现，只需要提供的目标类实现com.ymm.ebatis.core.interceptor.Interceptor接口，并且在/META-INF/services目录下提供com.ymm.ebatis.core.interceptor.Interceptor文件，内容为提供的目标类的全限定名。也可以在目标类上加上注解@AutoService(Interceptor.class)，由auto-service替我们生成。
 
-|序号|返回类型|异步已否|说明|
-|---|---|---|---|
-|1|`Optional<T>`|同步|可选返回值类型，单文档返回，此返回值说明，查询会返回最多一个文档|
-|2|`Optional<List<T>>`|同步| 可选返回列表，多文档返回，此返回值说明，查询会返回零个或多个文档|
-|3|`T`|同步|单文档返回类型|
-|4|`List<T>`|同步|多文档返回类型|
-|5|`Page<T>`|同步|分页多文档返回类型|
-|6|`CompletableFuture<T>`|异步|异步返回值类型，单文档返回，此返回值说明，异步返回最多一个文档|
-|7|`CompletableFuture<List<T>>`|异步|多文档返回类型|
-|7|`CompletableFuture<Page<T>>`|异步|分页多文档返回类型|
-|8|`void`|同步|无返回值|
+```
+@Slf4j
+@AutoService(Interceptor.class)
+public class TestInterceptor implements Interceptor {
+    @Override
+    public int getOrder() {
+        return 0;
+    }
 
+    @Override
+    public void handleException(Throwable throwable) {
+        log.error("Exception", throwable);
+    }
 
+    @Override
+    public void preRequest(Object[] args) {
+       ...
+       //通过ContextHolder可以跨上下文获取绑定的值
+       String userId = ContextHolder.getString("userId");
+    }
+
+    @Override
+    public <T extends ActionRequest> void postRequest(RequestInfo<T> requestInfo) {
+        ...
+    }
+
+    @Override
+    public <T extends ActionRequest> void preResponse(PreResponseInfo<T> preResponseInfo) {
+        ...
+    }
+
+    @Override
+    public <T extends ActionRequest, R extends ActionResponse> void postResponse(PostResponseInfo<T, R> postResponseInfo) {
+        ...
+    }
+}
+```
