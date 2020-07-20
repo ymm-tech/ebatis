@@ -1784,3 +1784,20 @@ public class TestInterceptor implements Interceptor {
     }
 }
 ```
+
+## spring集成
+
+通过简单得注解方式,即可以与spring框架完成集成。
+
+```java
+@Configuration
+@EnableEasyMapper(basePackages = "com.ymm.ebatis.sample.mapper")
+public class EbatisConfig {
+    @Bean(destroyMethod = "close")
+    public ClusterRouter clusterRouter() {
+        Cluster cluster = Cluster.simple("127.0.0.1", 9200, Credentials.basic("admin", "123456"));
+        ClusterRouter clusterRouter = ClusterRouter.single(cluster);
+        return clusterRouter;
+    }
+}
+```
