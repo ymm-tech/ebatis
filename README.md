@@ -1,5 +1,3 @@
-[TOC]
-
 # 设计说明
 
 `ebatis`采用和`MyBatis`类似思想，只需要定义接口，便可访问`elasticsearch`，隔离业务对`elasticserach`底层接口的直接访问。如此以来，数据访问的时候，不需要自己手动去构建DSL语句，同时，当升级`elastisearch`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级。
