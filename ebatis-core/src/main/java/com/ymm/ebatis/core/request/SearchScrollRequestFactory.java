@@ -3,10 +3,12 @@ package com.ymm.ebatis.core.request;
 import com.ymm.ebatis.core.annotation.SearchScroll;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScrollProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.search.ClearScrollRequest;
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
 
 import java.util.Collection;
@@ -47,7 +49,11 @@ class SearchScrollRequestFactory extends AbstractRequestFactory<SearchScroll, Ac
 
             // if scrollId is null, it means that current request is initial search scroll request
             if (scrollId == null) {
-                return RequestFactory.search().create(meta, args).scroll(scroll.initialKeepAlive());
+                SearchRequest request = RequestFactory.search().create(meta, args).scroll(scroll.initialKeepAlive());
+                if (condition instanceof RoutingProvider) {
+                    request.routing(((RoutingProvider) condition).getRouting());
+                }
+                return request;
             } else {
                 meta.setPageable(args);
                 return Requests.searchScrollRequest(scrollId).scroll(StringUtils.trimToNull(scroll.keepAlive()));

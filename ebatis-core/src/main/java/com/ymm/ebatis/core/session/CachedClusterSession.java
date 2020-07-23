@@ -7,6 +7,8 @@ import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.exception.InvalidResponseException;
+import com.ymm.ebatis.core.interceptor.DefaultPostResponseInfo;
+import com.ymm.ebatis.core.interceptor.DefaultPreResponseInfo;
 import com.ymm.ebatis.core.interceptor.Interceptor;
 import com.ymm.ebatis.core.interceptor.InterceptorFactory;
 import com.ymm.ebatis.core.request.CatRequest;
@@ -17,6 +19,7 @@ import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -130,8 +133,13 @@ class CachedClusterSession implements ClusterSession {
         return performRequestAsync(cluster::clearScrollAsync, request, extractor);
     }
 
+    @Override
+    public <T> CompletableFuture<T> mgetAsync(MultiGetRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::mgetAsync, request, extractor);
+    }
 
-    private <R extends ActionResponse, E> ActionListener<R> wrap(CompletableFuture<E> future, ResponseExtractor<E> extractor) {
+    private <R extends ActionResponse, T extends ActionRequest, E> ActionListener<R> wrap(CompletableFuture<E> future,
+                                                                                          ResponseExtractor<E> extractor, T request) {
         Context context = ContextHolder.getContext();
 
         return ActionListener.wrap(response -> {
@@ -148,6 +156,7 @@ class CachedClusterSession implements ClusterSession {
                         future.completeExceptionally(new InvalidResponseException(response.toString()));
                     }
                 }
+                interceptor.postResponse(new DefaultPostResponseInfo<>(request, response));
             } finally {
                 ContextHolder.remove();
             }
@@ -160,12 +169,13 @@ class CachedClusterSession implements ClusterSession {
 
     private <T extends ActionRequest, R extends ActionResponse, E> CompletableFuture<E> performRequestAsync(RequestExecutor<T, R> executor, T request, ResponseExtractor<E> extractor) {
         CompletableFuture<E> future = new CompletableFuture<>();
+        interceptor.preResponse(new DefaultPreResponseInfo<>(request, extractor));
         if (Env.isOfflineEnabled()) {
             future.complete(extractor.empty());
             return future;
         }
 
-        executor.execute(request, wrap(future, extractor));
+        executor.execute(request, wrap(future, extractor, request));
         return future;
     }
 

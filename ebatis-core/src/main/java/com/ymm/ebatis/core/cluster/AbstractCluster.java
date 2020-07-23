@@ -20,6 +20,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.DefaultClientConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.client.Request;
@@ -29,7 +30,9 @@ import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -52,6 +55,7 @@ public abstract class AbstractCluster implements Cluster {
     private final RestClientBuilder builder;
     private final HttpHost[] hosts;
     private String name;
+    private final Credentials credentials;
 
     public AbstractCluster(String hostname, int port) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, null);
@@ -66,8 +70,9 @@ public abstract class AbstractCluster implements Cluster {
     }
 
     public AbstractCluster(HttpHost[] hosts, Credentials credentials) {
+        this.credentials = credentials;
         this.hosts = hosts;
-        this.builder = custom(createBuilder(hosts, credentials));
+        this.builder = custom(createBuilder(hosts));
         this.name = Arrays.toString(hosts);
 
         this.lowLevelClientInitializer = createLowLevelClientInitializer();
@@ -129,11 +134,39 @@ public abstract class AbstractCluster implements Cluster {
      * @param hosts ES主机列表
      * @return 客户端构建器
      */
-    protected RestClientBuilder createBuilder(HttpHost[] hosts, Credentials credentials) {
-        return RestClient.builder(hosts)
-                .setHttpClientConfigCallback(builder -> builder.setConnectionReuseStrategy(DefaultClientConnectionReuseStrategy.INSTANCE)
-                        .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-                        .setDefaultCredentialsProvider(credentials == null ? null : credentials.toCredentialsProvider()));
+    protected RestClientBuilder createBuilder(HttpHost[] hosts) {
+        return RestClient.builder(hosts);
+    }
+
+    /**
+     * 设置HttpClientConfig credentials 请求响应打印 请求超时时间
+     *
+     * @param builder 客户端构建器
+     * @return 客户端构建器
+     */
+    private HttpAsyncClientBuilder setHttpClientConfig(HttpAsyncClientBuilder builder) {
+        builder.setConnectionReuseStrategy(DefaultClientConnectionReuseStrategy.INSTANCE)
+                .setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
+                .setDefaultCredentialsProvider(credentials == null ? null : credentials.toCredentialsProvider());
+        if (Env.isDebugEnabled()) {
+            builder.addInterceptorLast(this::printRequest)
+                    .addInterceptorLast(this::printResponse);
+        }
+
+        // 设置单次请求的超时时间
+        builder.addInterceptorLast(this::setRequestTimeout);
+        //定制HttpClientConfig
+        customHttpClientConfig(builder);
+        return builder;
+
+    }
+
+    /**
+     * 定制HttpClientConfig
+     *
+     * @param builder 客户端构建器
+     */
+    protected void customHttpClientConfig(HttpAsyncClientBuilder builder) {
     }
 
     /**
@@ -142,17 +175,8 @@ public abstract class AbstractCluster implements Cluster {
      * @param builder ES集群客户端构建器
      * @return 返回构建器自己
      */
-    protected RestClientBuilder custom(RestClientBuilder builder) {
-        builder.setHttpClientConfigCallback(httpBuilder -> {
-            if (Env.isDebugEnabled()) {
-                httpBuilder.addInterceptorLast(this::printRequest)
-                        .addInterceptorLast(this::printResponse);
-            }
-
-            // 设置单次请求的超时时间
-            httpBuilder.addInterceptorLast(this::setRequestTimeout);
-            return httpBuilder;
-        });
+    private RestClientBuilder custom(RestClientBuilder builder) {
+        builder.setHttpClientConfigCallback(this::setHttpClientConfig);
 
         // 设置默认超时时间
         builder.setRequestConfigCallback(requestConfigBuilder -> requestConfigBuilder);
@@ -189,10 +213,14 @@ public abstract class AbstractCluster implements Cluster {
             HttpEntityEnclosingRequest enclosingRequest = (HttpEntityEnclosingRequest) request;
             HttpEntity entity = enclosingRequest.getEntity();
             if (entity != null) {
-                Map<?, ?> map = objectMapper().readValue(entity.getContent(), Map.class);
-
-                String body = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
-                sb.append(body);
+                try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(entity.getContent()))) {
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        Map<?, ?> map = objectMapper().readValue(line, Map.class);
+                        String body = objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(map);
+                        sb.append(body);
+                    }
+                }
             }
         }
 

@@ -9,6 +9,8 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -176,6 +178,11 @@ public interface FederalCluster extends Cluster {
     @Override
     default void scrollAsync(SearchScrollRequest request, ActionListener<SearchResponse> listener) {
         throw new UnsupportedOperationException("联邦集群不支持scroll");
+    }
+
+    @Override
+    default void mgetAsync(MultiGetRequest request, ActionListener<MultiGetResponse> listener) {
+        throw new UnsupportedOperationException("联邦集群不支持multiGetAsync");
     }
 
     /**

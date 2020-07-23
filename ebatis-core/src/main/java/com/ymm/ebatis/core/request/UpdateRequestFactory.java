@@ -1,14 +1,15 @@
 package com.ymm.ebatis.core.request;
 
 import com.ymm.ebatis.core.annotation.Update;
+import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScriptProvider;
-import com.ymm.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.support.ActiveShardCount;
+import org.elasticsearch.action.support.single.instance.InstanceShardOperationRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.common.unit.TimeValue;
 
@@ -27,8 +28,9 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
     @Override
     protected void setAnnotationMeta(UpdateRequest request, Update update) {
         request.fetchSource(update.fetchSource())
-                .timeout(TimeValue.parseTimeValue(update.timeout(), "更新超时时间"))
-                .waitForActiveShards(ActiveShardCount.parseString(update.waitForActiveShards()))
+                .timeout(StringUtils.isBlank(update.timeout()) ? InstanceShardOperationRequest.DEFAULT_TIMEOUT :
+                        TimeValue.parseTimeValue(update.timeout(), "更新超时时间"))
+                .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(update.waitForActiveShards()))
                 .detectNoop(update.detectNoop())
                 .docAsUpsert(update.docAsUpsert())
                 .retryOnConflict(update.retryOnConflict())
@@ -55,10 +57,6 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
         if (parameterMeta.isBasic()) {
             request.id(String.valueOf(doc));
         } else {
-            if (doc instanceof VersionProvider) {
-                request.version(((VersionProvider) doc).getVersion());
-            }
-
             if (doc instanceof IdProvider) {
                 request.id(((IdProvider) doc).getId());
             }
@@ -70,6 +68,10 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
                 // Partial Document 更新
                 IndexRequest indexRequest = RequestFactory.index().create(meta, args);
                 request.doc(indexRequest);
+            }
+
+            if (doc instanceof RoutingProvider) {
+                request.routing(((RoutingProvider) doc).getRouting());
             }
         }
 

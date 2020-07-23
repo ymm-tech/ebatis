@@ -23,8 +23,6 @@ public @interface Filter {
 
     DisMax[] disMax() default {};
 
-    Exists[] exists() default {};
-
     Fuzzy[] fuzzy() default {};
 
     FunctionScore[] functionScore() default {};

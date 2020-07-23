@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.meta;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,4 +89,11 @@ public interface ConditionMeta {
      * @return 属性注解
      */
     <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass);
+
+    /**
+     * 获取type
+     *
+     * @return type
+     */
+    Type getGenericType();
 }

@@ -3,13 +3,14 @@ package com.ymm.ebatis.core.request;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ymm.ebatis.core.annotation.Index;
+import com.ymm.ebatis.core.common.ActiveShardCountUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.provider.IdProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.VersionProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.support.ActiveShardCount;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentType;
 
@@ -30,7 +31,7 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
     protected void setAnnotationMeta(IndexRequest request, Index index) {
         request.setRefreshPolicy(index.refreshPolicy())
                 .versionType(index.versionType())
-                .waitForActiveShards(ActiveShardCount.parseString(index.waitForActiveShards()))
+                .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(index.waitForActiveShards()))
                 .timeout(index.timeout())
                 .opType(index.opType());
 
@@ -64,6 +65,10 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
         if (doc instanceof VersionProvider) {
             request.version(((VersionProvider) doc).getVersion());
+        }
+
+        if (doc instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) doc).getRouting());
         }
 
         return request;

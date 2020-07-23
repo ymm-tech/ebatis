@@ -8,6 +8,7 @@ import com.ymm.ebatis.core.response.ResponseExtractor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.ClearScrollRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -302,6 +303,16 @@ public interface ClusterSession extends Cloneable {
      * @return 异步结果
      */
     <T> CompletableFuture<T> clearScrollAsync(ClearScrollRequest request, ResponseExtractor<T> extractor);
+
+    /**
+     * 异步多GET查询
+     *
+     * @param request   多get请求
+     * @param extractor 结果提取器
+     * @param <T>       结果类型
+     * @return 异步结果
+     */
+    <T> CompletableFuture<T> mgetAsync(MultiGetRequest request, ResponseExtractor<T> extractor);
 
     /**
      * 创建或获取指定类型接口代理对象，

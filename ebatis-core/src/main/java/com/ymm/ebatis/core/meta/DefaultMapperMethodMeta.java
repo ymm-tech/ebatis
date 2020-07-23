@@ -37,6 +37,7 @@ class DefaultMapperMethodMeta implements MapperMethod {
     private final HttpConfig httpConfig;
     private final String[] includeFields;
     private final Class<?> returnType;
+    private final Class<?> unwrappedReturnType;
     private ParameterMeta conditionParameter;
     private ParameterMeta pageableParameter;
     private ParameterMeta responseExtractorParameter;
@@ -57,7 +58,8 @@ class DefaultMapperMethodMeta implements MapperMethod {
         this.requestExecutor = requestType.getRequestExecutor();
         this.parameterMetas = getParameterMetas(method);
 
-        this.includeFields = getIncludeFields(this);
+        this.unwrappedReturnType = requestType.getEntityClass(this).orElse(null);
+        this.includeFields = getIncludeFields(unwrappedReturnType);
 
         validate();
     }
@@ -69,8 +71,9 @@ class DefaultMapperMethodMeta implements MapperMethod {
         }
     }
 
-    private String[] getIncludeFields(MethodMeta meta) {
-        return requestType.getEntityClass(meta)
+    private String[] getIncludeFields(Class<?> clazz) {
+        return Optional.ofNullable(clazz)
+                .filter(c -> !MetaUtils.isBasic(c))
                 .map(ClassMeta::of)
                 .map(c -> c.getFieldMetas().stream().map(FieldMeta::getName).toArray(String[]::new))
                 .orElse(ArrayUtils.EMPTY_STRING_ARRAY);
@@ -192,6 +195,11 @@ class DefaultMapperMethodMeta implements MapperMethod {
     @Override
     public String[] getIncludeFields() {
         return includeFields;
+    }
+
+    @Override
+    public Optional<Class<?>> unwrappedReturnType() {
+        return Optional.ofNullable(unwrappedReturnType);
     }
 
     @Override

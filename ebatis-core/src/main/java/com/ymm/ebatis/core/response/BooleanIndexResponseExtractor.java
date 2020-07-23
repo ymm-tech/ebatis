@@ -15,6 +15,6 @@ public class BooleanIndexResponseExtractor implements IndexResponseExtractor<Boo
 
     @Override
     public Boolean doExtractData(IndexResponse response) {
-        return response.status() == RestStatus.CREATED;
+        return response.status() == RestStatus.CREATED || response.status() == RestStatus.OK;
     }
 }

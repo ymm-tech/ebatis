@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -92,19 +94,36 @@ public enum QueryClauseType {
         for (FieldMeta meta : fields) {
             Object value = meta.getValue(instance);
 
-            if (!meta.isBasic()) {
-                // 动态组合语句，特殊处理，就是个坑
-                if (meta.isArray()) {
-                    Arrays.stream((Object[]) value).map(v -> QueryBuilderFactory.auto().create(meta, value)).collect(Collectors.toCollection(() -> builders));
-                } else if (meta.isCollection()) {
-                    ((Collection<?>) value).stream().map(v -> QueryBuilderFactory.auto().create(meta, value)).collect(Collectors.toCollection(() -> builders));
+            QueryBuilderFactory queryBuilderFactory = meta.getQueryBuilderFactory();
+            //terms语句特殊处理，接收集合入参
+            if (meta.isTermsQuery()) {
+                QueryBuilder builder = queryBuilderFactory.create(meta, value);
+                if (builder != null) {
+                    builders.add(builder);
+                }
+            } else if (meta.isArray()) {
+                Optional.ofNullable(value)
+                        .map(Object[].class::cast)
+                        .map(Arrays::stream)
+                        .orElseGet(Stream::empty)
+                        .map(v -> queryBuilderFactory.create(meta, v))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(() -> builders));
+            } else if (meta.isCollection()) {
+                Optional.ofNullable(value)
+                        .map(Collection.class::cast)
+                        .map(Collection::stream)
+                        .orElseGet(Stream::empty)
+                        .map(v -> queryBuilderFactory.create(meta, v))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(() -> builders));
+            } else {
+                QueryBuilder builder = queryBuilderFactory.create(meta, value);
+                if (builder != null) {
+                    builders.add(builder);
                 }
             }
 
-            QueryBuilder builder = meta.getQueryBuilderFactory().create(meta, value);
-            if (builder != null) {
-                builders.add(builder);
-            }
         }
         builders.forEach(combiner::combine);
     }

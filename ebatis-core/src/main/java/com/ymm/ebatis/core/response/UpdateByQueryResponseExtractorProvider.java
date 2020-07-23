@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.BulkByScrollTask;
 
 /**
  * @author 章多亮
@@ -21,6 +22,8 @@ public class UpdateByQueryResponseExtractorProvider extends AbstractResponseExtr
         Class<?> resultClass = genericType.resolve();
         if (BulkByScrollResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
+        } else if (BulkByScrollTask.Status.class == resultClass) {
+            return response -> ((BulkByScrollResponse) response).getStatus();
         } else {
             throw new UnsupportedOperationException();
         }
