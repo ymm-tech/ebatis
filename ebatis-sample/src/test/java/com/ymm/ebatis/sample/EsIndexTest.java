@@ -1,8 +1,8 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderIndexMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.rest.RestStatus;
@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -27,14 +28,14 @@ public class EsIndexTest extends ESAbstractTest {
         recentOrderIndexMapper = createEsMapper(RecentOrderIndexMapper.class);
     }
 
-    @SneakyThrows
+
     @Test
     public void indexRecentOrderBoolean() {
         Boolean bool = recentOrderIndexMapper.indexRecentOrderBoolean(new RecentOrderModel());
         log.info("index result:{}", bool);
     }
 
-    @SneakyThrows
+
     @Test
     public void indexRecentOrderBool() {
         boolean bool = recentOrderIndexMapper.indexRecentOrderBool(new RecentOrderModel());
@@ -42,38 +43,37 @@ public class EsIndexTest extends ESAbstractTest {
     }
 
 
-    @SneakyThrows
     @Test
     public void indexRecentOrderString() {
         String id = recentOrderIndexMapper.indexRecentOrderString(new RecentOrderModel());
         log.info("index id:{}", id);
     }
 
-    @SneakyThrows
+
     @Test
     public void indexRecentOrderVoid() {
         recentOrderIndexMapper.indexRecentOrderVoid(new RecentOrderModel());
         log.info("index success ");
     }
 
-    @SneakyThrows
+
     @Test
-    public void indexRecentOrderIndexResponse() {
+    public void indexRecentOrderIndexResponse() throws JsonProcessingException {
         IndexResponse indexResponse = recentOrderIndexMapper.indexRecentOrderIndexResponse(new RecentOrderModel());
         String response = getJsonResult(indexResponse);
         log.info("indexResponse success ：{}", response);
     }
 
-    @SneakyThrows
+
     @Test
     public void indexRecentOrderRestStatus() {
         RestStatus restStatus = recentOrderIndexMapper.indexRecentOrderRestStatus(new RecentOrderModel());
         log.info("index success restStatus：{}", restStatus);
     }
 
-    @SneakyThrows
+
     @Test
-    public void indexRecentOrderCompletableFuture() {
+    public void indexRecentOrderCompletableFuture() throws InterruptedException, ExecutionException {
         AtomicReference<Throwable> ex = new AtomicReference<>();
         CountDownLatch countDownLatch = new CountDownLatch(1);
         CompletableFuture<RestStatus> restStatusCompletableFuture = recentOrderIndexMapper.indexRecentOrderCompletableFuture(new RecentOrderModel());
@@ -87,9 +87,9 @@ public class EsIndexTest extends ESAbstractTest {
         Assert.assertNull(ex.get());
     }
 
-    @SneakyThrows
+
     @Test
-    public void indexRecentOrderFutureVoid() {
+    public void indexRecentOrderFutureVoid() throws InterruptedException {
         AtomicReference<Throwable> ex = new AtomicReference<>();
         CountDownLatch countDownLatch = new CountDownLatch(1);
         CompletableFuture<Void> voidCompletableFuture = recentOrderIndexMapper.indexRecentOrderFutureVoid(new RecentOrderModel());

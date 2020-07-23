@@ -1,6 +1,5 @@
 package com.ymm.ebatis.core.interceptor;
 
-import com.ymm.ebatis.core.common.LazyPrettyToString;
 import org.elasticsearch.action.ActionRequest;
 
 /**
@@ -28,6 +27,6 @@ public class DefaultRequestInfo<T extends ActionRequest> implements RequestInfo<
 
     @Override
     public String toString() {
-        return new LazyPrettyToString(request).toString();
+        return request.toString();
     }
 }

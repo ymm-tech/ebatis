@@ -1,10 +1,10 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.entity.RecentOrderModelScript;
 import com.ymm.ebatis.sample.mapper.RecentOrderBulkMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -28,8 +28,7 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void bulkIndexRecentOrderList() {
+    public void bulkIndexRecentOrderList() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292667L);
@@ -39,8 +38,7 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void bulkIndexRecentOrderListWithArray() {
+    public void bulkIndexRecentOrderListWithArray() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292667L);
@@ -50,8 +48,7 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void bulkIndexRecentOrderArray() {
+    public void bulkIndexRecentOrderArray() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292667L);
@@ -62,8 +59,7 @@ public class ESBulkTest extends ESAbstractTest {
 
 
     @Test
-    @SneakyThrows
-    public void bulkIndexRecentOrderBulkResponse() {
+    public void bulkIndexRecentOrderBulkResponse() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292667L);
@@ -73,16 +69,14 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void bulkDeleteRecentOrderListWithIds() {
+    public void bulkDeleteRecentOrderListWithIds() throws JsonProcessingException {
         List<BulkItemResponse> bulkItemResponses = recentOrderBulkMapper.bulkDeleteRecentOrderList(10124512292666L, 10124512292667L);
         String result = getJsonResult(bulkItemResponses);
         log.info("result:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void bulkDeleteRecentOrderListWithModes() {
+    public void bulkDeleteRecentOrderListWithModes() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292667L);
@@ -92,8 +86,7 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void bulkUpdateRecentOrderList() {
+    public void bulkUpdateRecentOrderList() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292667L);
@@ -106,8 +99,7 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void bulkUpdateRecentOrderListWithScript() {
+    public void bulkUpdateRecentOrderListWithScript() throws JsonProcessingException {
         RecentOrderModelScript rom1 = new RecentOrderModelScript();
         RecentOrderModelScript rom2 = new RecentOrderModelScript();
         rom2.setCargoId(10124512292667L);
@@ -120,7 +112,6 @@ public class ESBulkTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
     public void bulkUpdateRecentOrderListFuture() {
         RecentOrderModelScript rom1 = new RecentOrderModelScript();
         RecentOrderModelScript rom2 = new RecentOrderModelScript();
@@ -132,9 +123,14 @@ public class ESBulkTest extends ESAbstractTest {
                 throw new RuntimeException(e);
             } else {
                 for (BulkItemResponse bulkItemResponse : bulkItemResponses) {
-                    String result = getJsonResult(bulkItemResponse.getOpType());
-                    log.info("result:{}", result);
-                    log.info("msg:{}", bulkItemResponse.getFailureMessage());
+                    try {
+                        String result = getJsonResult(bulkItemResponse.getOpType());
+                        log.info("result:{}", result);
+                        log.info("msg:{}", bulkItemResponse.getFailureMessage());
+                    } catch (JsonProcessingException ex) {
+                        log.error("bulkUpdate exception", ex);
+                    }
+
                 }
             }
             return "success";

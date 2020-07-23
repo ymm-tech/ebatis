@@ -1,9 +1,9 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.sample.condition.RecentOrderAggCondition;
 import com.ymm.ebatis.sample.mapper.RecentOrderAggMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -28,32 +28,28 @@ public class ESAggTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void aggRecentOrder() {
+    public void aggRecentOrder() throws JsonProcessingException {
         SearchResponse searchResponse = recentOrderAggMapper.aggRecentOrder(Pageable.of(0, 10), new RecentOrderAggCondition());
         String result = getJsonResult(searchResponse);
         log.info("result:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void aggsRecentOrder() {
+    public void aggsRecentOrder() throws JsonProcessingException {
         Aggregations aggregations = recentOrderAggMapper.aggsRecentOrder(new RecentOrderAggCondition());
         String result = getJsonResult(aggregations);
         log.info("result:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void aggRecentOrders() {
+    public void aggRecentOrders() throws JsonProcessingException {
         List<Aggregation> aggregations = recentOrderAggMapper.aggRecentOrders(new RecentOrderAggCondition());
         String result = getJsonResult(aggregations);
         log.info("result:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void aggRecentOrderMap() {
+    public void aggRecentOrderMap() throws JsonProcessingException {
         Map<String, Aggregation> aggMap = recentOrderAggMapper.aggRecentOrderMap(new RecentOrderAggCondition());
         String result = getJsonResult(aggMap);
         log.info("result:{}", result);

@@ -1,5 +1,6 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.domain.ScrollResponse;
 import com.ymm.ebatis.core.response.ResponseExtractor;
@@ -34,7 +35,13 @@ public class ESScrollTest extends ESAbstractTest {
         do {
             response = recentOrderScrollMapper.searchScroll(condition, first);
             condition.setScrollId(response.getScrollId());
-            response.forEach(order -> log.info("order:{}", getJsonResult(order)));
+            response.forEach(order -> {
+                try {
+                    log.info("order:{}", getJsonResult(order));
+                } catch (JsonProcessingException e) {
+                    log.error("order result", e);
+                }
+            });
         } while (!response.isEmpty());
 
         Assert.assertTrue(recentOrderScrollMapper.clearSearchScroll(response.getScrollId(), new ResponseExtractor<Boolean>() {
