@@ -2,6 +2,7 @@ package com.ymm.ebatis.spring.cluster;
 
 import org.springframework.context.ApplicationContext;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -16,11 +17,11 @@ class ApplicationContextDelegate {
     }
 
     static <T> T getBean(String name, Class<T> beanClass) {
-        return CONTEXT_HOLDER.get().getBean(name, beanClass);
+        return Optional.ofNullable(CONTEXT_HOLDER.get()).map(context -> context.getBean(name, beanClass)).orElse(null);
     }
 
     static <T> T getBean(Class<T> beanClass) {
-        return CONTEXT_HOLDER.get().getBean(beanClass);
+        return Optional.ofNullable(CONTEXT_HOLDER.get()).map(context -> context.getBean(beanClass)).orElse(null);
     }
 
     static void setContext(ApplicationContext context) {
