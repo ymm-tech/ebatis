@@ -5,6 +5,7 @@ import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.rest.RestStatus;
 
 /**
  * @author 章多亮
@@ -22,6 +23,12 @@ public class DeleteResponseExtractorProvider extends AbstractResponseExtractorPr
 
         if (DeleteResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
+        } else if (RestStatus.class == resultClass) {
+            return RestStatusResponseExtractor.INSTANCE;
+        } else if (Boolean.class == resultClass || boolean.class == resultClass) {
+            return BooleanDeleteResponseExtractor.INSTANCE;
+        } else if (Void.class == resultClass || void.class == resultClass) {
+            return VoidResponseExtractor.INSTANCE;
         } else {
             throw new UnsupportedOperationException();
         }

@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.meta;
 
 import com.ymm.ebatis.core.exception.EbatisException;
+import com.ymm.ebatis.core.generic.GenericType;
 
 import java.lang.reflect.Field;
 
@@ -21,7 +22,14 @@ class CachedFieldClassMeta extends AbstractClassMeta implements FieldClassMeta {
     }
 
     private static ClassMeta create(Field field, Class<?> fieldType) {
-        if (!field.getType().isAssignableFrom(fieldType)) {
+        GenericType type = GenericType.forField(field);
+        Class<?> clazz;
+        if (type.isCollection() || type.isArray()) {
+            clazz = type.resolveGeneric(0);
+        } else {
+            clazz = type.resolve();
+        }
+        if (!clazz.isAssignableFrom(fieldType)) {
             throw new EbatisException("字段类型和实际类型不兼容");
         }
         return new CachedFieldClassMeta(field, fieldType);

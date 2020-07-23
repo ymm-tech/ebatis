@@ -1,9 +1,12 @@
 package com.ymm.ebatis.core.request;
 
+import com.ymm.ebatis.core.annotation.Agg;
+import com.ymm.ebatis.core.annotation.DeleteByQuery;
 import com.ymm.ebatis.core.annotation.MultiSearch;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.annotation.Search;
 import com.ymm.ebatis.core.annotation.SearchScroll;
+import com.ymm.ebatis.core.annotation.UpdateByQuery;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.domain.Collapse;
@@ -11,13 +14,16 @@ import com.ymm.ebatis.core.domain.ContextHolder;
 import com.ymm.ebatis.core.domain.Pageable;
 import com.ymm.ebatis.core.domain.ScriptField;
 import com.ymm.ebatis.core.domain.Sort;
+import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.ParameterMeta;
 import com.ymm.ebatis.core.provider.CollapseProvider;
+import com.ymm.ebatis.core.provider.RoutingProvider;
 import com.ymm.ebatis.core.provider.ScriptFieldProvider;
 import com.ymm.ebatis.core.provider.SortProvider;
 import com.ymm.ebatis.core.provider.SourceProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
@@ -48,6 +54,9 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         annotationClasses.add(Search.class);
         annotationClasses.add(MultiSearch.class);
         annotationClasses.add(SearchScroll.class);
+        annotationClasses.add(UpdateByQuery.class);
+        annotationClasses.add(DeleteByQuery.class);
+        annotationClasses.add(Agg.class);
 
         SEARCH_ANNOTATION_CLASSES = Collections.unmodifiableList(annotationClasses);
     }
@@ -95,7 +104,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                     searchSource.from(p.getFrom()).size(p.getSize());
                 });
 
-        setProviderMeta(condition, searchSource);
+        setProviderMeta(condition, searchSource, meta, request);
 
         request.source(searchSource);
 
@@ -116,7 +125,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         return queryType.orElse(QueryType.AUTO).getQueryBuilderFactory();
     }
 
-    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource) {
+    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource, MethodMeta meta, SearchRequest request) {
         if (condition instanceof ScriptFieldProvider) {
             ScriptField[] fields = ((ScriptFieldProvider) condition).getScriptFields();
             for (ScriptField field : fields) {
@@ -130,15 +139,22 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                 searchSource.sort(sort.toSortBuilder());
             }
         }
-
-        if (condition instanceof SourceProvider) {
-            SourceProvider sourceProvider = (SourceProvider) condition;
-            searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
+        if (meta.unwrappedReturnType().map(MetaUtils::isBasic).orElse(false)) {
+            searchSource.fetchSource(false);
+        } else {
+            if (condition instanceof SourceProvider) {
+                SourceProvider sourceProvider = (SourceProvider) condition;
+                searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
+            } else {
+                searchSource.fetchSource(meta.getIncludeFields(), ArrayUtils.EMPTY_STRING_ARRAY);
+            }
         }
-
         if (condition instanceof CollapseProvider) {
             Collapse collapse = ((CollapseProvider) condition).getCollapse();
             searchSource.collapse(collapse.toCollapseBuilder());
+        }
+        if (condition instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) condition).getRouting());
         }
     }
 }

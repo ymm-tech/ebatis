@@ -1,6 +1,7 @@
 package com.ymm.ebatis.core.meta;
 
 import com.ymm.ebatis.core.exception.EbatisException;
+import com.ymm.ebatis.core.generic.GenericType;
 
 import java.lang.reflect.Parameter;
 
@@ -21,7 +22,14 @@ class CachedParameterClassMeta extends AbstractClassMeta implements ParameterCla
     }
 
     private static ClassMeta create(Parameter parameter, Class<?> parameterType) {
-        if (!parameter.getType().isAssignableFrom(parameterType)) {
+        GenericType type = GenericType.forParameter(parameter);
+        Class<?> clazz;
+        if (type.isCollection() || type.isArray()) {
+            clazz = type.resolveGeneric(0);
+        } else {
+            clazz = type.resolve();
+        }
+        if (!clazz.isAssignableFrom(parameterType)) {
             throw new EbatisException("形参类型和实参类型不兼容");
         }
         return new CachedParameterClassMeta(parameter, parameterType);

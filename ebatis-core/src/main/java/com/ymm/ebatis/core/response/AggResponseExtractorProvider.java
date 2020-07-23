@@ -1,22 +1,15 @@
 package com.ymm.ebatis.core.response;
 
 import com.google.auto.service.AutoService;
-import com.ymm.ebatis.core.annotation.Agg;
-import com.ymm.ebatis.core.annotation.AggType;
-import com.ymm.ebatis.core.annotation.Metric;
-import com.ymm.ebatis.core.annotation.MetricType;
 import com.ymm.ebatis.core.generic.GenericType;
-import com.ymm.ebatis.core.meta.MetaUtils;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.Aggregations;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * @author 章多亮
@@ -24,35 +17,9 @@ import java.util.function.Function;
  */
 @AutoService(ResponseExtractorProvider.class)
 public class AggResponseExtractorProvider extends AbstractResponseExtractorProvider {
-    private static final Map<AggType, Function<MethodMeta, SearchResponseExtractor<?>>> RESPONSE_EXTRACTORS = new EnumMap<>(AggType.class);
-
-    static {
-        RESPONSE_EXTRACTORS.put(AggType.METRIC, AggResponseExtractorProvider::createMetricAggSearchResponseExtractor);
-    }
 
     public AggResponseExtractorProvider() {
         super(RequestType.AGG);
-    }
-
-    private static SearchResponseExtractor<?> createMetricAggSearchResponseExtractor(MethodMeta method) {
-        Metric metric = MetaUtils.getFirstElement(method.getAnnotation(Agg.class).metric());
-
-        MetricType type = metric.type();
-
-        switch (type) {
-            case VALUE_COUNT:
-                return ValueCountAggResponseExtractor.INSTANCE;
-            case AVG:
-                return AgvAggResponseExtractor.INSTANCE;
-            case MAX:
-                return MaxAggResponseExtractor.INSTANCE;
-            case MIN:
-                return MinAggResponseExtractor.INSTANCE;
-            case SUM:
-                return SumAggResponseExtractor.INSTANCE;
-            default:
-                throw new UnsupportedOperationException();
-        }
     }
 
 
@@ -67,6 +34,8 @@ public class AggResponseExtractorProvider extends AbstractResponseExtractorProvi
         } else if (List.class.isAssignableFrom(resultClass)) {
             if (Aggregation.class == genericType.resolveGeneric(0)) {
                 return AggregationListResponseExtractor.INSTANCE;
+            } else {
+                throw new UnsupportedOperationException("暂不支持的返回值类型");
             }
         } else if (Map.class.isAssignableFrom(resultClass)) {
             Class<?> keyClass = genericType.resolveGeneric(0);
@@ -74,17 +43,12 @@ public class AggResponseExtractorProvider extends AbstractResponseExtractorProvi
 
             if (String.class == keyClass && Aggregation.class == valueClass) {
                 return AggregationMapResponseExtractor.INSTANCE;
+            } else {
+                throw new UnsupportedOperationException("暂不支持的返回值类型");
             }
         }
 
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("暂不支持的返回值类型");
     }
 
-    @Override
-    public ResponseExtractor<?> getResponseExtractor(MethodMeta meta) {
-        Agg agg = meta.getAnnotation(Agg.class);
-        AggType type = agg.type();
-
-        return RESPONSE_EXTRACTORS.get(type).apply(meta);
-    }
 }

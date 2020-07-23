@@ -9,6 +9,7 @@ import com.ymm.ebatis.core.meta.RequestType;
 import org.elasticsearch.action.get.GetResponse;
 
 import java.io.IOException;
+import java.util.Optional;
 
 
 /**
@@ -29,6 +30,20 @@ public class GetResponseExtractorProvider extends AbstractResponseExtractorProvi
 
         if (resultClass == GetResponse.class) {
             return RawResponseExtractor.INSTANCE;
+        } else if (resultClass == Optional.class) {
+            Class<?> entityClass = genericType.resolveGeneric(0);
+            return (ConcreteResponseExtractor<?, GetResponse>) response -> {
+                try {
+                    if (response.isExists()) {
+                        return Optional.ofNullable(ObjectMapperHolder.objectMapper().readValue(response.getSourceAsBytes(),
+                                entityClass));
+                    } else {
+                        return Optional.empty();
+                    }
+                } catch (IOException e) {
+                    throw new DocumentDeserializeException(e);
+                }
+            };
         } else {
             return (ConcreteResponseExtractor<?, GetResponse>) response -> {
                 try {

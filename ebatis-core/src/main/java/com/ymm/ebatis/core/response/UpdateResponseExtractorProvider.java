@@ -4,7 +4,10 @@ import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.generic.GenericType;
 import com.ymm.ebatis.core.meta.MethodMeta;
 import com.ymm.ebatis.core.meta.RequestType;
+import org.elasticsearch.action.DocWriteResponse.Result;
 import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.index.get.GetResult;
+import org.elasticsearch.rest.RestStatus;
 
 /**
  * @author 章多亮
@@ -22,6 +25,16 @@ public class UpdateResponseExtractorProvider extends AbstractResponseExtractorPr
 
         if (UpdateResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
+        } else if (GetResult.class == resultClass) {
+            return GetResultUpdateResponseExtractor.INSTANCE;
+        } else if (RestStatus.class == resultClass) {
+            return RestStatusResponseExtractor.INSTANCE;
+        } else if (Boolean.class == resultClass || boolean.class == resultClass) {
+            return BooleanUpdateResponseExtractor.INSTANCE;
+        } else if (Result.class == resultClass) {
+            return ResultResponseExtractor.INSTANCE;
+        } else if (Void.class == resultClass || void.class == resultClass) {
+            return VoidResponseExtractor.INSTANCE;
         } else {
             throw new UnsupportedOperationException();
         }

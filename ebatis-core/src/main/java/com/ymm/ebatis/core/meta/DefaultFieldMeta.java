@@ -4,6 +4,7 @@ import com.ymm.ebatis.core.annotation.Prefix;
 import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
+import com.ymm.ebatis.core.exception.ConditionNotSupportException;
 import com.ymm.ebatis.core.exception.ReadMethodInvokeException;
 import com.ymm.ebatis.core.exception.ReadMethodNotFoundException;
 import com.ymm.ebatis.core.generic.GenericType;
@@ -19,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 章多亮
@@ -33,9 +35,11 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     private final Class<? extends Annotation> queryClauseAnnotationClass;
     private final Annotation queryClauseAnnotation;
     private final QueryBuilderFactory queryBuilderFactory;
+    private final boolean termsQuery;
+    private final Map<Class<? extends Annotation>, Optional<? extends Annotation>> metas = new ConcurrentHashMap<>();
 
     DefaultFieldMeta(Field field) {
-        super(field, field.getType());
+        super(field, field.getType(), field.getGenericType());
         this.field = field;
         this.readMethod = getReadMethod(field);
 
@@ -49,6 +53,17 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
         this.queryClauseAnnotation = annotation.orElse(null);
 
         this.queryBuilderFactory = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO).getQueryBuilderFactory();
+
+        this.termsQuery = queryBuilderFactory == QueryBuilderFactory.terms();
+        validate();
+    }
+
+    private void validate() {
+        boolean isExists = queryBuilderFactory == QueryBuilderFactory.exists();
+        boolean isBoolean = Boolean.TYPE == field.getType() || Boolean.class == field.getType();
+        if (isExists && !isBoolean) {
+            throw new ConditionNotSupportException(field + ":Exists query must be boolean or Boolean!");
+        }
     }
 
     private Class<?> getActualType(Field field) {
@@ -111,8 +126,10 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass) {
-        return getQueryClauseAnnotation().flatMap(a -> AnnotationUtils.findAttributeAnnotation(a, annotationClass));
+        return (Optional<A>) metas.computeIfAbsent(annotationClass, clazz ->
+                getQueryClauseAnnotation().flatMap(a -> AnnotationUtils.findAttributeAnnotation(a, clazz)));
     }
 
     @Override
@@ -153,5 +170,10 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     @Override
     public Map<Class<? extends Annotation>, List<FieldMeta>> getQueryClauses(Object instance) {
         return ClassMeta.field(field, instance == null ? null : instance.getClass()).getQueryClauses();
+    }
+
+    @Override
+    public boolean isTermsQuery() {
+        return termsQuery;
     }
 }

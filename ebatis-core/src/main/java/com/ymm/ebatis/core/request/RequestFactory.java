@@ -5,6 +5,7 @@ import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
+import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
@@ -29,22 +30,6 @@ public interface RequestFactory<R extends ActionRequest> {
 
     static RequestFactory<MultiSearchRequest> multiSearch() {
         return MultiSearchRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> metric() {
-        return MetricAggRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> bucket() {
-        return BucketAggRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> pipeline() {
-        return PipelineAggRequestFactory.INSTANCE;
-    }
-
-    static RequestFactory<SearchRequest> matrix() {
-        return MatrixAggRequestFactory.INSTANCE;
     }
 
     static RequestFactory<BulkRequest> bulk() {
@@ -89,6 +74,10 @@ public interface RequestFactory<R extends ActionRequest> {
 
     static RequestFactory<ActionRequest> searchScroll() {
         return SearchScrollRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<MultiGetRequest> multiGet() {
+        return MultiGetRequestFactory.INSTANCE;
     }
 
     /**

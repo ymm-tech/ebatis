@@ -6,6 +6,6 @@ package com.ymm.ebatis.core.cluster;
  */
 class RandomClusterRouter extends SimpleClusterRouter {
     public RandomClusterRouter(Cluster[] clusters) {
-        super(clusters, RandomClusterLoadBalancer.INSTANCE);
+        super(clusters, ClusterLoadBalancer.random());
     }
 }

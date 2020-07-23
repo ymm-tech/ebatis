@@ -39,7 +39,7 @@ public interface Interceptor {
     /**
      * 请求发送之前
      */
-    default <T extends ActionRequest, R extends ActionResponse> void preResponse(PreResponseInfo<T, R> preResponseInfo) {
+    default <T extends ActionRequest> void preResponse(PreResponseInfo<T> preResponseInfo) {
     }
 
     /**
