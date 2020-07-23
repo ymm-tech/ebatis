@@ -6,7 +6,7 @@
 
     <groupId>com.ymm.ebatis</groupId>
     <artifactId>ebatis</artifactId>
-    <version>7.5.1.5-SNAPSHOT</version>
+    <version>7.5.1.1.RELEASE</version>
     <packaging>pom</packaging>
 
     <modules>
