@@ -1,8 +1,8 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ymm.ebatis.sample.condition.RecentOrderScriptCondition;
 import com.ymm.ebatis.sample.mapper.RecentOrderDeleteByQueryMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.BulkByScrollTask;
@@ -23,8 +23,7 @@ public class ESDeleteByQueryTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrderLong() {
+    public void getRecentOrderLong() throws JsonProcessingException {
         RecentOrderScriptCondition sroc = new RecentOrderScriptCondition();
         sroc.setCargoId(10124512292666L);
         BulkByScrollResponse bulkByScrollResponse = recentOrderDeleteByQueryMapper.deleteByQueryRecentOrder(sroc);
@@ -33,8 +32,7 @@ public class ESDeleteByQueryTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void DeleteByQueryRecentOrderStatus() {
+    public void deleteByQueryRecentOrderStatus() throws JsonProcessingException {
         RecentOrderScriptCondition sroc = new RecentOrderScriptCondition();
         sroc.setCargoId(10124512292666L);
         BulkByScrollTask.Status status = recentOrderDeleteByQueryMapper.deleteByQueryRecentOrderStatus(sroc);
@@ -43,13 +41,16 @@ public class ESDeleteByQueryTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void DeleteByQueryRecentOrderFuture() {
+    public void deleteByQueryRecentOrderFuture() {
         RecentOrderScriptCondition sroc = new RecentOrderScriptCondition();
         sroc.setCargoId(10124512292666L);
         recentOrderDeleteByQueryMapper.deleteByQueryRecentOrderFuture(sroc).whenComplete((response, ex) -> {
-            String result = getJsonResult(response);
-            log.info("result:{}", result);
+            try {
+                String result = getJsonResult(response);
+                log.info("result:{}", result);
+            } catch (JsonProcessingException e) {
+                log.error("delete by query exception", e);
+            }
         }).join();
 
     }

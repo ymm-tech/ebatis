@@ -3,6 +3,9 @@ package com.ymm.ebatis.core.domain;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 
 public enum IntervalType {
+    /**
+     * 闭区间
+     */
     CLOSED_INTERVAL {
         @Override
         public <T> void left(RangeQueryBuilder builder, T min) {
@@ -13,7 +16,11 @@ public enum IntervalType {
         public <T> void right(RangeQueryBuilder builder, T max) {
             builder.lte(max);
         }
-    }, OPEN_INTERVAL {
+    },
+    /**
+     * 开区间
+     */
+    OPEN_INTERVAL {
         @Override
         public <T> void left(RangeQueryBuilder builder, T min) {
             builder.gt(min);

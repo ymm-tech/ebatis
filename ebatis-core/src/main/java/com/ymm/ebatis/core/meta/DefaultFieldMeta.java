@@ -5,13 +5,14 @@ import com.ymm.ebatis.core.annotation.QueryType;
 import com.ymm.ebatis.core.builder.QueryBuilderFactory;
 import com.ymm.ebatis.core.common.AnnotationUtils;
 import com.ymm.ebatis.core.exception.ConditionNotSupportException;
+import com.ymm.ebatis.core.exception.EbatisException;
 import com.ymm.ebatis.core.exception.ReadMethodInvokeException;
 import com.ymm.ebatis.core.exception.ReadMethodNotFoundException;
 import com.ymm.ebatis.core.generic.GenericType;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -83,9 +84,13 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
         return field;
     }
 
-    @SneakyThrows
     private Method getReadMethod(Field field) {
-        BeanInfo beanInfo = Introspector.getBeanInfo(field.getDeclaringClass());
+        BeanInfo beanInfo;
+        try {
+            beanInfo = Introspector.getBeanInfo(field.getDeclaringClass());
+        } catch (IntrospectionException e) {
+            throw new EbatisException("Introspect exception!", e);
+        }
         for (PropertyDescriptor propertyDescriptor : beanInfo.getPropertyDescriptors()) {
             if (propertyDescriptor.getName().equals(field.getName())) {
                 return propertyDescriptor.getReadMethod();

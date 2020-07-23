@@ -1,5 +1,6 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.ymm.ebatis.core.domain.Page;
 import com.ymm.ebatis.core.domain.Pageable;
@@ -14,7 +15,6 @@ import com.ymm.ebatis.sample.condition.base.ShipperInfo;
 import com.ymm.ebatis.sample.entity.RecentOrder;
 import com.ymm.ebatis.sample.mapper.RecentOrderMultiSearchMapper;
 import com.ymm.ebatis.sample.mapper.RecentOrderSearchMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
@@ -24,6 +24,7 @@ import org.junit.Test;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author weilong.hu
@@ -41,9 +42,8 @@ public class EsQueryTest extends ESAbstractTest {
     }
 
 
-    @SneakyThrows
     @Test
-    public void queryRecentOrderArray() {
+    public void queryRecentOrderArray() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292911L);
         RecentOrder[] recentOrders = recentOrderMapper.queryRecentOrderArray(condition);
@@ -51,9 +51,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderPage() {
+    public void queryRecentOrderPage() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         Page<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderPage(Pageable.of(1, 10), condition);
         String s = getJsonResult(recentOrders);
@@ -61,9 +61,8 @@ public class EsQueryTest extends ESAbstractTest {
     }
 
 
-    @SneakyThrows
     @Test
-    public void queryRecentOrderList() {
+    public void queryRecentOrderList() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292911L);
         List<RecentOrder> recentOrders = recentOrderMapper.queryRecentOrderList(condition);
@@ -71,9 +70,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderSearchResponse() {
+    public void queryRecentOrderSearchResponse() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292911L);
         SearchResponse searchResponse = recentOrderMapper.queryRecentOrderSearchResponse(condition);
@@ -81,9 +80,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderCompletableFutureList() {
+    public void queryRecentOrderCompletableFutureList() throws ExecutionException, InterruptedException, JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292911L);
         CompletableFuture<List<RecentOrder>> listCompletableFuture = recentOrderMapper.queryRecentOrderCompletableFutureList(condition);
@@ -92,9 +91,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderArrayScoreFunction() {
+    public void queryRecentOrderArrayScoreFunction() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292911L);
         RecentOrder[] recentOrders = recentOrderMapper.queryRecentOrderArrayScoreFunction(condition);
@@ -102,50 +101,49 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrder() {
+    public void queryRecentOrder() throws JsonProcessingException {
         RecentOrder recentOrder = recentOrderMapper.queryRecentOrder(new SampleRecentOrderCondition());
         String s = getJsonResult(recentOrder);
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderCount() {
+    public void queryRecentOrderCount() throws JsonProcessingException {
         Long count = recentOrderMapper.queryRecentOrderCount(new SampleRecentOrderCondition());
         String s = getJsonResult(count);
         log.info("RecentOrder count:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderCountWithBase() {
+    public void queryRecentOrderCountWithBase() throws JsonProcessingException {
         long count = recentOrderMapper.queryRecentOrderCount();
         String s = getJsonResult(count);
         log.info("RecentOrder count:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderCountWithBoolean() {
+    public void queryRecentOrderCountWithBoolean() throws JsonProcessingException {
         Boolean bool = recentOrderMapper.queryRecentOrderCountWithBoolean(new SampleRecentOrderCondition());
         String s = getJsonResult(bool);
         log.info("RecentOrder exist:{}", s);
     }
 
 
-    @SneakyThrows
     @Test
-    public void queryRecentOrderCountWithBool() {
+    public void queryRecentOrderCountWithBool() throws JsonProcessingException {
         boolean bool = recentOrderMapper.queryRecentOrderCountWithBool(getCondition());
         String s = getJsonResult(bool);
         log.info("RecentOrder exist:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchListPageWithArray() {
+    public void multiSearchListPageWithArray() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -157,9 +155,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchListPageWithList() {
+    public void multiSearchListPageWithList() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -171,9 +169,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchListPageWithSingle() {
+    public void multiSearchListPageWithSingle() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292911L);
         List<Page<RecentOrder>> pages = recentOrderMultiSearchMapper.queryRecentOrderListPage(
@@ -183,9 +181,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchQueryRecentOrderPageArray() {
+    public void multiSearchQueryRecentOrderPageArray() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -197,9 +195,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchListListWithArray() {
+    public void multiSearchListListWithArray() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -210,9 +208,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchArrayArrayWithArray() {
+    public void multiSearchArrayArrayWithArray() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -223,9 +221,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchListArrayWithArray() {
+    public void multiSearchListArrayWithArray() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -236,9 +234,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchSearchResponse() {
+    public void multiSearchSearchResponse() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -250,9 +248,8 @@ public class EsQueryTest extends ESAbstractTest {
     }
 
 
-    @SneakyThrows
     @Test
-    public void multiSearchArrayArrayFuture() {
+    public void multiSearchArrayArrayFuture() throws InterruptedException, JsonProcessingException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
@@ -269,9 +266,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void multiSearchArrayListy() {
+    public void multiSearchArrayListy() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -282,9 +279,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderCounts() {
+    public void queryRecentOrderCounts() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -295,9 +292,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderArrayCounts() {
+    public void queryRecentOrderArrayCounts() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -308,9 +305,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderBasicCounts() {
+    public void queryRecentOrderBasicCounts() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -321,9 +318,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderBooleanCounts() {
+    public void queryRecentOrderBooleanCounts() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -334,9 +331,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderBooleanArrayCounts() {
+    public void queryRecentOrderBooleanArrayCounts() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();
@@ -347,9 +344,9 @@ public class EsQueryTest extends ESAbstractTest {
         log.info("result:{}", s);
     }
 
-    @SneakyThrows
+
     @Test
-    public void queryRecentOrderBoolArrayCounts() {
+    public void queryRecentOrderBoolArrayCounts() throws JsonProcessingException {
         RecentOrderCondition condition = getCondition();
         condition.setCargoId(10124512292966L);
         SampleRecentOrderCondition sampleRecentOrderCondition = new SampleRecentOrderCondition();

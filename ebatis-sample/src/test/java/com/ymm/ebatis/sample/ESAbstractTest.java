@@ -1,9 +1,9 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ymm.ebatis.core.common.ObjectMapperHolder;
 import com.ymm.ebatis.core.proxy.MapperProxyFactory;
 import com.ymm.ebatis.sample.cluster.SampleClusterRouterProvider;
-import lombok.SneakyThrows;
 
 /**
  * @author weilong.hu
@@ -15,8 +15,8 @@ abstract class ESAbstractTest {
         return MapperProxyFactory.getMapperProxy(mapperClass, SampleClusterRouterProvider.SAMPLE_CLUSTER_NAME);
     }
 
-    @SneakyThrows
-    protected String getJsonResult(Object object) {
+
+    protected String getJsonResult(Object object) throws JsonProcessingException {
         return ObjectMapperHolder.objectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(object);
     }
 

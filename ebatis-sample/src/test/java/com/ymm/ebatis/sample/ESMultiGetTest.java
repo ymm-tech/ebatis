@@ -1,10 +1,10 @@
 package com.ymm.ebatis.sample;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.ymm.ebatis.sample.entity.RecentOrder;
 import com.ymm.ebatis.sample.entity.RecentOrderModel;
 import com.ymm.ebatis.sample.mapper.RecentOrderMultiGetMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
@@ -29,8 +29,7 @@ public class ESMultiGetTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrderLong() {
+    public void getRecentOrderLong() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292668L);
@@ -40,40 +39,35 @@ public class ESMultiGetTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersResponse() {
+    public void getRecentOrdersResponse() throws JsonProcessingException {
         MultiGetResponse recentOrdersResponse = recentOrderMultiGetMapper.getRecentOrdersResponse(10124512292666L, 10124512292668L);
         String result = getJsonResult(recentOrdersResponse);
         log.info("recentOrder:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersResponseWithid() {
+    public void getRecentOrdersResponseWithid() throws JsonProcessingException {
         MultiGetResponse recentOrdersResponse = recentOrderMultiGetMapper.getRecentOrdersResponse(10124512292666L);
         String result = getJsonResult(recentOrdersResponse);
         log.info("recentOrder:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersResponseWithModel() {
+    public void getRecentOrdersResponseWithModel() throws JsonProcessingException {
         MultiGetResponse recentOrdersResponse = recentOrderMultiGetMapper.getRecentOrdersResponse(new RecentOrderModel());
         String result = getJsonResult(recentOrdersResponse);
         log.info("recentOrder:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersResponseWithList() {
+    public void getRecentOrdersResponseWithList() throws JsonProcessingException {
         List<RecentOrder> recentOrders = recentOrderMultiGetMapper.getRecentOrders(10124512292666L, 10124512292668L);
         String result = getJsonResult(recentOrders);
         log.info("recentOrder:{}", result);
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersItemResponse() {
+    public void getRecentOrdersItemResponse() throws JsonProcessingException {
         MultiGetItemResponse[] recentOrdersItemResponse = recentOrderMultiGetMapper.getRecentOrdersItemResponse(10124512292666L, 10124512292668L);
         String result = getJsonResult(recentOrdersItemResponse);
         log.info("recentOrder:{}", result);
@@ -81,8 +75,7 @@ public class ESMultiGetTest extends ESAbstractTest {
 
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersItemResponseWithList() {
+    public void getRecentOrdersItemResponseWithList() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292668L);
@@ -92,8 +85,7 @@ public class ESMultiGetTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersResponseWithOptional() {
+    public void getRecentOrdersResponseWithOptional() throws JsonProcessingException {
         List<Optional<RecentOrder>> recentOrders = recentOrderMultiGetMapper.getRecentOrdersOptional(10124512292666L, 10124512292668L);
         for (Optional<RecentOrder> recentOrder : recentOrders) {
             if (recentOrder.isPresent()) {
@@ -107,8 +99,7 @@ public class ESMultiGetTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
-    public void getRecentOrdersOptional() {
+    public void getRecentOrdersOptional() throws JsonProcessingException {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
         rom2.setCargoId(10124512292668L);
@@ -124,7 +115,6 @@ public class ESMultiGetTest extends ESAbstractTest {
     }
 
     @Test
-    @SneakyThrows
     public void getRecentOrdersOptionalFuture() {
         RecentOrderModel rom1 = new RecentOrderModel();
         RecentOrderModel rom2 = new RecentOrderModel();
@@ -133,8 +123,13 @@ public class ESMultiGetTest extends ESAbstractTest {
         recentOrdersOptionalFuture.whenComplete((recentOrders, ex) -> {
             for (Optional<RecentOrder> recentOrder : recentOrders) {
                 if (recentOrder.isPresent()) {
-                    String result = getJsonResult(recentOrder.get());
-                    log.info("recentOrder:{}", result);
+                    try {
+                        String result = getJsonResult(recentOrder.get());
+                        log.info("recentOrder:{}", result);
+                    } catch (JsonProcessingException e) {
+                        log.error("recentOrder", e);
+                    }
+
                 } else {
                     log.info("recentOrder is not exist!");
                 }

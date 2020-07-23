@@ -16,8 +16,7 @@ public class SampleClusterRouterProvider implements ClusterRouterProvider {
     @Override
     public ClusterRouter getClusterRouter(String name) {
         if (SAMPLE_CLUSTER_NAME.equalsIgnoreCase(name)) {
-            ClusterRouter clusterRouter = ClusterRouter.single(Cluster.localhost());
-            return clusterRouter;
+            return ClusterRouter.single(Cluster.localhost());
         } else {
             return null;
         }
