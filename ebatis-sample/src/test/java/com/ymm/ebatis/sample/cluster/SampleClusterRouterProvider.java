@@ -4,7 +4,6 @@ import com.google.auto.service.AutoService;
 import com.ymm.ebatis.core.cluster.Cluster;
 import com.ymm.ebatis.core.cluster.ClusterRouter;
 import com.ymm.ebatis.core.cluster.ClusterRouterProvider;
-import com.ymm.ebatis.core.cluster.Credentials;
 
 /**
  * @author weilong.hu
@@ -17,8 +16,7 @@ public class SampleClusterRouterProvider implements ClusterRouterProvider {
     @Override
     public ClusterRouter getClusterRouter(String name) {
         if (SAMPLE_CLUSTER_NAME.equalsIgnoreCase(name)) {
-            Cluster cluster = Cluster.simple("192.168.199.7", 9200, Credentials.basic("stevedore", "yV8jwR5omQ"));
-            ClusterRouter clusterRouter = ClusterRouter.single(cluster);
+            ClusterRouter clusterRouter = ClusterRouter.single(Cluster.localhost());
             return clusterRouter;
         } else {
             return null;
