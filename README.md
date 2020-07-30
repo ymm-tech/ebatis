@@ -53,7 +53,7 @@ POST /recent_order_index/_bulk
 
 ```xml
 <dependency>
-  <groupId>com.ymm.ebatis</groupId>
+  <groupId>io.manbang</groupId>
   <artifactId>ebatis-core</artifactId>
   <version>7.5.1.1.RELEASE</version>
 </dependency>
@@ -107,8 +107,7 @@ public class SampleClusterRouterProvider implements ClusterRouterProvider {
     public ClusterRouter getClusterRouter(String name) {
         if (SAMPLE_CLUSTER_NAME.equalsIgnoreCase(name)) {
             Cluster cluster = Cluster.simple("127.0.0.1", 9200, Credentials.basic("admin", "123456"));
-            ClusterRouter clusterRouter = ClusterRouter.single(cluster);
-            return clusterRouter;
+            return ClusterRouter.single(cluster);
         } else {
             return null;
         }
@@ -1743,7 +1742,8 @@ public class Product {
 
 ## 拦截器
 
-ebatis中拦截器的加载通过SPI方式实现，只需要提供的目标类实现com.ymm.ebatis.core.interceptor.Interceptor接口，并且在/META-INF/services目录下提供com.ymm.ebatis.core.interceptor.Interceptor文件，内容为提供的目标类的全限定名。也可以在目标类上加上注解@AutoService(Interceptor.class)，由auto-service替我们生成。
+ebatis中拦截器的加载通过SPI方式实现，只需要提供的目标类实现io.manbang.ebatis.core.interceptor.Interceptor接口，并且在/META-INF/services目录下提供io.manbang.ebatis.core.interceptor
+.Interceptor文件，内容为提供的目标类的全限定名。也可以在目标类上加上注解@AutoService(Interceptor.class)，由auto-service替我们生成。
 
 ```
 @Slf4j
@@ -1789,7 +1789,7 @@ public class TestInterceptor implements Interceptor {
 
 ```java
 @Configuration
-@EnableEasyMapper(basePackages = "com.ymm.ebatis.sample.mapper")
+@EnableEasyMapper(basePackages = "io.manbang.ebatis.sample.mapper")
 public class EbatisConfig {
     @Bean(destroyMethod = "close")
     public ClusterRouter clusterRouter() {
