@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>ebatis</artifactId>
-        <groupId>com.ymm.ebatis</groupId>
+        <groupId>io.manbang</groupId>
         <version>7.5.1.1.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -28,17 +28,17 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.ymm.ebatis</groupId>
+                <groupId>io.manbang</groupId>
                 <artifactId>ebatis-spring</artifactId>
                 <version>7.5.1.1.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>com.ymm.ebatis</groupId>
+                <groupId>io.manbang</groupId>
                 <artifactId>ebatis-core</artifactId>
                 <version>7.5.1.1.RELEASE</version>
             </dependency>
             <dependency>
-                <groupId>com.ymm.ebatis</groupId>
+                <groupId>io.manbang</groupId>
                 <artifactId>ebatis-spring-boot-autoconfigure</artifactId>
                 <version>7.5.1.1.RELEASE</version>
             </dependency>
