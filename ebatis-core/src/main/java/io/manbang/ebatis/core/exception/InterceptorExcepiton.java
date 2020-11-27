@@ -2,7 +2,7 @@ package io.manbang.ebatis.core.exception;
 
 /**
  * @author weilong.hu
- * @date 2020-04-21
+ * @since 2020-04-21
  */
 public class InterceptorExcepiton extends EbatisException {
     private static final long serialVersionUID = -2355467883498121787L;

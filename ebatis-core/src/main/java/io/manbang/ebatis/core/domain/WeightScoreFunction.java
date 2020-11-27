@@ -7,7 +7,7 @@ import org.elasticsearch.index.query.functionscore.WeightBuilder;
 
 /**
  * @author weilong.hu
- * @date 2020-04-13
+ * @since 2020-04-13
  */
 class WeightScoreFunction implements ScoreFunction {
 

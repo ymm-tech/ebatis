@@ -24,6 +24,8 @@ public interface ScrollResponse<T> extends Iterable<T> {
      * Elasticsearch returns another batch of results with a new scroll identifier.
      * This new scroll identifier can then be used in a subsequent SearchScrollRequest to retrieve the next batch of results, and so on.
      * This process should be repeated in a loop until no more results are returned, meaning that the scroll has been exhausted and all the matching documents have been retrieved.
+     *
+     * @return scroll id
      */
     String getScrollId();
 

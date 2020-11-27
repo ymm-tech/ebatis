@@ -8,7 +8,7 @@ import org.apache.http.util.Args;
 
 /**
  * @author weilong.hu
- * @date 2020-04-08
+ * @since 2020-04-08
  */
 class BasicCredentials implements Credentials {
     private final String username;

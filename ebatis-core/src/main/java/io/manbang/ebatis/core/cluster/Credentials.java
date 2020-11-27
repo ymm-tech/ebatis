@@ -4,7 +4,7 @@ import org.apache.http.client.CredentialsProvider;
 
 /**
  * @author weilong.hu
- * @date 2020-04-08
+ * @since 2020-04-08
  */
 public interface Credentials {
     /**

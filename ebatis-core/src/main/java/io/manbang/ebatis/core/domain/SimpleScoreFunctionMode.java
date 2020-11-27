@@ -5,7 +5,7 @@ import org.elasticsearch.common.lucene.search.function.FunctionScoreQuery;
 
 /**
  * @author weilong.hu
- * @date 2020-04-17
+ * @since 2020-04-17
  */
 public class SimpleScoreFunctionMode implements ScoreFunctionMode {
     private final FunctionScoreQuery.ScoreMode scoreMode;

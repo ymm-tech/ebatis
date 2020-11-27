@@ -4,7 +4,7 @@ import org.elasticsearch.action.ActionRequest;
 
 /**
  * @author weilong.hu
- * @date 2020-04-21
+ * @since 2020-04-21
  */
 public interface RequestInfo<T extends ActionRequest> {
     /**
@@ -18,14 +18,14 @@ public interface RequestInfo<T extends ActionRequest> {
     /**
      * 获取actionRequest
      *
-     * @return
+     * @return T
      */
     T actionRequest();
 
     /**
      * 入参
      *
-     * @return
+     * @return object[]
      */
     Object[] args();
 
