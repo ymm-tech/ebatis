@@ -4,7 +4,7 @@ import org.elasticsearch.action.ActionRequest;
 
 /**
  * @author weilong.hu
- * @date 2020-04-22
+ * @since 2020-04-22
  */
 public class DefaultRequestInfo<T extends ActionRequest> implements RequestInfo<T> {
     private T request;

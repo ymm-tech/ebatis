@@ -46,6 +46,8 @@ public @interface MultiMatch {
 
     /**
      * [0..1]，超过这个区间，表示不设置
+     *
+     * @return cutoffFrequency
      */
     float cutoffFrequency() default -1.0F;
 

@@ -21,6 +21,7 @@ public @interface Delete {
     /**
      * 执行删除时，要求的分片副本数量，默认-2使用es集群默认配置，<code>all</code>或-1表示全副本+主分片，其他数字
      * <table>
+     *     <caption>es</caption>
      *     <thead>
      *         <tr>
      *             <th>

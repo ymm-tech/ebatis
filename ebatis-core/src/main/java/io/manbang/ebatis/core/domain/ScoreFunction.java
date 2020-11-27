@@ -53,9 +53,9 @@ public interface ScoreFunction {
     }
 
     /**
-     * @param weight
-     * @param weightCondition
-     * @return
+     * @param weight          weight
+     * @param weightCondition weightCondition
+     * @return weightScore
      */
     static ScoreFunction weightScore(float weight, Object weightCondition) {
         return new WeightScoreFunction(weight, weightCondition);

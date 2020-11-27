@@ -5,7 +5,7 @@ import org.elasticsearch.action.ActionResponse;
 
 /**
  * @author weilong.hu
- * @date 2020-04-21
+ * @since 2020-04-21
  */
 public interface PostResponseInfo<T extends ActionRequest, R extends ActionResponse> {
     /**
@@ -17,12 +17,12 @@ public interface PostResponseInfo<T extends ActionRequest, R extends ActionRespo
     String toString();
 
     /**
-     * @return
+     * @return actionRequest
      */
     T actionRequest();
 
     /**
-     *
+     * @return actionResponse
      */
     R actionResponse();
 

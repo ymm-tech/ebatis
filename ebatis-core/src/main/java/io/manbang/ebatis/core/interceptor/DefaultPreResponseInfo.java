@@ -5,7 +5,7 @@ import org.elasticsearch.action.ActionRequest;
 
 /**
  * @author weilong.hu
- * @date 2020-04-22
+ * @since 2020-04-22
  */
 public class DefaultPreResponseInfo<T extends ActionRequest> implements PreResponseInfo<T> {
     private T request;

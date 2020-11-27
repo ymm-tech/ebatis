@@ -36,6 +36,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 异步GET查询
      *
+     * @param <T>       响应提取结果
      * @param request   删除请求
      * @param extractor 响应提取器
      * @return 应县结果
@@ -45,6 +46,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 同步删除
      *
+     * @param <T> 响应提取结果
      * @param request   删除请求
      * @param extractor 响应提取器
      * @return 应县结果
@@ -57,6 +59,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 异步删除
      *
+     * @param <T> 响应提取结果
      * @param request   删除请求
      * @param extractor 响应提取器
      * @return 应县结果
@@ -66,6 +69,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 同步删除
      *
+     * @param <T> t 请求结果
      * @param request   删除请求
      * @param extractor 响应提取器
      * @return 应县结果
@@ -144,6 +148,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 异步索引
      *
+     * @param <T> 响应结果
      * @param request   索引请求
      * @param extractor 结果提取器
      * @return 结果
@@ -153,6 +158,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 同步索引
      *
+     * @param <T> 结果类型
      * @param request   索引请求
      * @param extractor 结果提取器
      * @return 结果
@@ -164,6 +170,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 异步多搜索
      *
+     * @param <T> 响应结果
      * @param request   多搜索请求
      * @param extractor 响应提取器
      * @return 结果
@@ -173,6 +180,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 同步多搜索
      *
+     * @param <T> 响应结果
      * @param request   多搜索请求
      * @param extractor 响应提取器
      * @return 结果
@@ -184,6 +192,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 异步多搜索
      *
+     * @param <T> 响应提取器
      * @param request   多搜索请求
      * @param extractor 响应提取器
      * @param pageable  分页信息
@@ -194,6 +203,7 @@ public interface ClusterSession extends Cloneable {
     /**
      * 同步多搜索
      *
+     * @param <T> 响应提取器
      * @param request   多搜索请求
      * @param extractor 响应提取器
      * @param pageable  分页信息
@@ -218,6 +228,7 @@ public interface ClusterSession extends Cloneable {
      *
      * @param request   搜索请求
      * @param extractor 结果提取器
+     * @param <T> 结果提取器
      * @return 结果
      */
     default <T> T searchSync(SearchRequest request, ResponseExtractor<T> extractor) {

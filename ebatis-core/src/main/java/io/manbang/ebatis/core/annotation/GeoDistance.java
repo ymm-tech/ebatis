@@ -26,11 +26,15 @@ public @interface GeoDistance {
 
     /**
      * Algorithm to use for distance computation. PLANE/ARC
+     *
+     * @return distanceCalculation
      */
     String distanceCalculation() default "ARC";
 
     /**
      * How strict should geo coordinate validation be?
+     *
+     * @return validationMethod
      */
     GeoValidationMethod validationMethod() default GeoValidationMethod.STRICT;
 
