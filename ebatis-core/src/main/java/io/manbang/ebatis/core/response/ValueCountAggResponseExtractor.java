@@ -1,7 +1,7 @@
 package io.manbang.ebatis.core.response;
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.aggregations.metrics.ValueCount;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 
 /**
  * @author 章多亮

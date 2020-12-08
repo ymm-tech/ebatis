@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DeleteByQuery {
-    int maxDocs() default -1;
+    String[] docTypes() default {};
 
     int batchSize() default 1000;
 

@@ -11,7 +11,7 @@ import io.manbang.ebatis.spring.annotation.EasyMapper;
 /**
  * @author weilong.hu
  */
-@EasyMapper(indices = "recent_order_index")
+@EasyMapper(indices = "recent_order_index", types = "tweet")
 public interface RecentOrderScrollMapper {
 
     @SearchScroll(keepAlive = "5s")

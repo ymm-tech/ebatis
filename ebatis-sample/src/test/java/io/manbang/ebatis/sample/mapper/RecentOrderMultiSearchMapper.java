@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author weilong.hu
  */
-@EasyMapper(indices = "recent_order_index")
+@EasyMapper(indices = "recent_order_index", types = "tweet")
 public interface RecentOrderMultiSearchMapper {
     //MultiSearch List<Page<Entity>>  形参数组
     @MultiSearch(queryType = QueryType.BOOL)

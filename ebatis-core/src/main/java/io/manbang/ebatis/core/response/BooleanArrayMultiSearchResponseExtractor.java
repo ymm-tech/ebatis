@@ -20,7 +20,7 @@ public class BooleanArrayMultiSearchResponseExtractor implements MultiSearchResp
                 .map(MultiSearchResponse.Item::getResponse)
                 .map(SearchResponse::getHits)
                 .map(SearchHits::getTotalHits)
-                .map(totalHits -> !NumberUtils.LONG_ZERO.equals(totalHits.value))
+                .map(totalHits -> !NumberUtils.LONG_ZERO.equals(totalHits))
                 .toArray(Boolean[]::new);
     }
 

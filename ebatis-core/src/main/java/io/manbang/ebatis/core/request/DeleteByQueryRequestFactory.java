@@ -26,12 +26,8 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(deleteByQuery.waitForActiveShards()))
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
+                .setDocTypes(deleteByQuery.docTypes())
                 .setConflicts(deleteByQuery.conflicts());
-
-        int maxDocs = deleteByQuery.maxDocs();
-        if (maxDocs > 0) {
-            request.setMaxDocs(maxDocs);
-        }
 
         long keepAlive = deleteByQuery.scrollKeepAlive();
         if (keepAlive > 0) {

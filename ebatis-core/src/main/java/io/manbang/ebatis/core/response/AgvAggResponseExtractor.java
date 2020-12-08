@@ -1,7 +1,7 @@
 package io.manbang.ebatis.core.response;
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.aggregations.metrics.Avg;
+import org.elasticsearch.search.aggregations.metrics.avg.Avg;
 
 /**
  * @author 章多亮

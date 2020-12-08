@@ -22,7 +22,7 @@ public class TotalHitsBasicArrayMultiSearchResponseExtractor implements MultiSea
                 .map(MultiSearchResponse.Item::getResponse)
                 .map(SearchResponse::getHits)
                 .map(SearchHits::getTotalHits)
-                .mapToLong(totalHits -> totalHits.value)
+                .mapToLong(totalHits -> totalHits)
                 .toArray();
     }
 }

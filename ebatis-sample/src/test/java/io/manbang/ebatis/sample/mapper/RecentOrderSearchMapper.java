@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author weilong.hu
  */
-@EasyMapper(indices = "recent_order_index")
+@EasyMapper(indices = "recent_order_index", types = "tweet")
 public interface RecentOrderSearchMapper {
     /**
      * 搜索订单

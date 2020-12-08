@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * @author weilong.hu
  */
-@EasyMapper(indices = "recent_order_index")
+@EasyMapper(indices = "recent_order_index", types = "tweet")
 public interface RecentOrderAggMapper {
     // agg SearchResponse
     @Agg

@@ -25,7 +25,7 @@ public class DocumentPageExtractor<T> implements SearchResponseExtractor<Page<T>
     @Override
     public Page<T> doExtractData(SearchResponse response) {
         List<T> documents = documentExtractor.extractData(response);
-        long total = response.getHits().getTotalHits().value;
+        long total = response.getHits().getTotalHits();
         Pageable pageable = ContextHolder.getContext().getPageable().orElseThrow(PageableNotFoundException::new);
         return Page.of(total, documents, pageable);
     }

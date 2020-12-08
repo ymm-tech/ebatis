@@ -1,7 +1,7 @@
 package io.manbang.ebatis.core.response;
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.aggregations.metrics.Cardinality;
+import org.elasticsearch.search.aggregations.metrics.cardinality.Cardinality;
 
 /**
  * @author 章多亮

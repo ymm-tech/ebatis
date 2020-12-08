@@ -25,7 +25,6 @@ public class TotalHitsListMultiSearchResponseExtractor implements MultiSearchRes
                 .map(MultiSearchResponse.Item::getResponse)
                 .map(SearchResponse::getHits)
                 .map(SearchHits::getTotalHits)
-                .map(totalHits -> totalHits.value)
                 .collect(Collectors.toList());
     }
 

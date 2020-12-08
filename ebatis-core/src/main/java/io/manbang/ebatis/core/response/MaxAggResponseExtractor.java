@@ -1,7 +1,7 @@
 package io.manbang.ebatis.core.response;
 
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.search.aggregations.metrics.Max;
+import org.elasticsearch.search.aggregations.metrics.max.Max;
 
 /**
  * @author 章多亮

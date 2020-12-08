@@ -30,17 +30,12 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
                 .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(updateByQuery.waitForActiveShards()))
                 .setShouldStoreResult(updateByQuery.shouldStoreResult())
                 .setBatchSize(updateByQuery.batchSize())
+                .setDocTypes(updateByQuery.docTypes())
                 .setConflicts(updateByQuery.conflicts());
 
         SearchRequest searchRequest = request.getSearchRequest();
         searchRequest.preference(StringUtils.trimToNull(updateByQuery.preference()))
-                .requestCache(updateByQuery.requestCache())
-        ;
-
-        int maxDocs = updateByQuery.maxDocs();
-        if (maxDocs > 0) {
-            request.setMaxDocs(maxDocs);
-        }
+                .requestCache(updateByQuery.requestCache());
 
         long keepAlive = updateByQuery.scrollKeepAlive();
         if (keepAlive > 0) {

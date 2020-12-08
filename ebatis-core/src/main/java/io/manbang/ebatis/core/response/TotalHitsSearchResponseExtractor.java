@@ -14,6 +14,6 @@ public class TotalHitsSearchResponseExtractor implements SearchResponseExtractor
 
     @Override
     public Long doExtractData(SearchResponse response) {
-        return response.getHits().getTotalHits().value;
+        return response.getHits().getTotalHits();
     }
 }

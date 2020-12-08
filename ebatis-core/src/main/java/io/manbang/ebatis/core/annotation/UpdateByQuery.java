@@ -36,7 +36,7 @@ public @interface UpdateByQuery {
 
     float requestsPerSecond() default Float.POSITIVE_INFINITY;
 
-    int maxDocs() default -1;
+    String[] docTypes() default {};
 
     int batchSize() default 1000;
 
