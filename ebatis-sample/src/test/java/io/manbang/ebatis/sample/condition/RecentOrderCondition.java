@@ -2,6 +2,7 @@ package io.manbang.ebatis.sample.condition;
 
 import io.manbang.ebatis.core.annotation.Field;
 import io.manbang.ebatis.core.annotation.Must;
+import io.manbang.ebatis.core.annotation.Nested;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.annotation.Should;
 import io.manbang.ebatis.core.domain.Range;
@@ -97,6 +98,9 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
 
     @Must(queryType = QueryType.WILDCARD)
     private String unloadAddress;
+
+    @Must(queryType = QueryType.NESTED, nest = @Nested(path = "attrs"))
+    private Integer cargoAttr;
 
     @Override
     public ScoreFunction getFunction() {

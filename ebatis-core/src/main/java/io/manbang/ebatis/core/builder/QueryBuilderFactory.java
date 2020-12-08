@@ -83,6 +83,10 @@ public interface QueryBuilderFactory {
         return BoostingQueryBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory nested() {
+        return NestedQueryBuilderFactory.INSTANCE;
+    }
+
     /**
      * 创建查询构建器
      *

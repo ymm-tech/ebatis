@@ -41,7 +41,7 @@ public enum QueryType {
     INDICES(null),
     MLT(null),
     MULTI_MATCH(null),
-    NESTED(null),
+    NESTED(QueryBuilderFactory.nested()),
     PREFIX(null),
     QUERY_STRING(null),
     RANGE(null),
