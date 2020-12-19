@@ -27,6 +27,7 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+
             <dependency>
                 <groupId>io.manbang</groupId>
                 <artifactId>ebatis-spring</artifactId>
