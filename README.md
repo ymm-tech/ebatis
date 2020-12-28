@@ -9,9 +9,9 @@
 
 # ebatis入门及相关文章
 
-https://github.com/ymm-tech/ebatis/wiki
-https://www.infoq.cn/article/u4Xhw5Q3jfLE1brGhtbR
-https://mp.weixin.qq.com/s/GFRiiQEk-JLpPnCi_WrRqw
+使用手册:https://github.com/ymm-tech/ebatis/wiki  
+相关文章:https://www.infoq.cn/article/u4Xhw5Q3jfLE1brGhtbR  
+相关文章:https://mp.weixin.qq.com/s/GFRiiQEk-JLpPnCi_WrRqw  
 
 ## 交流群
 
