@@ -15,8 +15,9 @@ https://mp.weixin.qq.com/s/GFRiiQEk-JLpPnCi_WrRqw
 
 ## 交流群
 
-|钉钉|  
-|<img src="https://github.com/codingPao/ymm-tech/blob/main/ebatisDingDing.JPG?raw=true" width="350px"><div align="center"> 优先加钉钉群 </div>|
+> 钉钉 
+ 
+<img src="https://github.com/codingPao/ymm-tech/blob/main/ebatisDingDing.JPG?raw=true" width="350px">
 
 
 ## 支持我们
