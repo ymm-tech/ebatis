@@ -1,0 +1,49 @@
+sonar_preview:
+  only:
+    - api
+#    - pushes
+    - web
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/preview.sh $CI_PROJECT_ID $CI_COMMIT_SHA $CI_COMMIT_REF_NAME $CI_PIPELINE_ID
+  tags:
+    - ebatis2
+    
+sonar_analyze:
+  only:
+    - api
+#    - pushes
+    - web
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/analyze.sh $CI_PROJECT_NAME $CI_PROJECT_NAME
+  tags:
+    - ebatis2
+    
+
+sonar_preview:on-schedule:
+  only:
+    - schedules
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/preview-master.sh $CI_PROJECT_ID $CI_COMMIT_SHA $CI_COMMIT_REF_NAME
+  tags:
+    - ebatis2
+    
+sonar_analyze:on-schedule:
+  only:
+    - schedules
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/analyze-master.sh $CI_PROJECT_NAME $CI_PROJECT_NAME
+  tags:
+    - ebatis2
+
+coverage_analyze:
+  only:
+    - triggers
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/coverage-analyze.sh $CI_PROJECT_NAME $CI_PROJECT_NAME $CI_COMMIT_REF_NAME $CI_PIPELINE_ID
+  tags:
+    - coverage_test
