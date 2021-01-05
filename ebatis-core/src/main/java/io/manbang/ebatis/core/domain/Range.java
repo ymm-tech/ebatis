@@ -101,6 +101,34 @@ public interface Range<T extends Comparable<T>> {
     Range<T> openRight();
 
     /**
+     * 范围相交
+     *
+     * @return 自身
+     */
+    Range<T> intersects();
+
+    /**
+     * 范围不相交
+     *
+     * @return 自身
+     */
+    Range<T> disjoint();
+
+    /**
+     * 范围在内部
+     *
+     * @return 自身
+     */
+    Range<T> within();
+
+    /**
+     * 范围包含
+     *
+     * @return 自身
+     */
+    Range<T> contains();
+
+    /**
      * 转换成ES的插叙构建器
      *
      * @return 查询构建器
