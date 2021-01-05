@@ -3,12 +3,13 @@
 [![JDK support](https://img.shields.io/badge/JDK-8+-green.svg)](https://github.com/ymm-tech/ebatis/releases)
 [![Maven Central](https://img.shields.io/badge/maven-7.5.1.4.RELEASE-green)](https://search.maven.org/search?q=ebatis)
 [![License](https://img.shields.io/badge/License-MIT-yellowgreen)](https://choosealicense.com/licenses/mit/)  
-`ebatis`采用和`MyBatis`类似思想，只需要定义接口，便可访问`elasticsearch`，隔离业务对`elasticserach`底层接口的直接访问。如此以来，数据访问的时候，不需要自己手动去构建`DSL`语句，同时，当升级`elastisearch
-`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级（目前支持`Elastisearch 6.5.1`与`7.5.1`版本）。
+`ebatis`是一个声明式`Elasticsearch ORM`框架。只需要定义接口，便可轻松访问`Elasticsearch`。`ebatis`优雅地帮你隔离业务对`Elasticserach`底层驱动接口的直接调用，你不再需要自己手动去构建繁琐`DSL`
+语句。同时，当升级`Elastisearch`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级。  
+目前，支持`Elastisearch` `6.5.1`与`7.5.1`版本。
 
 # ebatis现状
 
-目前`ebatis`已经在满帮业务系统上稳定运行近一年，承载着每日上亿次搜索服务。
+`ebatis`已经在满帮业务系统上稳定运行近一年，承载着每日近十亿次搜索服务。
 
 # QUICK START
 `POM`依赖（目前也支持`6.5.1.2.RELEASE`）
