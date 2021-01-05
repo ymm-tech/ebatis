@@ -1,14 +1,17 @@
 # ebatis是什么
-
-`ebatis`采用和`MyBatis`类似思想，只需要定义接口，便可访问`elasticsearch`，隔离业务对`elasticserach`底层接口的直接访问。如此以来，数据访问的时候，不需要自己手动去构建DSL语句，同时，当升级`elastisearch
-`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级（目前支持elastisearch 6.5.1与7.5.1版本）。
+[![GitHub Stars](https://img.shields.io/badge/stars-100%2B-blue)](https://github.com/ymm-tech/ebatis/stargazers) 
+[![JDK support](https://img.shields.io/badge/JDK-8+-green.svg)](https://github.com/ymm-tech/ebatis/releases)
+[![Maven Central](https://img.shields.io/badge/maven-7.5.1.4.RELEASE-green)](https://search.maven.org/search?q=ebatis)
+[![License](https://img.shields.io/badge/License-MIT-yellowgreen)](https://choosealicense.com/licenses/mit/)  
+`ebatis`采用和`MyBatis`类似思想，只需要定义接口，便可访问`elasticsearch`，隔离业务对`elasticserach`底层接口的直接访问。如此以来，数据访问的时候，不需要自己手动去构建`DSL`语句，同时，当升级`elastisearch
+`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级（目前支持`Elastisearch 6.5.1`与`7.5.1`版本）。
 
 # ebatis现状
 
 目前`ebatis`已经在满帮业务系统上稳定运行近一年，承载着每日上亿次搜索服务。
 
-# quick start
-POM依赖（目前也支持6.5.1.2.RELEASE）
+# QUICK START
+`POM`依赖（目前也支持`6.5.1.2.RELEASE`）
 ```xml
 <dependency>
      <groupId>io.manbang</groupId>
@@ -16,7 +19,7 @@ POM依赖（目前也支持6.5.1.2.RELEASE）
      <version>7.5.1.4.RELEASE</version>
 </dependency>
 ```
-创建集群连接
+创建集群连接如下:
 ```java
 @AutoService(ClusterRouterProvider.class)
 public class SampleClusterRouterProvider implements ClusterRouterProvider {
@@ -33,7 +36,7 @@ public class SampleClusterRouterProvider implements ClusterRouterProvider {
     }
 }
 ```
-定义POJO对象
+定义`POJO`对象如下:
 ```java
 @Data
 public class RecentOrder {
@@ -51,7 +54,7 @@ public class RecentOrderCondition {
     private String driverUserName;
 }
 ```
-定义Mapper接口
+定义`Mapper`接口
 ```java
 @Mapper(indices = "recent_order_index")
 public interface RecentOrderRepository {
@@ -59,7 +62,7 @@ public interface RecentOrderRepository {
     List<RecentOrder> search(RecentOrderCondition condition);
 }
 ```
-测试接口
+测试接口如下:
 ```java
 @Slf4j
 public class OrderRepositoryTest {
@@ -85,7 +88,7 @@ public class OrderRepositoryTest {
     }
 }
 ```
-搜索得DSL语句
+搜索得`DSL`语句如下:
 ```json
 {
   "query" : {
@@ -115,7 +118,7 @@ public class OrderRepositoryTest {
   }
 }
 ```
-ebatis版本使用xx.xx.xx.xx.RELEASE表示，前三位代表Elasticsearch适配集群的驱动版本，后一位代表ebatis在此版本上的迭代。例如7.5.1.3.RELEASE表示ebatis在Elasticsearch 7.5.1版本上迭代的第三次版本。
+`ebatis`版本使用`xx.xx.xx.xx.RELEASE`表示，前三位代表`Elasticsearch`适配集群的驱动版本，后一位代表`ebatis`在此版本上的迭代。例如`7.5.1.3.RELEASE`表示`ebatis`在`Elasticsearch 7.5.1`版本上迭代的第三次版本。
 
 # ebatis入门及相关文章
 
