@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ebatis</artifactId>
         <groupId>io.manbang</groupId>
-        <version>6.5.1.1.RELEASE</version>
+        <version>6.5.1.2.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ebatis-spring</artifactId>
@@ -14,7 +14,7 @@
         <dependency>
             <artifactId>ebatis-core</artifactId>
             <groupId>io.manbang</groupId>
-            <version>6.5.1.1.RELEASE</version>
+            <version>6.5.1.2.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
