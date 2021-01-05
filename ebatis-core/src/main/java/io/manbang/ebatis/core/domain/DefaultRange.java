@@ -107,10 +107,11 @@ class DefaultRange<T extends Comparable<T>> implements Range<T> {
 
         RangeQueryBuilder builder = QueryBuilders.rangeQuery(name);
 
-        // 如果左界限为空，右界限肯定不是空值，因为上面已经判断了，左右界限同时为空的场景
+        //设置范围关系
         if (Objects.nonNull(relation)) {
             builder.relation(relation.getRelationName());
         }
+        // 如果左界限为空，右界限肯定不是空值，因为上面已经判断了，左右界限同时为空的场景
         if (left == null) {
             rightIntervalType.right(builder, right);
         } else if (right == null) {
