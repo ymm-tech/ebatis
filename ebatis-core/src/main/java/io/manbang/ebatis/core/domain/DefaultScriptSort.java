@@ -34,6 +34,7 @@ class DefaultScriptSort extends AbstractSort implements ScriptSort {
     public SortBuilder<?> toSortBuilder() {
         ScriptSortBuilder builder = SortBuilders.scriptSort(script.toEsScript(), sortType).order(sortDirection.getOrder());
         setSortMode(builder::sortMode);
+        setNestedSort(builder::setNestedSort);
         return builder;
     }
 }

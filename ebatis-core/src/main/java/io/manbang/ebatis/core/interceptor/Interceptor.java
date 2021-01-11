@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.interceptor;
 
+import io.manbang.ebatis.core.cluster.Cluster;
+import io.manbang.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionResponse;
 
@@ -27,9 +29,11 @@ public interface Interceptor {
     /**
      * 入参拼装请求之前
      *
-     * @param args args
+     * @param args    args
+     * @param cluster cluster
+     * @param meta    meta
      */
-    default void preRequest(Object[] args) {
+    default void preRequest(Object[] args, Cluster cluster, MethodMeta meta) {
     }
 
     /**
