@@ -20,6 +20,7 @@ class DefaultFieldSort extends AbstractSort implements FieldSort {
                 .order(direction().getOrder());
 
         setSortMode(builder::sortMode);
+        setNestedSort(builder::setNestedSort);
         return builder;
     }
 

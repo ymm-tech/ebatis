@@ -1,11 +1,13 @@
 package io.manbang.ebatis.sample.interceptor;
 
 import com.google.auto.service.AutoService;
+import io.manbang.ebatis.core.cluster.Cluster;
 import io.manbang.ebatis.core.domain.ContextHolder;
 import io.manbang.ebatis.core.interceptor.Interceptor;
 import io.manbang.ebatis.core.interceptor.PostResponseInfo;
 import io.manbang.ebatis.core.interceptor.PreResponseInfo;
 import io.manbang.ebatis.core.interceptor.RequestInfo;
+import io.manbang.ebatis.core.meta.MethodMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionResponse;
@@ -31,7 +33,7 @@ public class TestInterceptor implements Interceptor {
     }
 
     @Override
-    public void preRequest(Object[] args) {
+    public void preRequest(Object[] args, Cluster cluster, MethodMeta meta) {
         log.info("preRequest", args);
         log.error("preRequest userId{}", ContextHolder.getString("userId"));
 
