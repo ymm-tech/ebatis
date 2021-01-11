@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.interceptor;
 
+import io.manbang.ebatis.core.cluster.Cluster;
+import io.manbang.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionResponse;
 
@@ -27,8 +29,8 @@ public class Interceptors implements Interceptor {
     }
 
     @Override
-    public void preRequest(Object[] args) {
-        interceptors.forEach(i -> i.preRequest(args));
+    public void preRequest(Object[] args, Cluster cluster, MethodMeta meta) {
+        interceptors.forEach(i -> i.preRequest(args, cluster, meta));
     }
 
     @Override

@@ -120,6 +120,14 @@ public interface Sort {
     SortDirection direction();
 
     /**
+     * 设置nested objects
+     *
+     * @param nestedSort nested
+     * @return 排序对象
+     */
+    Sort nested(NestedSort nestedSort);
+
+    /**
      * 转换成排序
      *
      * @return 排序构建器

@@ -104,6 +104,7 @@ class DefaultGeoDistanceSort extends AbstractSort implements GeoDistanceSort {
                 .order(direction().getOrder());
 
         setSortMode(builder::sortMode);
+        setNestedSort(builder::setNestedSort);
         return builder;
     }
 }
