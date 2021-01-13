@@ -35,4 +35,6 @@ public @interface Search {
     MatchPhrasePrefix[] matchPhrasePrefix() default {};
 
     boolean countOnly() default false;
+
+    String timeout() default "1m";
 }

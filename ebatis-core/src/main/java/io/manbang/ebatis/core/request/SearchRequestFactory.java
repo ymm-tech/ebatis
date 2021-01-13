@@ -27,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -68,7 +69,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
     protected void setAnnotationMeta(SearchRequest request, Search search) {
         request.preference(StringUtils.trimToNull(search.preference()))
                 .searchType(search.searchType());
-
+        request.source().timeout(TimeValue.parseTimeValue(search.timeout(), "search timeout"));
         if (search.countOnly()) {
             request.source().fetchSource(false).size(0);
         }
