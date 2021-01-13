@@ -1,6 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.index.VersionType;
 
 import java.lang.annotation.Documented;
@@ -25,7 +24,7 @@ public @interface Update {
 
     String timeout() default "";
 
-    WriteRequest.RefreshPolicy refreshPolicy() default WriteRequest.RefreshPolicy.NONE;
+    String refreshPolicy() default "false";
 
     boolean scriptedUpsert() default false;
 
