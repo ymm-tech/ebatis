@@ -1,6 +1,5 @@
 sonar_preview:
   only:
-    - api
 #    - pushes
     - web
   stage: test
@@ -11,7 +10,6 @@ sonar_preview:
     
 sonar_analyze:
   only:
-    - api
 #    - pushes
     - web
   stage: test
@@ -20,6 +18,23 @@ sonar_analyze:
   tags:
     - ebatis2
     
+sonar_preview_sec:
+  only:
+    - api
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/preview-sec.sh $CI_PROJECT_ID $CI_COMMIT_SHA $CI_COMMIT_REF_NAME $CI_PIPELINE_ID
+  tags:
+    - ebatis2
+
+sonar_analyze_sec:
+  only:
+    - api
+  stage: test
+  script:
+    - /home/gitlab-runner/ci/analyze-sec.sh $CI_PROJECT_NAME $CI_PROJECT_NAME
+  tags:
+    - ebatis2
 
 sonar_preview:on-schedule:
   only:
