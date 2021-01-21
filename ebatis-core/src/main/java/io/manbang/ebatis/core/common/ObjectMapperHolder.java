@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.common;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,6 +17,7 @@ public class ObjectMapperHolder {
         OBJECT_MAPPERS = ThreadLocal.withInitial(() -> {
             ObjectMapper mapper = new ObjectMapper();
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             return mapper;
         });
     }
