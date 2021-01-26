@@ -2,9 +2,9 @@ package io.manbang.ebatis.core.meta;
 
 import java.lang.annotation.Annotation;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @since 2020/6/3 14:11
  */
 class CachedAnnotationMeta implements AnnotationMeta {
-    private static final Map<Class<? extends Annotation>, AnnotationMeta> METAS = new HashMap<>();
+    private static final Map<Class<? extends Annotation>, AnnotationMeta> METAS = new ConcurrentHashMap<>();
 
     private final Class<? extends Annotation> annotationType;
     private final List<AnnotationAttribute> attributes;
