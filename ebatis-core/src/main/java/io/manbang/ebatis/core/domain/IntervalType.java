@@ -2,7 +2,7 @@ package io.manbang.ebatis.core.domain;
 
 import org.elasticsearch.index.query.RangeQueryBuilder;
 
-public enum IntervalType {
+enum IntervalType {
     /**
      * 闭区间
      */

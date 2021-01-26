@@ -29,9 +29,9 @@ import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 集群亲和会话
@@ -40,7 +40,7 @@ import java.util.concurrent.CompletableFuture;
  * @since 2020/5/23 17:14
  */
 class CachedClusterSession implements ClusterSession {
-    private static final Map<Cluster, ClusterSession> CLUSTER_SESSIONS = new HashMap<>();
+    private static final Map<Cluster, ClusterSession> CLUSTER_SESSIONS = new ConcurrentHashMap<>();
     private final Cluster cluster;
     private final Interceptor interceptor;
 
