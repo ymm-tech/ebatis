@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.domain;
 
+import java.util.Map;
+
 /**
  * @author duoliang.zhang
  * @since 2019/12/26 17:46:39
@@ -74,4 +76,53 @@ public interface ResponseMeta {
      * @return 错误原因
      */
     String getCause();
+
+    /**
+     * 获取score
+     *
+     * @return score
+     */
+    float getScore();
+
+    /**
+     * 获取version
+     *
+     * @return version
+     */
+    long getVersion();
+
+    /**
+     * 获取文档字符串
+     *
+     * @return 文档字符串
+     */
+    String getSourceAsString();
+
+    /**
+     * 获取map形式文档
+     *
+     * @return map形式文档
+     */
+    Map<String, Object> getSourceAsMap();
+
+    /**
+     * 获取排序数组
+     *
+     * @return 排序数组
+     */
+    Object[] getSortValues();
+
+    /**
+     * 获取集群别名
+     *
+     * @return 集群别名
+     */
+    String getClusterAlias();
+
+    /**
+     * 获取匹配查询
+     *
+     * @return 匹配查询
+     */
+    String[] getMatchedQueries();
 }

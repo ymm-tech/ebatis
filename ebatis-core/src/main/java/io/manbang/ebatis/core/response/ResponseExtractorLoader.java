@@ -4,17 +4,17 @@ import io.manbang.ebatis.core.meta.MethodMeta;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author 章多亮
  * @since 2019/12/20 10:35
  */
 public class ResponseExtractorLoader {
-    private static final Map<MethodMeta, ResponseExtractor<?>> RESPONSE_EXTRACTORS = new HashMap<>();
+    private static final Map<MethodMeta, ResponseExtractor<?>> RESPONSE_EXTRACTORS = new ConcurrentHashMap<>();
     private static final List<ResponseExtractorProvider> RESPONSE_EXTRACTOR_PROVIDERS = new ArrayList<>();
 
     static {

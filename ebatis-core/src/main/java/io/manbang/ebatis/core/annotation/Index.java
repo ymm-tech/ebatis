@@ -1,7 +1,6 @@
 package io.manbang.ebatis.core.annotation;
 
 import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.index.VersionType;
 
 import java.lang.annotation.Documented;
@@ -44,7 +43,7 @@ public @interface Index {
      */
     String timeout() default "1m";
 
-    WriteRequest.RefreshPolicy refreshPolicy() default WriteRequest.RefreshPolicy.NONE;
+    String refreshPolicy() default "false";
 
     /**
      * 获取等待的主分片和副本分片数量，默认只需要主分片活跃就可以

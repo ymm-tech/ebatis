@@ -4,11 +4,11 @@ import io.manbang.ebatis.core.domain.Page;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author duoliang.zhang
@@ -62,7 +62,7 @@ public enum ResultType {
         }
     };
 
-    private static final Map<Class<?>, ResultType> METHOD_RETURN_TYPES = new HashMap<>();
+    private static final Map<Class<?>, ResultType> METHOD_RETURN_TYPES = new ConcurrentHashMap<>();
 
     static {
         for (ResultType type : values()) {

@@ -18,7 +18,14 @@ public interface MetaSource {
         return new SimpleResponseMeta()
                 .setId(hit.getId())
                 .setIndex(hit.getIndex())
-                .setType(hit.getType());
+                .setType(hit.getType())
+                .setScore(hit.getScore())
+                .setVersion(hit.getVersion())
+                .setSourceAsString(hit.getSourceAsString())
+                .setSourceAsMap(hit.getSourceAsMap())
+                .setSortValues(hit.getSortValues())
+                .setClusterAlias(hit.getClusterAlias())
+                .setMatchedQueries(hit.getMatchedQueries());
     }
 
     /**

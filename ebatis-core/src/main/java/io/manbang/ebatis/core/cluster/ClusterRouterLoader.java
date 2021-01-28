@@ -4,9 +4,9 @@ import io.manbang.ebatis.core.exception.ClusterRouterNotFoundException;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 路由器载入器，对名字缓存
@@ -16,7 +16,7 @@ import java.util.ServiceLoader;
  */
 @Slf4j
 public class ClusterRouterLoader {
-    private static final Map<String, ClusterRouter> CLUSTER_ROUTERS = new HashMap<>();
+    private static final Map<String, ClusterRouter> CLUSTER_ROUTERS = new ConcurrentHashMap<>();
 
     private ClusterRouterLoader() {
         throw new UnsupportedOperationException();

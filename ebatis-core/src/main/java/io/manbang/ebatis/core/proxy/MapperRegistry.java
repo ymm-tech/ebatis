@@ -7,8 +7,8 @@ import io.manbang.ebatis.core.exception.MapperNotInterfaceException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Mapper接口注解表，所有的接口的动态代理都存在在此
@@ -17,7 +17,7 @@ import java.util.Map;
  * @since 2020/5/25 17:27
  */
 class MapperRegistry {
-    private static final Map<Class<?>, Object> PROXIES = new HashMap<>();
+    private static final Map<Class<?>, Object> PROXIES = new ConcurrentHashMap<>();
 
     private MapperRegistry() {
         throw new UnsupportedOperationException();

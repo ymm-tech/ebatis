@@ -59,15 +59,15 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
         request.source(source, XContentType.JSON);
         if (doc instanceof IdProvider) {
-            request.id(((IdProvider) doc).getId());
+            request.id(((IdProvider) doc).id());
         }
 
         if (doc instanceof VersionProvider) {
-            request.version(((VersionProvider) doc).getVersion());
+            request.version(((VersionProvider) doc).version());
         }
 
         if (doc instanceof RoutingProvider) {
-            request.routing(((RoutingProvider) doc).getRouting());
+            request.routing(((RoutingProvider) doc).routing());
         }
 
         return request;

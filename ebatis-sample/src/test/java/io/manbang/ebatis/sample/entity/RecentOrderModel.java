@@ -15,7 +15,7 @@ public class RecentOrderModel implements IdProvider {
     private Integer shipperUserId = 0;
 
     @Override
-    public String getId() {
+    public String id() {
         return String.valueOf(cargoId);
     }
 }
