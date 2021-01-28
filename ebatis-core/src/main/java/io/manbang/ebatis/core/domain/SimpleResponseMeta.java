@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -18,4 +20,15 @@ class SimpleResponseMeta implements ResponseMeta {
     private boolean success;
     private boolean timeout;
     private String cause;
+    private float score;
+    private long version;
+    private long seqNo;
+    private long primaryTerm;
+    private String sourceAsString;
+    private Map<String, Object> sourceAsMap;
+    private Object[] sortValues;
+    private Object[] rawSortValues;
+    private String clusterAlias;
+    private String[] matchedQueries;
+
 }
