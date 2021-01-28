@@ -42,17 +42,17 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
             request.id(String.valueOf(condition));
         } else {
             if (condition instanceof IdProvider) {
-                request.id(((IdProvider) condition).getId());
+                request.id(((IdProvider) condition).id());
             } else {
                 throw new ConditionNotSupportException(meta.toString());
             }
 
             if (condition instanceof VersionProvider) {
-                request.version(((VersionProvider) condition).getVersion());
+                request.version(((VersionProvider) condition).version());
             }
 
             if (condition instanceof RoutingProvider) {
-                request.routing(((RoutingProvider) condition).getRouting());
+                request.routing(((RoutingProvider) condition).routing());
             }
         }
 

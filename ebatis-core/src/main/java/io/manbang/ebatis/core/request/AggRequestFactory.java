@@ -55,7 +55,7 @@ class AggRequestFactory extends AbstractRequestFactory<Agg, SearchRequest> {
             }
         }
         if (condition instanceof RoutingProvider) {
-            request.routing(((RoutingProvider) condition).getRouting());
+            request.routing(((RoutingProvider) condition).routing());
         }
         return request;
     }

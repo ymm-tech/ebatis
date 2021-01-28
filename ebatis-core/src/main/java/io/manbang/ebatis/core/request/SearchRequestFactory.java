@@ -155,7 +155,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
             searchSource.collapse(collapse.toCollapseBuilder());
         }
         if (condition instanceof RoutingProvider) {
-            request.routing(((RoutingProvider) condition).getRouting());
+            request.routing(((RoutingProvider) condition).routing());
         }
     }
 }

@@ -12,5 +12,5 @@ public interface VersionProvider extends Provider {
      *
      * @return 版本
      */
-    long getVersion();
+    long version();
 }
