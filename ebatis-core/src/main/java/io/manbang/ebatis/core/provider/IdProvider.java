@@ -10,5 +10,5 @@ public interface IdProvider extends Provider {
      *
      * @return 文档Id
      */
-    String getId();
+    String id();
 }

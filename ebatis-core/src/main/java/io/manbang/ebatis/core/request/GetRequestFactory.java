@@ -36,17 +36,17 @@ class GetRequestFactory extends AbstractRequestFactory<Get, GetRequest> {
             request.id(String.valueOf(value));
         } else {
             if (value instanceof IdProvider) {
-                request.id(((IdProvider) value).getId());
+                request.id(((IdProvider) value).id());
             } else {
                 throw new ConditionNotSupportException(meta.toString());
             }
 
             if (value instanceof VersionProvider) {
-                request.version(((VersionProvider) value).getVersion());
+                request.version(((VersionProvider) value).version());
             }
 
             if (value instanceof RoutingProvider) {
-                request.routing(((RoutingProvider) value).getRouting());
+                request.routing(((RoutingProvider) value).routing());
             }
         }
 

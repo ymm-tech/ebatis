@@ -5,11 +5,11 @@ package io.manbang.ebatis.core.provider;
  *
  * @author weilong.hu
  */
-public interface RoutingProvider {
+public interface RoutingProvider extends Provider {
     /**
      * 获取routing值
      *
      * @return 字段列表
      */
-    String getRouting();
+    String routing();
 }

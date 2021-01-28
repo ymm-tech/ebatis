@@ -58,7 +58,7 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
             request.id(String.valueOf(doc));
         } else {
             if (doc instanceof IdProvider) {
-                request.id(((IdProvider) doc).getId());
+                request.id(((IdProvider) doc).id());
             }
 
             // 脚本更新
@@ -71,7 +71,7 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
             }
 
             if (doc instanceof RoutingProvider) {
-                request.routing(((RoutingProvider) doc).getRouting());
+                request.routing(((RoutingProvider) doc).routing());
             }
         }
 
