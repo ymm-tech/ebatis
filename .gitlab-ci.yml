@@ -1,7 +1,7 @@
 sonar_preview:
   only:
-#    - pushes
-    - web
+    refs:
+      - api
   stage: test
   script:
     - /home/gitlab-runner/ci/preview.sh $CI_PROJECT_ID $CI_COMMIT_SHA $CI_COMMIT_REF_NAME $CI_PIPELINE_ID
@@ -10,8 +10,8 @@ sonar_preview:
     
 sonar_analyze:
   only:
-#    - pushes
-    - web
+    refs:
+      - api
   stage: test
   script:
     - /home/gitlab-runner/ci/analyze.sh $CI_PROJECT_NAME $CI_PROJECT_NAME
@@ -20,7 +20,10 @@ sonar_analyze:
     
 sonar_preview_sec:
   only:
-    - api
+    refs:
+      - triggers
+    variables:
+      - $CI_COMMIT_REF_NAME == "master"
   stage: test
   script:
     - /home/gitlab-runner/ci/preview-sec.sh $CI_PROJECT_ID $CI_COMMIT_SHA $CI_COMMIT_REF_NAME $CI_PIPELINE_ID
@@ -29,7 +32,10 @@ sonar_preview_sec:
 
 sonar_analyze_sec:
   only:
-    - api
+    refs:
+      - triggers
+    variables:
+      - $CI_COMMIT_REF_NAME == "master"
   stage: test
   script:
     - /home/gitlab-runner/ci/analyze-sec.sh $CI_PROJECT_NAME $CI_PROJECT_NAME
@@ -57,6 +63,8 @@ sonar_analyze:on-schedule:
 coverage_analyze:
   only:
     - triggers
+  except:
+    - master
   stage: test
   script:
     - /home/gitlab-runner/ci/coverage-analyze.sh $CI_PROJECT_NAME $CI_PROJECT_NAME $CI_COMMIT_REF_NAME $CI_PIPELINE_ID
