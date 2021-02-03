@@ -6,6 +6,7 @@ import io.manbang.ebatis.core.domain.ContextHolder;
 import io.manbang.ebatis.core.domain.HttpConfig;
 import io.manbang.ebatis.core.exception.RequestTypeNotSupportException;
 import io.manbang.ebatis.core.executor.RequestExecutor;
+import io.manbang.ebatis.core.mapper.MappingRouter;
 import io.manbang.ebatis.core.response.ResponseExtractor;
 import io.manbang.ebatis.core.response.ResponseExtractorLoader;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * @author 章多亮
@@ -30,6 +32,8 @@ class DefaultMapperMethodMeta implements MapperMethod {
 
     private final String[] indices;
     private final String[] types;
+    private final Supplier<String[]> indicesSupplier;
+    private final Supplier<String[]> typesSupplier;
     private final RequestType requestType;
     private final ResultType resultType;
     private final RequestExecutor requestExecutor;
@@ -48,6 +52,9 @@ class DefaultMapperMethodMeta implements MapperMethod {
 
         this.indices = mapperInterface.getIndices();
         this.types = mapperInterface.getTypes();
+        final Optional<MappingRouter> mappingRouter = Optional.ofNullable(mapperInterface.getMappingRouter());
+        this.indicesSupplier = mappingRouter.map(m -> (Supplier<String[]>) m::indices).orElse(() -> indices);
+        this.typesSupplier = mappingRouter.map(m -> (Supplier<String[]>) m::types).orElse(() -> types);
 
         this.requestType = getRequestType(method);
         this.resultType = getResultType(method);
@@ -138,12 +145,12 @@ class DefaultMapperMethodMeta implements MapperMethod {
 
     @Override
     public String[] getIndices() {
-        return indices;
+        return indicesSupplier.get();
     }
 
     @Override
     public String[] getTypes() {
-        return types;
+        return typesSupplier.get();
     }
 
     @Override

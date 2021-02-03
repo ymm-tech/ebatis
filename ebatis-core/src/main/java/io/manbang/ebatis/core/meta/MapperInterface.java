@@ -1,6 +1,7 @@
 package io.manbang.ebatis.core.meta;
 
 import io.manbang.ebatis.core.domain.HttpConfig;
+import io.manbang.ebatis.core.mapper.MappingRouter;
 
 import java.lang.reflect.Method;
 
@@ -33,6 +34,13 @@ public interface MapperInterface extends AnnotatedMeta<Class<?>> {
      * @return 类型列表
      */
     String[] getTypes();
+
+    /**
+     * 获取索引 type路由器
+     *
+     * @return 索引 type路由器
+     */
+    MappingRouter getMappingRouter();
 
     /**
      * 获取集群路由器

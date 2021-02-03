@@ -5,7 +5,10 @@ import io.manbang.ebatis.core.annotation.Mapper;
 import io.manbang.ebatis.core.common.AnnotationUtils;
 import io.manbang.ebatis.core.domain.HttpConfig;
 import io.manbang.ebatis.core.exception.AttributeNotFoundException;
+import io.manbang.ebatis.core.exception.InstanceException;
 import io.manbang.ebatis.core.exception.MapperAnnotationNotPresentException;
+import io.manbang.ebatis.core.mapper.MappingRouter;
+import sun.reflect.misc.ReflectUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,6 +28,7 @@ class DefaultMapperInterface implements MapperInterface {
     private final String[] indices;
     private final String[] types;
     private final String clusterRouter;
+    private final MappingRouter mappingRouter;
     private final Map<Method, MapperMethod> mapperMethods;
     private final HttpConfig httpConfig;
 
@@ -38,6 +42,7 @@ class DefaultMapperInterface implements MapperInterface {
         this.indices = getIndices(mapperAnnotation);
         this.types = getTypes(mapperAnnotation);
         this.clusterRouter = getClusterRouter(mapperAnnotation);
+        this.mappingRouter = getMappingRouter(mapperAnnotation);
 
         this.mapperMethods = getMapperMethods(mapperType);
     }
@@ -52,6 +57,18 @@ class DefaultMapperInterface implements MapperInterface {
 
     private String[] getIndices(Annotation mapperAnnotation) {
         return getAnnotationAttribute(mapperAnnotation, "indices", true);
+    }
+
+    private MappingRouter getMappingRouter(Annotation mapperAnnotation) {
+        Class<? extends MappingRouter> mappingRouterClazz = getAnnotationAttribute(mapperAnnotation, "mappingRouter", true);
+        try {
+            if (MappingRouter.class.equals(mappingRouterClazz)) {
+                return null;
+            }
+            return (MappingRouter) ReflectUtil.newInstance(mappingRouterClazz);
+        } catch (Exception e) {
+            throw new InstanceException(e);
+        }
     }
 
     private <A> A getAnnotationAttribute(Annotation mapperAnnotation, String attributeName, boolean required) {
@@ -111,6 +128,11 @@ class DefaultMapperInterface implements MapperInterface {
     @Override
     public String[] getTypes() {
         return types;
+    }
+
+    @Override
+    public MappingRouter getMappingRouter() {
+        return mappingRouter;
     }
 
     @Override
