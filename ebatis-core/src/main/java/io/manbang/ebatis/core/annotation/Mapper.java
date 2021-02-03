@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.annotation;
 
+import io.manbang.ebatis.core.mapper.MappingRouter;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -36,4 +38,11 @@ public @interface Mapper {
      * @return 集群名称
      */
     String clusterRouter() default "";
+
+    /**
+     * 索引 type动态设置
+     *
+     * @return 索引 type动态设置器
+     */
+    Class<? extends MappingRouter> mappingRouter() default MappingRouter.class;
 }
