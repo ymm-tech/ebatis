@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.mapper;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
  * @author weilong.hu
  * @since 2021/2/3 14:39
@@ -7,5 +9,7 @@ package io.manbang.ebatis.core.mapper;
 public interface MappingRouter {
     String[] indices();
 
-    String[] types();
+    default String[] types() {
+        return ArrayUtils.EMPTY_STRING_ARRAY;
+    }
 }
