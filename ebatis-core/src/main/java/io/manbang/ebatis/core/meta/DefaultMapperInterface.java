@@ -8,7 +8,6 @@ import io.manbang.ebatis.core.exception.AttributeNotFoundException;
 import io.manbang.ebatis.core.exception.InstanceException;
 import io.manbang.ebatis.core.exception.MapperAnnotationNotPresentException;
 import io.manbang.ebatis.core.mapper.MappingRouter;
-import sun.reflect.misc.ReflectUtil;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -65,7 +64,7 @@ class DefaultMapperInterface implements MapperInterface {
             if (MappingRouter.class.equals(mappingRouterClazz)) {
                 return null;
             }
-            return (MappingRouter) ReflectUtil.newInstance(mappingRouterClazz);
+            return mappingRouterClazz.newInstance();
         } catch (Exception e) {
             throw new InstanceException(e);
         }
