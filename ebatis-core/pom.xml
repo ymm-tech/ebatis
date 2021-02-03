@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ebatis</artifactId>
         <groupId>io.manbang</groupId>
-        <version>7.5.1.8.RELEASE</version>
+        <version>7.5.1.9.RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ebatis-core</artifactId>
