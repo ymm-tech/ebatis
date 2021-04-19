@@ -10,6 +10,7 @@ import io.manbang.ebatis.core.domain.ScoreFunction;
 import io.manbang.ebatis.core.domain.ScoreFunctionMode;
 import io.manbang.ebatis.core.domain.Script;
 import io.manbang.ebatis.core.provider.ScoreFunctionProvider;
+import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
 import io.manbang.ebatis.sample.condition.base.SecurityTran;
 import lombok.Data;
@@ -101,6 +102,9 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
 
     @Must(queryType = QueryType.NESTED, nest = @Nested(path = "attrs"))
     private Integer cargoAttr;
+
+    @Must(queryType = QueryType.BOOSTING)
+    private Load load;
 
     @Override
     public ScoreFunction getFunction() {
