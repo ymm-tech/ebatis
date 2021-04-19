@@ -6,6 +6,7 @@ import io.manbang.ebatis.core.domain.Page;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.sample.condition.RecentOrderCondition;
 import io.manbang.ebatis.sample.condition.SampleRecentOrderCondition;
+import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.entity.RecentOrder;
 import io.manbang.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.search.SearchResponse;
@@ -72,5 +73,14 @@ public interface RecentOrderSearchMapper {
     //Search Boolean 测试
     @Search(queryType = QueryType.BOOL)
     boolean queryRecentOrderCountWithBool(SampleRecentOrderCondition condition);
+
+    /**
+     * 搜索订单
+     *
+     * @param load 搜索条件
+     * @return 订单集合
+     */
+    @Search(queryType = QueryType.BOOSTING)
+    RecentOrder[] queryRecentOrderArray(Load load);
 
 }
