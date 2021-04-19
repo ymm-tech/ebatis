@@ -8,6 +8,7 @@ import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.domain.Script;
 import io.manbang.ebatis.sample.condition.RecentOrderCondition;
 import io.manbang.ebatis.sample.condition.SampleRecentOrderCondition;
+import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
 import io.manbang.ebatis.sample.condition.base.RateMode;
 import io.manbang.ebatis.sample.condition.base.SecurityTran;
@@ -387,6 +388,8 @@ public class EsQueryTest extends ESAbstractTest {
         condition.setShipperInfo(ShipperInfo.builder().shipperTelephone(18030000725L).shipperTelephoneMask(999725L).shipperUserId(123321L).build());
         condition.setShipperInfos(new Object[]{ShipperInfo.builder().shipperTelephone(18031111725L).shipperTelephoneMask(999726L).shipperUserId(456654L).build()});
         condition.setUnloadAddress("**沈阳市皇姑区**");
+
+        condition.setLoad(new Load());
         return condition;
     }
 }

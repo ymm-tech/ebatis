@@ -1,9 +1,12 @@
 package io.manbang.ebatis.sample.condition;
 
+import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.Order;
 import io.manbang.ebatis.core.domain.Aggregation;
+import io.manbang.ebatis.core.domain.FiltersAggregation;
 import io.manbang.ebatis.core.domain.TermsAggregation;
 import io.manbang.ebatis.core.provider.AggProvider;
+import lombok.Data;
 
 /**
  * @author weilong.hu
@@ -18,7 +21,15 @@ public class RecentOrderAggCondition extends SampleRecentOrderCondition implemen
         TermsAggregation terms3 = Aggregation.terms("grpByRoute").fieldName("startAreaCode").order(Order.COUNT_DESC);
         terms1.subAgg(terms2);
         terms2.subAgg(terms3);
+        final Condition condition = new Condition();
+        condition.setCargoType(1);
+        final FiltersAggregation filter = Aggregation.filters("type").filter("cargoType", condition);
+        return new Aggregation[]{terms1, terms2, filter};
+    }
 
-        return new Aggregation[]{terms1, terms2};
+    @Data
+    public static class Condition {
+        @Must
+        private Integer cargoType;
     }
 }
