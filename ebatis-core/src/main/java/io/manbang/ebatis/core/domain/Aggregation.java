@@ -17,6 +17,16 @@ public interface Aggregation {
     }
 
     /**
+     * Create a new Filters aggregation with the given name.
+     *
+     * @param name name
+     * @return FiltersAggregation
+     */
+    static FiltersAggregation filters(String name) {
+        return new FiltersAggregation(name);
+    }
+
+    /**
      * builder
      *
      * @return builder
