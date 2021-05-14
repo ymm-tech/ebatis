@@ -13,7 +13,7 @@ public interface HighlighterBuilder extends Highlighter<HighlighterBuilder> {
 
     HighlighterBuilder useExplicitFieldOrder(boolean useExplicitFieldOrder);
 
-    HighlighterBuilder fields(HighlighterField... fields);
+    HighlighterBuilder addFields(HighlighterField... fields);
 
     String tagsSchema();
 

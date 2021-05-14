@@ -38,7 +38,7 @@ class SimpleHighlighter extends AbstractHighlighter<HighlighterBuilder> implemen
     }
 
     @Override
-    public HighlighterBuilder fields(HighlighterField... fields) {
+    public HighlighterBuilder addFields(HighlighterField... fields) {
         this.fields.addAll(Lists.newArrayList(fields));
         return this;
     }
