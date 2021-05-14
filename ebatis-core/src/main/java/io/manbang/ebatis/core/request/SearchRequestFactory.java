@@ -18,6 +18,7 @@ import io.manbang.ebatis.core.meta.MetaUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.CollapseProvider;
+import io.manbang.ebatis.core.provider.HighlighterProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptFieldProvider;
 import io.manbang.ebatis.core.provider.SortProvider;
@@ -156,6 +157,10 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         }
         if (condition instanceof RoutingProvider) {
             request.routing(((RoutingProvider) condition).routing());
+        }
+
+        if (condition instanceof HighlighterProvider) {
+            searchSource.highlighter(((HighlighterProvider) condition).highlighterBuilder().toBuilder());
         }
     }
 }
