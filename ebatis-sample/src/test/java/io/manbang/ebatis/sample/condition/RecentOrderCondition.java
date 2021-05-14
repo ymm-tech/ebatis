@@ -5,10 +5,13 @@ import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.Nested;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.annotation.Should;
+import io.manbang.ebatis.core.domain.Highlighter;
+import io.manbang.ebatis.core.domain.HighlighterBuilder;
 import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.domain.ScoreFunction;
 import io.manbang.ebatis.core.domain.ScoreFunctionMode;
 import io.manbang.ebatis.core.domain.Script;
+import io.manbang.ebatis.core.provider.HighlighterProvider;
 import io.manbang.ebatis.core.provider.ScoreFunctionProvider;
 import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
@@ -25,7 +28,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider {
+public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider, HighlighterProvider {
 
     /**
      * 基本类型
@@ -117,4 +120,8 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
     }
 
 
+    @Override
+    public HighlighterBuilder highlighterBuilder() {
+        return Highlighter.highlighter().field(Highlighter.field("loadAddress"));
+    }
 }

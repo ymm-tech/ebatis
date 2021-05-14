@@ -2,6 +2,7 @@ package io.manbang.ebatis.core.response;
 
 import io.manbang.ebatis.core.common.ObjectMapperHolder;
 import io.manbang.ebatis.core.domain.AdditionalSource;
+import io.manbang.ebatis.core.domain.HighlightSource;
 import io.manbang.ebatis.core.domain.MetaSource;
 import io.manbang.ebatis.core.domain.ResponseMeta;
 import io.manbang.ebatis.core.exception.DocumentDeserializeException;
@@ -10,6 +11,7 @@ import org.elasticsearch.common.collect.Tuple;
 import org.elasticsearch.search.SearchHit;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,6 +56,14 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
                     .collect(Collectors.toMap(Tuple::v1, Tuple::v2));
             AdditionalSource additionalSource = (AdditionalSource) document;
             additionalSource.setAdditionalSource(additionalSourceMap);
+        }
+
+        if (document instanceof HighlightSource) {
+            final Map<String, List<String>> highlightSourceMap = hit.getHighlightFields().values().stream()
+                    .map(h -> Tuple.tuple(h.getName(), Arrays.stream(h.fragments()).map(t -> t.string()).collect(Collectors.toList())))
+                    .collect(Collectors.toMap(Tuple::v1, Tuple::v2));
+            final HighlightSource highlightSource = (HighlightSource) document;
+            highlightSource.setHighlightSource(highlightSourceMap);
         }
         return document;
     }
