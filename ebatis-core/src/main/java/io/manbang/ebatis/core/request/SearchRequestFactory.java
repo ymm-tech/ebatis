@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static io.manbang.ebatis.core.domain.HighlighterBuilderUtils.toHighlighterBuilder;
+
 /**
  * @author 章多亮
  * @since 2019/12/17 15:32
