@@ -122,6 +122,6 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
 
     @Override
     public HighlighterBuilder highlighterBuilder() {
-        return Highlighter.highlighter().field(Highlighter.field("loadAddress"));
+        return Highlighter.highlighter().addFields(Highlighter.field("loadAddress"));
     }
 }
