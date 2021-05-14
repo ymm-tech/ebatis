@@ -40,6 +40,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static io.manbang.ebatis.core.domain.HighlighterBuilderUtils.toHighlighterBuilder;
+
 /**
  * @author 章多亮
  * @since 2019/12/17 15:32
@@ -160,7 +162,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         }
 
         if (condition instanceof HighlighterProvider) {
-            searchSource.highlighter(((HighlighterProvider) condition).highlighterBuilder().toBuilder());
+            searchSource.highlighter(toHighlighterBuilder(((HighlighterProvider) condition).highlighterBuilder()));
         }
     }
 }

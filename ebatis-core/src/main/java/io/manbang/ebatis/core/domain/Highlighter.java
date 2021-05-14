@@ -51,6 +51,39 @@ public interface Highlighter<T extends Highlighter<T>> {
 
     T forceSource(Boolean forceSource);
 
-    <B> B toBuilder();
+    String[] preTags();
 
+    String[] postTags();
+
+    Integer fragmentSize();
+
+    Integer numOfFragments();
+
+    String highlighterType();
+
+    String fragmenter();
+
+    Object highlightCondition();
+
+    String order();
+
+    Boolean highlightFilter();
+
+    Boolean forceSource();
+
+    String boundaryScannerType();
+
+    Integer boundaryMaxScan();
+
+    char[] boundaryChars();
+
+    String boundaryScannerLocale();
+
+    Integer noMatchSize();
+
+    Integer phraseLimit();
+
+    Map<String, Object> options();
+
+    Boolean requireFieldMatch();
 }
