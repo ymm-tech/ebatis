@@ -8,4 +8,10 @@ public interface HighlighterField extends Highlighter<HighlighterField> {
     HighlighterField fragmentOffset(int fragmentOffset);
 
     HighlighterField matchedFields(String... matchedFields);
+
+    int fragmentOffset();
+
+    String[] matchedFields();
+
+    String name();
 }

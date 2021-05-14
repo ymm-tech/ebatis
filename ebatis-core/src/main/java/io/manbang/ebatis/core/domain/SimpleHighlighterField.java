@@ -1,18 +1,15 @@
 package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.builder.QueryBuilderFactory;
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-
 /**
  * @author weilong.hu
  * @since 2021/5/13 17:47
  */
-public class SimpleHighlighterField extends AbstractHighlighter<HighlighterField> implements HighlighterField {
+class SimpleHighlighterField extends AbstractHighlighter<HighlighterField> implements HighlighterField {
     private String name;
     private int fragmentOffset = -1;
     private String[] matchedFields;
 
-    public SimpleHighlighterField(String name) {
+    SimpleHighlighterField(String name) {
         this.name = name;
     }
 
@@ -29,12 +26,17 @@ public class SimpleHighlighterField extends AbstractHighlighter<HighlighterField
     }
 
     @Override
-    public <B> B toBuilder() {
-        return (B) new HighlightBuilder.Field(name).fragmentOffset(fragmentOffset).matchedFields(matchedFields)
-                .preTags(preTags).postTags(postTags).fragmentSize(fragmentSize).numOfFragments(numOfFragments).highlighterType(highlighterType)
-                .fragmenter(fragmenter).highlightQuery(QueryBuilderFactory.bool().create(null, highlightCondition)).order(order)
-                .highlightFilter(highlightFilter).forceSource(forceSource).boundaryScannerType(boundaryScannerType).boundaryMaxScan(boundaryMaxScan)
-                .boundaryChars(boundaryChars).boundaryScannerLocale(boundaryScannerLocale).noMatchSize(noMatchSize).phraseLimit(phraseLimit)
-                .options(options).requireFieldMatch(requireFieldMatch);
+    public int fragmentOffset() {
+        return fragmentOffset;
+    }
+
+    @Override
+    public String[] matchedFields() {
+        return matchedFields;
+    }
+
+    @Override
+    public String name() {
+        return name;
     }
 }

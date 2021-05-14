@@ -1,14 +1,12 @@
 package io.manbang.ebatis.core.domain;
 
-import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
-
 import java.util.Map;
 
 /**
  * @author weilong.hu
  * @since 2021/5/13 15:51
  */
-public abstract class AbstractHighlighter<T extends Highlighter<T>> implements Highlighter<T> {
+abstract class AbstractHighlighter<T extends Highlighter<T>> implements Highlighter<T> {
     protected String[] preTags;
 
     protected String[] postTags;
@@ -29,7 +27,7 @@ public abstract class AbstractHighlighter<T extends Highlighter<T>> implements H
 
     protected Boolean forceSource;
 
-    protected HighlightBuilder.BoundaryScannerType boundaryScannerType;
+    protected String boundaryScannerType;
 
     protected Integer boundaryMaxScan;
 
@@ -101,8 +99,7 @@ public abstract class AbstractHighlighter<T extends Highlighter<T>> implements H
 
     @Override
     public T boundaryScannerType(String boundaryScannerType) {
-        this.boundaryScannerType = HighlightBuilder.BoundaryScannerType.fromString(boundaryScannerType);
-        ;
+        this.boundaryScannerType = boundaryScannerType;
         return (T) this;
     }
 
@@ -154,4 +151,93 @@ public abstract class AbstractHighlighter<T extends Highlighter<T>> implements H
         return (T) this;
     }
 
+    @Override
+    public String[] preTags() {
+        return preTags;
+    }
+
+    @Override
+    public String[] postTags() {
+        return postTags;
+    }
+
+    @Override
+    public Integer fragmentSize() {
+        return fragmentSize;
+    }
+
+    @Override
+    public Integer numOfFragments() {
+        return numOfFragments;
+    }
+
+    @Override
+    public String highlighterType() {
+        return highlighterType;
+    }
+
+    @Override
+    public String fragmenter() {
+        return fragmenter;
+    }
+
+    @Override
+    public Object highlightCondition() {
+        return highlightCondition;
+    }
+
+    @Override
+    public String order() {
+        return order;
+    }
+
+    @Override
+    public Boolean highlightFilter() {
+        return highlightFilter;
+    }
+
+    @Override
+    public Boolean forceSource() {
+        return forceSource;
+    }
+
+    @Override
+    public String boundaryScannerType() {
+        return boundaryScannerType;
+    }
+
+    @Override
+    public Integer boundaryMaxScan() {
+        return boundaryMaxScan;
+    }
+
+    @Override
+    public char[] boundaryChars() {
+        return boundaryChars;
+    }
+
+    @Override
+    public String boundaryScannerLocale() {
+        return boundaryScannerLocale;
+    }
+
+    @Override
+    public Integer noMatchSize() {
+        return noMatchSize;
+    }
+
+    @Override
+    public Integer phraseLimit() {
+        return phraseLimit;
+    }
+
+    @Override
+    public Map<String, Object> options() {
+        return options;
+    }
+
+    @Override
+    public Boolean requireFieldMatch() {
+        return requireFieldMatch;
+    }
 }
