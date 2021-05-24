@@ -1,10 +1,9 @@
 package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.MultiMatch;
-import io.manbang.ebatis.core.exception.EbatisException;
+import io.manbang.ebatis.core.exception.ConditionNotSupportException;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import io.manbang.ebatis.core.provider.MultiMatchFieldProvider;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -39,14 +38,11 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
 
     @Override
     protected MultiMatchQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        MultiMatch multiMatch = meta.findAttributeAnnotation(MultiMatch.class).orElseThrow(EbatisException::new);
-
-        String[] fields = multiMatch.fields();
-
-        if (condition instanceof MultiMatchFieldProvider) {
-            fields = ArrayUtils.addAll(fields, ((MultiMatchFieldProvider) condition).getFields());
+        if (!(condition instanceof MultiMatchFieldProvider)) {
+            throw new ConditionNotSupportException("条件必须实现: MultiMatchFieldProvider");
         }
+        String[] fields = ((MultiMatchFieldProvider) condition).getFields();
 
-        return QueryBuilders.multiMatchQuery(String.valueOf(condition), fields);
+        return QueryBuilders.multiMatchQuery(((MultiMatchFieldProvider) condition).text(), fields);
     }
 }

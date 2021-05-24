@@ -29,7 +29,7 @@ public enum QueryType {
      * Ids查询
      */
     BOOSTING(QueryBuilderFactory.boosting()),
-    DIS_MAX(null),
+    DIS_MAX(QueryBuilderFactory.disMax()),
     FIELD(null),
     FUZZY(QueryBuilderFactory.fuzzy()),
     GEO_SHAPE(QueryBuilderFactory.geoShape()),
@@ -40,7 +40,7 @@ public enum QueryType {
     HAS_PARENT(null),
     INDICES(null),
     MLT(null),
-    MULTI_MATCH(null),
+    MULTI_MATCH(QueryBuilderFactory.multiMatch()),
     NESTED(QueryBuilderFactory.nested()),
     PREFIX(null),
     QUERY_STRING(null),

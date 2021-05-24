@@ -19,13 +19,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface MultiMatch {
 
-    /**
-     * 获取需要匹配的字段列表
-     *
-     * @return 字段列表
-     */
-    String[] fields() default {};
-
     Operator operator() default Operator.OR;
 
     int slop() default 0;
