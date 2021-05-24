@@ -35,7 +35,7 @@ class FunctionScoreQueryBuilderFactory extends AbstractQueryBuilderFactory<Query
             throw new ConditionNotSupportException("条件必须实现: ScoreFunctionProvider");
         }
 
-        QueryBuilder queryBuilder = BoolQueryBuilderFactory.INSTANCE.create(meta, condition);
+        QueryBuilder queryBuilder = QueryBuilderFactory.bool().create(meta, condition);
 
         ScoreFunctionProvider provider = (ScoreFunctionProvider) condition;
         //对于函数积分组合查询，如果没有提供ScoreFunction,则当作Bool查询

@@ -8,11 +8,13 @@ import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.domain.Script;
 import io.manbang.ebatis.sample.condition.RecentOrderCondition;
 import io.manbang.ebatis.sample.condition.SampleRecentOrderCondition;
+import io.manbang.ebatis.sample.condition.base.Cargo;
 import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
 import io.manbang.ebatis.sample.condition.base.RateMode;
 import io.manbang.ebatis.sample.condition.base.SecurityTran;
 import io.manbang.ebatis.sample.condition.base.ShipperInfo;
+import io.manbang.ebatis.sample.condition.base.Truck;
 import io.manbang.ebatis.sample.entity.RecentOrder;
 import io.manbang.ebatis.sample.mapper.RecentOrderMultiSearchMapper;
 import io.manbang.ebatis.sample.mapper.RecentOrderSearchMapper;
@@ -390,6 +392,8 @@ public class EsQueryTest extends ESAbstractTest {
         condition.setUnloadAddress("**沈阳市皇姑区**");
 
         condition.setLoad(new Load());
+        condition.setTruck(new Truck());
+        condition.setCargo(new Cargo());
         return condition;
     }
 }

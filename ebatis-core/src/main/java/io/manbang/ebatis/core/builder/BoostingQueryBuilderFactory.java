@@ -20,8 +20,8 @@ class BoostingQueryBuilderFactory extends AbstractQueryBuilderFactory<BoostingQu
             throw new ConditionNotSupportException("条件必须实现: BoostingProvider");
         }
         final BoostingProvider provider = (BoostingProvider) condition;
-        final QueryBuilder positive = BoolQueryBuilderFactory.INSTANCE.create(null, provider.positive());
-        final QueryBuilder negative = BoolQueryBuilderFactory.INSTANCE.create(null, provider.negative());
+        final QueryBuilder positive = QueryBuilderFactory.bool().create(null, provider.positive());
+        final QueryBuilder negative = QueryBuilderFactory.bool().create(null, provider.negative());
         return QueryBuilders.boostingQuery(positive, negative).negativeBoost(provider.negativeBoost());
     }
 }
