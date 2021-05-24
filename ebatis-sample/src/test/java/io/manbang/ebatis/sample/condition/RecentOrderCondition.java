@@ -13,9 +13,11 @@ import io.manbang.ebatis.core.domain.ScoreFunctionMode;
 import io.manbang.ebatis.core.domain.Script;
 import io.manbang.ebatis.core.provider.HighlighterProvider;
 import io.manbang.ebatis.core.provider.ScoreFunctionProvider;
+import io.manbang.ebatis.sample.condition.base.Cargo;
 import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
 import io.manbang.ebatis.sample.condition.base.SecurityTran;
+import io.manbang.ebatis.sample.condition.base.Truck;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
@@ -108,6 +110,12 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
 
     @Must(queryType = QueryType.BOOSTING)
     private Load load;
+
+    @Must(queryType = QueryType.DIS_MAX)
+    private Truck truck;
+
+    @Must(queryType = QueryType.MULTI_MATCH)
+    private Cargo cargo;
 
     @Override
     public ScoreFunction getFunction() {

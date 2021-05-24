@@ -87,6 +87,10 @@ public interface QueryBuilderFactory {
         return NestedQueryBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory disMax() {
+        return DisMaxBuilderFactory.INSTANCE;
+    }
+
     /**
      * 创建查询构建器
      *
