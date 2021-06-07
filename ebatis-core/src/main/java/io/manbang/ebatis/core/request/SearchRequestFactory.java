@@ -21,6 +21,7 @@ import io.manbang.ebatis.core.provider.CollapseProvider;
 import io.manbang.ebatis.core.provider.HighlighterProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptFieldProvider;
+import io.manbang.ebatis.core.provider.SearchAfterProvider;
 import io.manbang.ebatis.core.provider.SortProvider;
 import io.manbang.ebatis.core.provider.SourceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -159,6 +160,10 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         }
         if (condition instanceof RoutingProvider) {
             request.routing(((RoutingProvider) condition).routing());
+        }
+
+        if (condition instanceof SearchAfterProvider) {
+            searchSource.searchAfter(((SearchAfterProvider) condition).sortValues());
         }
 
         if (condition instanceof HighlighterProvider) {

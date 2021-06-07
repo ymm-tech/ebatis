@@ -11,8 +11,11 @@ import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.domain.ScoreFunction;
 import io.manbang.ebatis.core.domain.ScoreFunctionMode;
 import io.manbang.ebatis.core.domain.Script;
+import io.manbang.ebatis.core.domain.Sort;
 import io.manbang.ebatis.core.provider.HighlighterProvider;
 import io.manbang.ebatis.core.provider.ScoreFunctionProvider;
+import io.manbang.ebatis.core.provider.SearchAfterProvider;
+import io.manbang.ebatis.core.provider.SortProvider;
 import io.manbang.ebatis.sample.condition.base.Cargo;
 import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
@@ -30,7 +33,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider, HighlighterProvider {
+public class RecentOrderCondition extends SampleRecentOrderCondition implements ScoreFunctionProvider, HighlighterProvider, SortProvider, SearchAfterProvider {
 
     /**
      * 基本类型
@@ -131,5 +134,15 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
     @Override
     public HighlighterBuilder highlighterBuilder() {
         return Highlighter.highlighter().addFields(Highlighter.field("loadAddress"));
+    }
+
+    @Override
+    public Sort[] getSorts() {
+        return new Sort[]{Sort.fieldDesc("cargoType")};
+    }
+
+    @Override
+    public Object[] sortValues() {
+        return new Object[]{1};
     }
 }
