@@ -27,6 +27,26 @@ public interface Aggregation {
     }
 
     /**
+     * Create a new Sum aggregation with the given name.
+     *
+     * @param name name
+     * @return SumAggregation
+     */
+    static SumAggregation sum(String name) {
+        return new SumAggregation(name);
+    }
+
+    /**
+     * Create a new ValueCount aggregation with the given name.
+     *
+     * @param name name
+     * @return CountAggregation
+     */
+    static CountAggregation count(String name) {
+        return new CountAggregation(name);
+    }
+
+    /**
      * builder
      *
      * @return builder
