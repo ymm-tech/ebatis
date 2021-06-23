@@ -16,7 +16,7 @@ public class SumAggregation implements SubAggregation<SumAggregation> {
     /**
      * 聚合名称
      */
-    private String name;
+    private final String name;
     /**
      * 聚合字段名称
      */
@@ -24,7 +24,7 @@ public class SumAggregation implements SubAggregation<SumAggregation> {
     /**
      * 子聚合
      */
-    private List<Aggregation> subAggregations = new ArrayList<>();
+    private final List<Aggregation> subAggregations = new ArrayList<>();
 
     public SumAggregation(String name) {
         this.name = name;

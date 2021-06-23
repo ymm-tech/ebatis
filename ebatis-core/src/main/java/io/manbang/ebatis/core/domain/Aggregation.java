@@ -37,6 +37,16 @@ public interface Aggregation {
     }
 
     /**
+     * Create a new ValueCount aggregation with the given name.
+     *
+     * @param name name
+     * @return CountAggregation
+     */
+    static CountAggregation count(String name) {
+        return new CountAggregation(name);
+    }
+
+    /**
      * builder
      *
      * @return builder
