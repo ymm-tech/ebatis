@@ -44,7 +44,7 @@ public enum QueryType {
     NESTED(QueryBuilderFactory.nested()),
     PREFIX(null),
     QUERY_STRING(null),
-    RANGE(null),
+    RANGE(QueryBuilderFactory.auto()),
     SCRIPT(null),
     IDS(null),
     TERM(QueryBuilderFactory.term()),
