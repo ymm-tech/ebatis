@@ -47,6 +47,16 @@ public interface Aggregation {
     }
 
     /**
+     * Create a new avg aggregation with the given name.
+     *
+     * @param name name
+     * @return CountAggregation
+     */
+    static AvgAggregation avg(String name) {
+        return new AvgAggregation(name);
+    }
+
+    /**
      * builder
      *
      * @return builder
