@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.manbang.ebatis.sample.entity.RecentOrderModel;
 import io.manbang.ebatis.sample.mapper.RecentOrderIndexMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.rest.RestStatus;
 import org.junit.Assert;
@@ -101,5 +102,14 @@ public class EsIndexTest extends ESAbstractTest {
         countDownLatch.await();
         log.info("index success");
         Assert.assertNull(ex.get());
+    }
+
+    @Test
+    public void refreshIndex() {
+        final RefreshResponse refreshAll1 = recentOrderIndexMapper.refresh("_all");
+        final RefreshResponse refreshAll2 = recentOrderIndexMapper.refresh(null);
+        Assert.assertNotNull(refreshAll1);
+        Assert.assertNotNull(refreshAll2);
+        log.info("refresh result,status:{},totalShards:{},successfulShards:{},failedShards:{}", refreshAll1.getStatus(), refreshAll1.getTotalShards(), refreshAll1.getSuccessfulShards(), refreshAll1.getFailedShards());
     }
 }
