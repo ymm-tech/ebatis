@@ -2,11 +2,11 @@ package io.manbang.ebatis.core.proxy;
 
 import io.manbang.ebatis.core.annotation.Mapper;
 import io.manbang.ebatis.core.exception.MapperAnnotationNotPresentException;
-import io.manbang.ebatis.core.exception.MapperNotAllowInheritException;
 import io.manbang.ebatis.core.exception.MapperNotInterfaceException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,9 +35,9 @@ class MapperRegistry {
             throw new MapperNotInterfaceException(mapperInterface.toString());
         }
 
-        // 接口不能有继承
+        //校验实现的接口
         if (mapperInterface.getInterfaces().length > 0) {
-            throw new MapperNotAllowInheritException(mapperInterface.toString());
+            Arrays.stream(mapperInterface.getInterfaces()).forEach(MapperType::type);
         }
 
         Annotation[] annotations = mapperInterface.getAnnotations();
