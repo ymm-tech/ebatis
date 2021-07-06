@@ -6,14 +6,20 @@ import io.manbang.ebatis.core.cluster.ClusterRouterLoader;
 import io.manbang.ebatis.core.common.MethodUtils;
 import io.manbang.ebatis.core.config.Env;
 import io.manbang.ebatis.core.domain.ContextHolder;
+import io.manbang.ebatis.core.exception.MethodInvokeException;
 import io.manbang.ebatis.core.meta.MapperInterface;
 import io.manbang.ebatis.core.meta.MapperMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
+import org.elasticsearch.common.collect.Tuple;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Mapper接口的代理，解析接口定义的元数据信息，并将元数据和实参转变成对应请求调用
@@ -25,6 +31,7 @@ class MapperProxy implements InvocationHandler {
     private final MapperInterface mapperInterface;
     private final String clusterRouterName;
     private final LazyInitializer<ClusterRouter> clusterRouter;
+    private final Map<? extends Class<?>, Object> mapperInstances;
 
     MapperProxy(Class<?> mapperType, String name) {
         this.mapperInterface = MapperInterface.of(mapperType);
@@ -35,6 +42,8 @@ class MapperProxy implements InvocationHandler {
                 return ClusterRouterLoader.getClusterRouter(clusterRouterName);
             }
         };
+        final Class<?>[] interfaces = mapperType.getInterfaces();
+        this.mapperInstances = Arrays.stream(interfaces).map(i -> Tuple.tuple(i, MapperType.type(i).instance(clusterRouter))).collect(Collectors.toMap(Tuple::v1, Tuple::v2));
     }
 
     /**
@@ -65,6 +74,10 @@ class MapperProxy implements InvocationHandler {
             return invokeObjectMethod(method, args);
         }
 
+        if (isMapperMethod(method)) {
+            return invokeMapperMethod(method, args);
+        }
+
         MapperMethod mapperMethod = mapperInterface.getMapperMethod(method);
         ContextHolder.setHttpConfig(mapperMethod.getHttpConfig());
 
@@ -83,5 +96,17 @@ class MapperProxy implements InvocationHandler {
         } else {
             return null;
         }
+    }
+
+    private Object invokeMapperMethod(Method method, Object[] args) {
+        try {
+            return method.invoke(mapperInstances.get(method.getDeclaringClass()), args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new MethodInvokeException(e);
+        }
+    }
+
+    private boolean isMapperMethod(Method method) {
+        return mapperInstances.containsKey(method.getDeclaringClass());
     }
 }
