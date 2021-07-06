@@ -1,6 +1,7 @@
 package io.manbang.ebatis.sample.mapper;
 
 import io.manbang.ebatis.core.annotation.Index;
+import io.manbang.ebatis.core.mapper.IndexApi;
 import io.manbang.ebatis.sample.entity.RecentOrderModel;
 import io.manbang.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.action.index.IndexResponse;
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
  * @author weilong.hu
  */
 @EasyMapper(indices = "recent_order_index")
-public interface RecentOrderIndexMapper {
+public interface RecentOrderIndexMapper extends IndexApi {
     /**
      * 创建一笔订单
      *
