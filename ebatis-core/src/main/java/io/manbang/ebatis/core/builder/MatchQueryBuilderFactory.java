@@ -1,25 +1,23 @@
 package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.Match;
+import io.manbang.ebatis.core.builder.compatibility.CompatibleMatchQueryBuilder;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 
 /**
  * @author 章多亮
  * @since 2020/1/7 9:28
  */
-class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQueryBuilder, Match> {
+class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<CompatibleMatchQueryBuilder, Match> {
     static final MatchQueryBuilderFactory INSTANCE = new MatchQueryBuilderFactory();
 
     private MatchQueryBuilderFactory() {
     }
 
     @Override
-    protected void setAnnotationMeta(MatchQueryBuilder builder, Match match) {
-        builder.autoGenerateSynonymsPhraseQuery(match.autoGenerateSynonymsPhraseQuery())
-                .operator(match.operator())
+    protected void setAnnotationMeta(CompatibleMatchQueryBuilder builder, Match match) {
+        builder.operator(match.operator())
                 .fuzzyTranspositions(match.fuzzyTranspositions())
                 .lenient(match.lenient())
                 .maxExpansions(match.maxExpansions())
@@ -36,7 +34,7 @@ class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQueryBui
     }
 
     @Override
-    protected MatchQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        return QueryBuilders.matchQuery(meta.getName(), condition);
+    protected CompatibleMatchQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        return new CompatibleMatchQueryBuilder(meta.getName(), condition);
     }
 }

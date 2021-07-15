@@ -44,8 +44,6 @@ public @interface MultiMatch {
      */
     float cutoffFrequency() default -1.0F;
 
-    boolean autoGenerateSynonymsPhraseQuery() default true;
-
     boolean fuzzyTranspositions() default true;
 
     MatchQuery.ZeroTermsQuery zeroTermsQuery() default MatchQuery.ZeroTermsQuery.NONE;

@@ -33,8 +33,6 @@ public @interface Match {
 
     float cutoffFrequency() default -1;
 
-    boolean autoGenerateSynonymsPhraseQuery() default true;
-
     Operator operator() default Operator.OR;
 
     String analyzer() default "";
