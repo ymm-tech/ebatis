@@ -24,7 +24,7 @@ public enum QueryType {
     /**
      * 常量积分组合查询
      */
-    CONSTANT_SCORE(QueryBuilderFactory.functionScore()),
+    CONSTANT_SCORE(QueryBuilderFactory.constantScore()),
     /**
      * Ids查询
      */
