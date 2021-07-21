@@ -57,6 +57,27 @@ public interface Aggregation {
     }
 
     /**
+     * Create a new percentiles aggregation with the given name.
+     *
+     * @param name name
+     * @return PercentilesAggregation
+     */
+    static PercentilesAggregation percentiles(String name) {
+        return new PercentilesAggregation(name);
+    }
+
+    /**
+     * Create a new PercentileRanks aggregation with the given name.
+     *
+     * @param name   name
+     * @param values values
+     * @return PercentileRanksAggregation
+     */
+    static PercentileRanksAggregation percentileRanks(String name, double... values) {
+        return new PercentileRanksAggregation(name, values);
+    }
+
+    /**
      * builder
      *
      * @return builder
