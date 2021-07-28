@@ -1,6 +1,11 @@
 package io.manbang.ebatis.core.annotation;
 
 import org.elasticsearch.search.aggregations.BucketOrder;
+import org.elasticsearch.search.aggregations.InternalOrder;
+import org.elasticsearch.search.aggregations.KeyComparable;
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
+
+import java.util.Comparator;
 
 /**
  * @author weilong.hu
@@ -15,13 +20,13 @@ public enum Order {
      */
     COUNT_DESC(BucketOrder.count(false)),
     /**
-     * count升序
+     * key升序
      */
-    KEY_ASC(BucketOrder.key(true)),
+    TERM_ASC(new InternalOrder((byte) 5, "_term", true, comparingKeys())),
     /**
-     * count降序
+     * key降序
      */
-    KEY_DESC(BucketOrder.key(false));
+    TERM_DESC(new InternalOrder((byte) 6, "_term", true, comparingKeys()));
 
     private final BucketOrder order;
 
@@ -31,5 +36,14 @@ public enum Order {
 
     public BucketOrder order() {
         return this.order;
+    }
+
+    private static Comparator<MultiBucketsAggregation.Bucket> comparingKeys() {
+        return (b1, b2) -> {
+            if (b1 instanceof KeyComparable) {
+                return ((KeyComparable) b1).compareKey(b2);
+            }
+            throw new IllegalStateException("Unexpected order bucket class [" + b1.getClass() + "]");
+        };
     }
 }

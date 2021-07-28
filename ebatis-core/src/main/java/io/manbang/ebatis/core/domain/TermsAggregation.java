@@ -1,15 +1,15 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.annotation.Order;
+import io.manbang.ebatis.core.domain.compatibility.CompatibleTermsAggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author weilong.hu
@@ -162,7 +162,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
 
     @Override
     public AggregationBuilder toAggBuilder() {
-        TermsAggregationBuilder agg = AggregationBuilders.terms(name)
+        CompatibleTermsAggregationBuilder agg = new CompatibleTermsAggregationBuilder(name, null)
                 .size(size)
                 .showTermDocCountError(showTermDocCountError)
                 .minDocCount(minDocCount)
@@ -181,7 +181,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         }
 
         if (!orders.isEmpty()) {
-            orders.forEach(order -> agg.order(order.order()));
+            agg.order(orders.stream().map(Order::order).collect(Collectors.toList()));
         }
         if (!subAggregations.isEmpty()) {
             subAggregations.forEach(subAgg -> agg.subAggregation(subAgg.toAggBuilder()));

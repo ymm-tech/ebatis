@@ -20,7 +20,7 @@ public class RecentOrderAggCondition extends SampleRecentOrderCondition implemen
     @Override
     public Aggregation[] getAggregations() {
         TermsAggregation terms1 =
-                Aggregation.terms("grpByEventType").fieldName("startCityCode").order(Order.COUNT_DESC, Order.KEY_ASC);
+                Aggregation.terms("grpByEventType").fieldName("startCityCode").order(Order.COUNT_DESC, Order.TERM_ASC);
         TermsAggregation terms2 = Aggregation.terms("grpByUserId").fieldName("startProvinceCode").order(Order.COUNT_DESC);
         TermsAggregation terms3 = Aggregation.terms("grpByRoute").fieldName("startAreaCode").order(Order.COUNT_DESC);
         terms1.subAgg(terms2);
