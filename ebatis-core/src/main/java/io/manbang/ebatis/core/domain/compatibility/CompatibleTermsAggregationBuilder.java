@@ -87,7 +87,7 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
         return PARSER.parse(parser, new TermsAggregationBuilder(aggregationName, null), null);
     }
 
-    private BucketOrder order = BucketOrder.compound(BucketOrder.count(false)); // automatically adds tie-breaker key asc order
+    private BucketOrder order = new CompoundOrder((byte) 7, "null", false, null, Collections.singletonList(BucketOrder.count(false)));// automatically adds tie-breaker key asc order
     private IncludeExclude includeExclude = null;
     private String executionHint = null;
     private Aggregator.SubAggCollectionMode collectMode = null;
