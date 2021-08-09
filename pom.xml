@@ -34,7 +34,7 @@
         <spring-boot.version>1.5.12.RELEASE</spring-boot.version>
         <fastjson.version>1.2.61</fastjson.version>
         <awaitility.version>4.0.1</awaitility.version>
-        <es.version>7.5.1</es.version>
+        <es.version>7.13.3</es.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <javassist.version>3.26.0-GA</javassist.version>
