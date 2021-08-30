@@ -161,9 +161,13 @@ class CachedClusterSession implements ClusterSession {
                 ContextHolder.remove();
             }
         }, exception -> {
-            future.completeExceptionally(exception);
-            interceptor.handleException(exception);
-            ContextHolder.remove();
+            ContextHolder.setContext(context);
+            try {
+                future.completeExceptionally(exception);
+                interceptor.handleException(exception);
+            } finally {
+                ContextHolder.remove();
+            }
         });
     }
 
