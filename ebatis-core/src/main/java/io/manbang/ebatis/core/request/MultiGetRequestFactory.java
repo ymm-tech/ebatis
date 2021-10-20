@@ -48,10 +48,10 @@ class MultiGetRequestFactory extends AbstractRequestFactory<MultiGet, MultiGetRe
         MultiGetRequest request = new MultiGetRequest();
         for (Object condition : conditions) {
             if (parameterMeta.isBasic()) {
-                request.add(new Item(meta.getIndex(), StringUtils.trimToNull(meta.getType()), String.valueOf(condition)));
+                request.add(new Item(meta.getIndex(meta, args), StringUtils.trimToNull(meta.getType(meta, args)), String.valueOf(condition)));
             } else {
                 if (condition instanceof IdProvider) {
-                    Item item = new Item(meta.getIndex(), StringUtils.trimToNull(meta.getType()), ((IdProvider) condition).id());
+                    Item item = new Item(meta.getIndex(meta, args), StringUtils.trimToNull(meta.getType(meta, args)), ((IdProvider) condition).id());
                     if (condition instanceof VersionProvider) {
                         item.version(((VersionProvider) condition).version());
                     }

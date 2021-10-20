@@ -89,12 +89,12 @@ class IndexApiImpl implements IndexApi {
             }
 
             @Override
-            public String[] getIndices() {
+            public String[] getIndices(MethodMeta meta, Object[] args) {
                 return indices;
             }
 
             @Override
-            public String[] getTypes() {
+            public String[] getTypes(MethodMeta meta, Object[] args) {
                 return new String[0];
             }
 
