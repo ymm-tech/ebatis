@@ -37,4 +37,6 @@ public @interface Search {
     boolean countOnly() default false;
 
     String timeout() default "1m";
+
+    boolean trackTotalHits() default false;
 }
