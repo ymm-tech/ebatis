@@ -87,8 +87,8 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         Object condition = conditionMeta.map(p -> p.getValue(args)).orElse(null);
 
         // 1. 如果是一个入参
-        SearchRequest request = Requests.searchRequest(meta.getIndices());
-        setTypesIfNecessary(meta, request::types);
+        SearchRequest request = Requests.searchRequest(meta.getIndices(meta, args));
+        setTypesIfNecessary(meta, args, request::types);
 
         // 获取语句构建器，不能的查询语句是不一样的
         QueryBuilderFactory factory = getQueryBuilderFactory(meta);

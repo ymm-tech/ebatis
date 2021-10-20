@@ -36,9 +36,9 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
      *
      * @return 索引列表
      */
-    String[] getIndices();
+    String[] getIndices(MethodMeta meta, Object[] args);
 
-    String[] getTypes();
+    String[] getTypes(MethodMeta meta, Object[] args);
 
     RequestType getRequestType();
 
@@ -58,15 +58,15 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
 
     ParameterMeta getResponseExtractorParameter();
 
-    default String getIndex() {
-        return getIndices()[0];
+    default String getIndex(MethodMeta meta, Object[] args) {
+        return getIndices(meta, args)[0];
     }
 
-    default String getType() {
-        if (ArrayUtils.isEmpty(getTypes())) {
+    default String getType(MethodMeta meta, Object[] args) {
+        if (ArrayUtils.isEmpty(getTypes(meta, args))) {
             return StringUtils.EMPTY;
         }
-        return getTypes()[0];
+        return getTypes(meta, args)[0];
     }
 
     String[] getIncludeFields();

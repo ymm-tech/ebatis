@@ -21,7 +21,7 @@ public abstract class AbstractClusterRouter implements ClusterRouter {
     @Override
     public Cluster route(MethodMeta meta) {
         Cluster cluster = choose(meta);
-        log.debug("索引 {} 选定集群: {}", meta.getIndices(), cluster.getName());
+        log.debug("选定集群: {}", cluster.getName());
         return cluster;
     }
 

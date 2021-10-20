@@ -50,7 +50,7 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
 
         UpdateByQueryRequest request = new UpdateByQueryRequest();
         request.getSearchRequest().source(source);
-        request.indices(meta.getIndices());
+        request.indices(meta.getIndices(meta, args));
         Object condition = args[0];
 
         if (condition instanceof ScriptProvider) {
