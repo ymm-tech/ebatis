@@ -77,6 +77,9 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         if (search.countOnly()) {
             request.source().fetchSource(false).size(0);
         }
+        if (search.trackTotalHits()) {
+            request.source().trackTotalHits(true);
+        }
     }
 
     @Override
