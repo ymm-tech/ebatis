@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
 
 /**
  * @author 章多亮
@@ -32,8 +32,8 @@ class DefaultMapperMethodMeta implements MapperMethod {
 
     private final String[] indices;
     private final String[] types;
-    private final Supplier<String[]> indicesSupplier;
-    private final Supplier<String[]> typesSupplier;
+    private final BiFunction<MethodMeta, Object[], String[]> indicesSupplier;
+    private final BiFunction<MethodMeta, Object[], String[]> typesSupplier;
     private final RequestType requestType;
     private final ResultType resultType;
     private final RequestExecutor requestExecutor;
@@ -53,8 +53,10 @@ class DefaultMapperMethodMeta implements MapperMethod {
         this.indices = mapperInterface.getIndices();
         this.types = mapperInterface.getTypes();
         final Optional<MappingRouter> mappingRouter = Optional.ofNullable(mapperInterface.getMappingRouter());
-        this.indicesSupplier = mappingRouter.map(m -> (Supplier<String[]>) m::indices).orElse(() -> indices);
-        this.typesSupplier = mappingRouter.map(m -> (Supplier<String[]>) m::types).orElse(() -> types);
+        this.indicesSupplier = mappingRouter.map(r -> (BiFunction<MethodMeta, Object[], String[]>) r::indices)
+                .orElse((methodMeta, objects) -> indices);
+        this.typesSupplier = mappingRouter.map(r -> (BiFunction<MethodMeta, Object[], String[]>) r::types)
+                .orElse((methodMeta, objects) -> types);
 
         this.requestType = getRequestType(method);
         this.resultType = getResultType(method);
@@ -144,13 +146,13 @@ class DefaultMapperMethodMeta implements MapperMethod {
     }
 
     @Override
-    public String[] getIndices() {
-        return indicesSupplier.get();
+    public String[] getIndices(MethodMeta meta, Object[] args) {
+        return indicesSupplier.apply(meta, args);
     }
 
     @Override
-    public String[] getTypes() {
-        return typesSupplier.get();
+    public String[] getTypes(MethodMeta meta, Object[] args) {
+        return typesSupplier.apply(meta, args);
     }
 
     @Override

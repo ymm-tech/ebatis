@@ -48,8 +48,8 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
     @Override
     protected UpdateRequest doCreate(MethodMeta meta, Object[] args) {
         UpdateRequest request = new UpdateRequest();
-        request.index(meta.getIndex());
-        setTypeIfNecessary(meta, request::type);
+        request.index(meta.getIndex(meta, args));
+        setTypeIfNecessary(meta, args, request::type);
 
         ParameterMeta parameterMeta = meta.getConditionParameter();
         Object doc = parameterMeta.getValue(args);

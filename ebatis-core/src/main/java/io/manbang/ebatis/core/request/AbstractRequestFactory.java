@@ -31,15 +31,15 @@ public abstract class AbstractRequestFactory<A extends Annotation, R extends Act
         return request;
     }
 
-    protected void setTypeIfNecessary(MethodMeta meta, Consumer<String> consumer) {
-        if (StringUtils.isNotBlank(meta.getType())) {
-            consumer.accept(meta.getType());
+    protected void setTypeIfNecessary(MethodMeta meta, Object[] args, Consumer<String> consumer) {
+        if (StringUtils.isNotBlank(meta.getType(meta, args))) {
+            consumer.accept(meta.getType(meta, args));
         }
     }
 
-    protected void setTypesIfNecessary(MethodMeta meta, Consumer<String[]> consumer) {
-        if (ArrayUtils.isNotEmpty(meta.getTypes())) {
-            consumer.accept(meta.getTypes());
+    protected void setTypesIfNecessary(MethodMeta meta, Object[] args, Consumer<String[]> consumer) {
+        if (ArrayUtils.isNotEmpty(meta.getTypes(meta, args))) {
+            consumer.accept(meta.getTypes(meta, args));
         }
     }
 

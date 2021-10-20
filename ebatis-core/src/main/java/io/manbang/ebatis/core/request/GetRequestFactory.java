@@ -26,8 +26,8 @@ class GetRequestFactory extends AbstractRequestFactory<Get, GetRequest> {
 
     @Override
     protected GetRequest doCreate(MethodMeta meta, Object[] args) {
-        GetRequest request = Requests.getRequest(meta.getIndex());
-        setTypeIfNecessary(meta, request::type);
+        GetRequest request = Requests.getRequest(meta.getIndex(meta, args));
+        setTypeIfNecessary(meta, args, request::type);
 
         ParameterMeta parameterMeta = meta.getConditionParameter();
         Object value = parameterMeta.getValue(args);

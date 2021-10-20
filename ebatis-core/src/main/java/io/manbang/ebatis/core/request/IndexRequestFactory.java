@@ -43,8 +43,8 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
     @Override
     protected IndexRequest doCreate(MethodMeta meta, Object[] args) {
-        IndexRequest request = Requests.indexRequest(meta.getIndex());
-        setTypeIfNecessary(meta, request::type);
+        IndexRequest request = Requests.indexRequest(meta.getIndex(meta, args));
+        setTypeIfNecessary(meta, args, request::type);
 
         Object doc = meta.getConditionParameter().getValue(args);
 

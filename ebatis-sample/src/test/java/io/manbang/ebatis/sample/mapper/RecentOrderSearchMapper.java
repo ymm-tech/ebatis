@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author weilong.hu
  */
-@EasyMapper(indices = "recent_order_index")
+@EasyMapper(indices = "recent_order_index", mappingRouter = SampleMappingRouter.class)
 public interface RecentOrderSearchMapper {
     /**
      * 搜索订单
@@ -59,7 +59,7 @@ public interface RecentOrderSearchMapper {
     RecentOrder queryRecentOrder(SampleRecentOrderCondition condition);
 
     //Search Long 测试
-    @Search(queryType = QueryType.BOOL)
+    @Search(queryType = QueryType.BOOL, trackTotalHits = true)
     Long queryRecentOrderCount(SampleRecentOrderCondition condition);
 
     //Search long 测试

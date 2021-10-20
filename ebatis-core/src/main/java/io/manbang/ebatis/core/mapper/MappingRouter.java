@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.mapper;
 
+import io.manbang.ebatis.core.meta.MethodMeta;
+
 /**
  * 此接口用来路由到对应的 Mapping，有时候，我们需要在执行ES请求的时候，才能确认要到那个Index执行操作
  * 比如，按月归档的ES，月份不同，索引就不同；别名方式虽然能解决名称不同的问题，但是，如果仍然要对就的索引操作
@@ -11,9 +13,9 @@ package io.manbang.ebatis.core.mapper;
 public interface MappingRouter {
     String[] _TYPES = new String[0];
 
-    String[] indices();
+    String[] indices(MethodMeta meta, Object[] args);
 
-    default String[] types() {
+    default String[] types(MethodMeta meta, Object[] args) {
         return _TYPES;
     }
 }

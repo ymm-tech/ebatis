@@ -38,26 +38,28 @@ public interface Interceptor {
 
     /**
      * 入参拼装请求之后
+     *
      * @param requestInfo request
-     * @param <T> T extends ActionRequest
+     * @param <T>         T extends ActionRequest
      */
     default <T extends ActionRequest> void postRequest(RequestInfo<T> requestInfo) {
     }
 
     /**
      * 请求发送之前
+     *
      * @param preResponseInfo response info
-     * @param <T> T extends ActionRequest
+     * @param <T>             T extends ActionRequest
      */
     default <T extends ActionRequest> void preResponse(PreResponseInfo<T> preResponseInfo) {
     }
 
     /**
      * 请求响应之后
-     * @param postResponseInfo post response
-     * @param <T> T extends ActionRequest
-     * @param <R> R extends ActionResponse
      *
+     * @param postResponseInfo post response
+     * @param <T>              T extends ActionRequest
+     * @param <R>              R extends ActionResponse
      */
     default <T extends ActionRequest, R extends ActionResponse> void postResponse(PostResponseInfo<T, R> postResponseInfo) {
     }
