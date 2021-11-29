@@ -4,13 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.manbang.ebatis.sample.entity.RecentOrderModel;
 import io.manbang.ebatis.sample.mapper.RecentOrderIndexMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.rest.RestStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -111,5 +116,24 @@ public class EsIndexTest extends ESAbstractTest {
         Assert.assertNotNull(refreshAll1);
         Assert.assertNotNull(refreshAll2);
         log.info("refresh result,status:{},totalShards:{},successfulShards:{},failedShards:{}", refreshAll1.getStatus(), refreshAll1.getTotalShards(), refreshAll1.getSuccessfulShards(), refreshAll1.getFailedShards());
+    }
+
+    @Test
+    public void createIndex() {
+        Map settings = new HashMap<>();
+        settings.put("number_of_shards", 3);
+        settings.put("number_of_replicas", 2);
+        Map type = new HashMap<>();
+        Map fields = new HashMap<>();
+        fields.put("field1", Collections.singletonMap("type", "text"));
+        type.put("properties", fields);
+        final CreateIndexResponse response = recentOrderIndexMapper.create("2021_11_29_test", settings, "cargo", type);
+        log.info("create index result:{}", response.isAcknowledged());
+    }
+
+    @Test
+    public void deleteIndex() {
+        final AcknowledgedResponse response = recentOrderIndexMapper.delete("2021_11_29_test");
+        log.info("delete index result:{}", response.isAcknowledged());
     }
 }

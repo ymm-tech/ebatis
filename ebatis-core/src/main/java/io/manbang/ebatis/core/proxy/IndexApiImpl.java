@@ -17,8 +17,12 @@ import io.manbang.ebatis.core.response.ResponseExtractor;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.Requests;
 
@@ -26,6 +30,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -36,14 +41,14 @@ import java.util.concurrent.CompletableFuture;
 class IndexApiImpl implements IndexApi {
     private final static Interceptor INTERCEPTOR = InterceptorFactory.interceptors();
 
-    public static IndexApi index(LazyInitializer<ClusterRouter> clusterRouter) {
-        return new IndexApiImpl(clusterRouter);
-    }
-
     private final LazyInitializer<ClusterRouter> clusterRouter;
 
     IndexApiImpl(LazyInitializer<ClusterRouter> clusterRouter) {
         this.clusterRouter = clusterRouter;
+    }
+
+    public static IndexApi index(LazyInitializer<ClusterRouter> clusterRouter) {
+        return new IndexApiImpl(clusterRouter);
     }
 
     @Override
@@ -62,6 +67,69 @@ class IndexApiImpl implements IndexApi {
                 try {
                     future.complete(response);
                     INTERCEPTOR.postResponse(new DefaultPostResponseInfo<>(refreshRequest, response));
+                } finally {
+                    ContextHolder.remove();
+                }
+            }, exception -> {
+                future.completeExceptionally(exception);
+                INTERCEPTOR.handleException(exception);
+                ContextHolder.remove();
+            }));
+        } catch (ConcurrentException e) {
+            throw new EbatisException(e);
+        }
+        return future;
+    }
+
+
+    @Override
+    public CreateIndexResponse create(String index, Map settings, String type, Map source) {
+        return createAsync(index, settings, type, source).join();
+    }
+
+    @Override
+    public CompletableFuture<CreateIndexResponse> createAsync(String index, Map settings, String type, Map source) {
+        CompletableFuture<CreateIndexResponse> future = new CompletableFuture<>();
+        Context context = ContextHolder.getContext();
+        final CreateIndexRequest createIndexRequest = Requests.createIndexRequest(index);
+        createIndexRequest.settings(settings);
+        createIndexRequest.mapping(type, source);
+        try {
+            clusterRouter.get().route(getMethodMeta(new String[]{index})).highLevelClient().indices().createAsync(createIndexRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
+                ContextHolder.setContext(context);
+                try {
+                    future.complete(response);
+                    INTERCEPTOR.postResponse(new DefaultPostResponseInfo<>(createIndexRequest, response));
+                } finally {
+                    ContextHolder.remove();
+                }
+            }, exception -> {
+                future.completeExceptionally(exception);
+                INTERCEPTOR.handleException(exception);
+                ContextHolder.remove();
+            }));
+        } catch (ConcurrentException e) {
+            throw new EbatisException(e);
+        }
+        return future;
+    }
+
+    @Override
+    public AcknowledgedResponse delete(String... indices) {
+        return deleteAsync(indices).join();
+    }
+
+    @Override
+    public CompletableFuture<AcknowledgedResponse> deleteAsync(String... indices) {
+        CompletableFuture<AcknowledgedResponse> future = new CompletableFuture<>();
+        Context context = ContextHolder.getContext();
+        final DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indices);
+        try {
+            clusterRouter.get().route(getMethodMeta(indices)).highLevelClient().indices().deleteAsync(deleteIndexRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
+                ContextHolder.setContext(context);
+                try {
+                    future.complete(response);
+                    INTERCEPTOR.postResponse(new DefaultPostResponseInfo<>(deleteIndexRequest, response));
                 } finally {
                     ContextHolder.remove();
                 }
