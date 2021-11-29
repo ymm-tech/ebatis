@@ -1,7 +1,10 @@
 package io.manbang.ebatis.core.mapper;
 
 import org.elasticsearch.action.admin.indices.refresh.RefreshResponse;
+import org.elasticsearch.action.support.master.AcknowledgedResponse;
+import org.elasticsearch.client.indices.CreateIndexResponse;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -25,5 +28,41 @@ public interface IndexApi {
      */
     CompletableFuture<RefreshResponse> refreshAsync(String... indices);
 
+    /**
+     * 创建索引
+     *
+     * @param index    index name
+     * @param settings settings
+     * @param source   source
+     * @return CreateIndexResponse
+     */
+    @SuppressWarnings("unchecked")
+    CreateIndexResponse create(String index, Map settings, Map source);
 
+    /**
+     * 异步创建索引
+     *
+     * @param index    index name
+     * @param settings settings
+     * @param source   source
+     * @return CompletableFuture<CreateIndexResponse>
+     */
+    @SuppressWarnings("unchecked")
+    CompletableFuture<CreateIndexResponse> createAsync(String index, Map settings, Map source);
+
+    /**
+     * 删除索引
+     *
+     * @param indices 索引名
+     * @return AcknowledgedResponse
+     */
+    AcknowledgedResponse delete(String... indices);
+
+    /**
+     * 异步删除索引
+     *
+     * @param indices 索引名
+     * @return AcknowledgedResponse
+     */
+    CompletableFuture<AcknowledgedResponse> deleteAsync(String... indices);
 }
