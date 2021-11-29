@@ -37,5 +37,5 @@ public @interface Match {
 
     String analyzer() default "";
 
-    String fuzziness() default "";
+    String fuzziness() default "AUTO";
 }
