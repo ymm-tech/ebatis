@@ -34,6 +34,8 @@ public interface MethodMeta extends AnnotatedMeta<Method> {
     /**
      * 获取接口要操作的所有索引
      *
+     * @param meta MethodMeta
+     * @param args 入参
      * @return 索引列表
      */
     String[] getIndices(MethodMeta meta, Object[] args);

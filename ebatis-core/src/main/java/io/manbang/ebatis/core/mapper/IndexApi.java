@@ -45,7 +45,7 @@ public interface IndexApi {
      * @param index    index name
      * @param settings settings
      * @param source   source
-     * @return CompletableFuture<CreateIndexResponse>
+     * @return CompletableFuture 异步响应
      */
     @SuppressWarnings("unchecked")
     CompletableFuture<CreateIndexResponse> createAsync(String index, Map settings, Map source);
@@ -54,7 +54,7 @@ public interface IndexApi {
      * 删除索引
      *
      * @param indices 索引名
-     * @return AcknowledgedResponse
+     * @return AcknowledgedResponse 删除响应
      */
     AcknowledgedResponse delete(String... indices);
 
@@ -62,7 +62,7 @@ public interface IndexApi {
      * 异步删除索引
      *
      * @param indices 索引名
-     * @return AcknowledgedResponse
+     * @return AcknowledgedResponse 删除响应
      */
     CompletableFuture<AcknowledgedResponse> deleteAsync(String... indices);
 }
