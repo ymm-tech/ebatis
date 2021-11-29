@@ -6,7 +6,7 @@
 
     <groupId>io.manbang</groupId>
     <artifactId>ebatis</artifactId>
-    <version>6.5.1.6.RELEASE</version>
+    <version>6.5.1.7.RELEASE</version>
     <packaging>pom</packaging>
     <name>ebatis</name>
     <description>Elasticsearch ORM Framework</description>
