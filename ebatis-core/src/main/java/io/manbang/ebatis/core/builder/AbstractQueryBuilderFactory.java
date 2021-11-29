@@ -19,7 +19,7 @@ abstract class AbstractQueryBuilderFactory<B extends QueryBuilder, A extends Ann
 
     @SuppressWarnings("unchecked")
     protected AbstractQueryBuilderFactory() {
-        attributeAnnotationClass = (Class<A>) GenericType.forType(getClass()).resolveGenericOptional(1).orElse(null);
+        attributeAnnotationClass = (Class<A>) GenericType.forType(getClass()).as(AbstractQueryBuilderFactory.class).resolveGenericOptional(1).orElse(null);
     }
 
     @Override
