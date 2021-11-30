@@ -44,12 +44,10 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
     public static final ParseField MIN_DOC_COUNT_FIELD_NAME = new ParseField("min_doc_count");
     public static final ParseField SHARD_MIN_DOC_COUNT_FIELD_NAME = new ParseField("shard_min_doc_count");
     public static final ParseField REQUIRED_SIZE_FIELD_NAME = new ParseField("size");
-
-    static final TermsAggregator.BucketCountThresholds DEFAULT_BUCKET_COUNT_THRESHOLDS = new TermsAggregator.BucketCountThresholds(1, 0, 10,
-            -1);
     public static final ParseField SHOW_TERM_DOC_COUNT_ERROR = new ParseField("show_term_doc_count_error");
     public static final ParseField ORDER_FIELD = new ParseField("order");
-
+    static final TermsAggregator.BucketCountThresholds DEFAULT_BUCKET_COUNT_THRESHOLDS = new TermsAggregator.BucketCountThresholds(1, 0, 10,
+            -1);
     private static final ObjectParser<TermsAggregationBuilder, Void> PARSER;
 
     static {
@@ -83,10 +81,6 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
                 IncludeExclude::parseExclude, IncludeExclude.EXCLUDE_FIELD, ObjectParser.ValueType.STRING_ARRAY);
     }
 
-    public static AggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
-        return PARSER.parse(parser, new TermsAggregationBuilder(aggregationName, null), null);
-    }
-
     private BucketOrder order = new CompoundOrder((byte) 7, "null", false, null, Collections.singletonList(BucketOrder.count(false)));// automatically adds tie-breaker key asc order
     private IncludeExclude includeExclude = null;
     private String executionHint = null;
@@ -94,7 +88,6 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
     private TermsAggregator.BucketCountThresholds bucketCountThresholds = new TermsAggregator.BucketCountThresholds(
             DEFAULT_BUCKET_COUNT_THRESHOLDS);
     private boolean showTermDocCountError = false;
-
     public CompatibleTermsAggregationBuilder(String name, ValueType valueType) {
         super(name, valueType);
     }
@@ -109,13 +102,11 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
         this.showTermDocCountError = clone.showTermDocCountError;
     }
 
-    @Override
-    protected AggregationBuilder shallowCopy(AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metaData) {
-        return new CompatibleTermsAggregationBuilder(this, factoriesBuilder, metaData);
-    }
-
     /**
      * Read from a stream.
+     *
+     * @param in stream
+     * @throws IOException exception
      */
     public CompatibleTermsAggregationBuilder(StreamInput in) throws IOException {
         super(in);
@@ -125,6 +116,15 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
         includeExclude = in.readOptionalWriteable(IncludeExclude::new);
         order = InternalOrder.Streams.readOrder(in);
         showTermDocCountError = in.readBoolean();
+    }
+
+    public static AggregationBuilder parse(String aggregationName, XContentParser parser) throws IOException {
+        return PARSER.parse(parser, new TermsAggregationBuilder(aggregationName, null), null);
+    }
+
+    @Override
+    protected AggregationBuilder shallowCopy(AggregatorFactories.Builder factoriesBuilder, Map<String, Object> metaData) {
+        return new CompatibleTermsAggregationBuilder(this, factoriesBuilder, metaData);
     }
 
     @Override
@@ -380,14 +380,12 @@ public class CompatibleTermsAggregationBuilder extends TermsAggregationBuilder {
     public static class CompoundOrder extends InternalOrder {
 
         static final byte ID = -1;
+        final List<BucketOrder> orderElements;
 
         public CompoundOrder(byte id, String key, boolean asc, Comparator<MultiBucketsAggregation.Bucket> comparator, List<BucketOrder> orderElements) {
             super(id, key, asc, comparator);
             this.orderElements = orderElements;
         }
-
-        final List<BucketOrder> orderElements;
-
 
         /**
          * @return unmodifiable list of {@link BucketOrder}s to sort on.
