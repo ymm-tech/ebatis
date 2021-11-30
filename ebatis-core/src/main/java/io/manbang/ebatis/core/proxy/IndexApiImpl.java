@@ -1,11 +1,14 @@
 package io.manbang.ebatis.core.proxy;
 
+import io.manbang.ebatis.core.cluster.Cluster;
 import io.manbang.ebatis.core.cluster.ClusterRouter;
 import io.manbang.ebatis.core.domain.Context;
 import io.manbang.ebatis.core.domain.ContextHolder;
 import io.manbang.ebatis.core.domain.HttpConfig;
 import io.manbang.ebatis.core.exception.EbatisException;
 import io.manbang.ebatis.core.interceptor.DefaultPostResponseInfo;
+import io.manbang.ebatis.core.interceptor.DefaultPreResponseInfo;
+import io.manbang.ebatis.core.interceptor.DefaultRequestInfo;
 import io.manbang.ebatis.core.interceptor.Interceptor;
 import io.manbang.ebatis.core.interceptor.InterceptorFactory;
 import io.manbang.ebatis.core.mapper.IndexApi;
@@ -33,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -82,7 +86,14 @@ class IndexApiImpl implements IndexApi {
         Context context = ContextHolder.getContext();
         final RefreshRequest refreshRequest = Requests.refreshRequest(indices);
         try {
-            clusterRouter.get().route(getMethodMeta(indices)).highLevelClient().indices().refreshAsync(refreshRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
+            final Method createAsync = this.getClass().getDeclaredMethod("refreshAsync", String[].class);
+            final MethodMeta methodMeta = getMethodMeta(Objects.isNull(indices) ? new String[]{"_all"} : indices, createAsync);
+            final Object[] args = {indices};
+            final Cluster cluster = clusterRouter.get().route(methodMeta);
+            INTERCEPTOR.preRequest(args, cluster, methodMeta);
+            INTERCEPTOR.postRequest(new DefaultRequestInfo<>(refreshRequest, args));
+            INTERCEPTOR.preResponse(new DefaultPreResponseInfo<>(refreshRequest, null));
+            cluster.highLevelClient().indices().refreshAsync(refreshRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
                 ContextHolder.setContext(context);
                 try {
                     future.complete(response);
@@ -95,7 +106,7 @@ class IndexApiImpl implements IndexApi {
                 INTERCEPTOR.handleException(exception);
                 ContextHolder.remove();
             }));
-        } catch (ConcurrentException e) {
+        } catch (ConcurrentException | NoSuchMethodException e) {
             throw new EbatisException(e);
         }
         return future;
@@ -115,7 +126,14 @@ class IndexApiImpl implements IndexApi {
         createIndexRequest.settings(settings);
         createIndexRequest.mapping(type, source);
         try {
-            clusterRouter.get().route(getMethodMeta(new String[]{index})).highLevelClient().indices().createAsync(createIndexRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
+            final Method createAsync = this.getClass().getDeclaredMethod("createAsync", String.class, Map.class, String.class, Map.class);
+            final MethodMeta methodMeta = getMethodMeta(new String[]{index}, createAsync);
+            final Object[] args = {index, settings, type, source};
+            final Cluster cluster = clusterRouter.get().route(methodMeta);
+            INTERCEPTOR.preRequest(args, cluster, methodMeta);
+            INTERCEPTOR.postRequest(new DefaultRequestInfo<>(createIndexRequest, args));
+            INTERCEPTOR.preResponse(new DefaultPreResponseInfo<>(createIndexRequest, null));
+            cluster.highLevelClient().indices().createAsync(createIndexRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
                 ContextHolder.setContext(context);
                 try {
                     future.complete(response);
@@ -128,7 +146,7 @@ class IndexApiImpl implements IndexApi {
                 INTERCEPTOR.handleException(exception);
                 ContextHolder.remove();
             }));
-        } catch (ConcurrentException e) {
+        } catch (ConcurrentException | NoSuchMethodException e) {
             throw new EbatisException(e);
         }
         return future;
@@ -145,7 +163,14 @@ class IndexApiImpl implements IndexApi {
         Context context = ContextHolder.getContext();
         final DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest(indices);
         try {
-            clusterRouter.get().route(getMethodMeta(indices)).highLevelClient().indices().deleteAsync(deleteIndexRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
+            final Method deleteAsync = this.getClass().getDeclaredMethod("deleteAsync", String[].class);
+            final MethodMeta methodMeta = getMethodMeta(indices, deleteAsync);
+            final Cluster cluster = clusterRouter.get().route(methodMeta);
+            final Object[] args = {indices};
+            INTERCEPTOR.preRequest(args, cluster, methodMeta);
+            INTERCEPTOR.postRequest(new DefaultRequestInfo<>(deleteIndexRequest, args));
+            INTERCEPTOR.preResponse(new DefaultPreResponseInfo<>(deleteIndexRequest, null));
+            cluster.highLevelClient().indices().deleteAsync(deleteIndexRequest, RequestOptions.DEFAULT, ActionListener.wrap(response -> {
                 ContextHolder.setContext(context);
                 try {
                     future.complete(response);
@@ -158,13 +183,13 @@ class IndexApiImpl implements IndexApi {
                 INTERCEPTOR.handleException(exception);
                 ContextHolder.remove();
             }));
-        } catch (ConcurrentException e) {
+        } catch (ConcurrentException | NoSuchMethodException e) {
             throw new EbatisException(e);
         }
         return future;
     }
 
-    private MethodMeta getMethodMeta(String[] indices) {
+    private MethodMeta getMethodMeta(String[] indices, Method method) {
         return new MethodMeta() {
             @Override
             public Class<?> getReturnType() {
@@ -243,7 +268,7 @@ class IndexApiImpl implements IndexApi {
 
             @Override
             public Method getElement() {
-                return null;
+                return method;
             }
         };
     }
