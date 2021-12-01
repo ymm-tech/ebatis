@@ -1,9 +1,13 @@
 package io.manbang.ebatis.core.domain;
 
+import io.manbang.ebatis.core.exception.EbatisException;
 import io.manbang.ebatis.core.meta.ClassMeta;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import lombok.Data;
+import org.elasticsearch.common.ParseField;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -12,6 +16,20 @@ import java.util.stream.Collectors;
 @Data
 abstract class AbstractScript implements Script {
     private static final String DEFAULT_LANG = "painless";
+
+    static {
+        try {
+            final Field sourceParseField = org.elasticsearch.script.Script.class.getDeclaredField("SOURCE_PARSE_FIELD");
+            sourceParseField.setAccessible(true);
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(sourceParseField, sourceParseField.getModifiers() & ~Modifier.FINAL);
+            sourceParseField.set(null, new ParseField("inline"));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new EbatisException(e);
+        }
+    }
+
     private final String idOrCode;
     private Map<String, Object> params;
     private String lang;
