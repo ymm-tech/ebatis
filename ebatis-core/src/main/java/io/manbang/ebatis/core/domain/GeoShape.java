@@ -11,8 +11,4 @@ public interface GeoShape {
     static GeoShape indexedShape(String name, String indexedShapeId) {
         return new DefaultGeoShape(name, indexedShapeId);
     }
-
-    ShapeRelation getRelation();
-
-    GeoShape setRelation(ShapeRelation relation);
 }
