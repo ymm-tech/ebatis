@@ -1,7 +1,6 @@
 package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.geometry.Geometry;
-import io.manbang.ebatis.core.geometry.ShapeRelation;
+import io.manbang.ebatis.core.domain.geometry.Geometry;
 
 public interface GeoShape {
     static GeoShape geoShape(String name, Geometry shape) {
@@ -11,4 +10,12 @@ public interface GeoShape {
     static GeoShape indexedShape(String name, String indexedShapeId) {
         return new DefaultGeoShape(name, indexedShapeId);
     }
+
+    GeoShape intersects();
+
+    GeoShape disjoint();
+
+    GeoShape within();
+
+    GeoShape contains();
 }

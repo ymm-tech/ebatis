@@ -8,8 +8,7 @@ import io.manbang.ebatis.core.domain.Page;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.domain.Script;
-import io.manbang.ebatis.core.geometry.Geometry;
-import io.manbang.ebatis.core.geometry.ShapeRelation;
+import io.manbang.ebatis.core.domain.geometry.Geometry;
 import io.manbang.ebatis.sample.condition.RecentOrderCondition;
 import io.manbang.ebatis.sample.condition.SampleRecentOrderCondition;
 import io.manbang.ebatis.sample.condition.base.Cargo;
@@ -398,7 +397,7 @@ public class EsQueryTest extends ESAbstractTest {
         condition.setLoad(new Load());
         condition.setTruck(new Truck());
         condition.setCargo(new Cargo());
-        condition.setCargoGeo(GeoShape.geoShape("cargoPoint", Geometry.point(new Coordinate(119.380453, 32.361451))).setRelation(ShapeRelation.CONTAINS));
+        condition.setCargoGeo(GeoShape.geoShape("cargoPoint", Geometry.point(new Coordinate(119.380453, 32.361451))).contains());
         return condition;
     }
 }

@@ -1,4 +1,4 @@
-package io.manbang.ebatis.core.geometry;
+package io.manbang.ebatis.core.domain.geometry;
 
 import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.provider.BuildProvider;
@@ -11,8 +11,8 @@ import java.util.Objects;
  * @since 2021/12/02 17:08
  */
 public class CircleGeometry implements Geometry, BuildProvider {
-    private final double y;
     private final double x;
+    private final double y;
     private final double z;
     private final double radiusMeters;
 
@@ -31,7 +31,8 @@ public class CircleGeometry implements Geometry, BuildProvider {
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T build() {
-        return (T) new Circle(y, x, z, radiusMeters);
+        return (T) new Circle(x, y, z, radiusMeters);
     }
 }
