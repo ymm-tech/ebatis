@@ -5,6 +5,7 @@ import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.Nested;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.annotation.Should;
+import io.manbang.ebatis.core.domain.GeoShape;
 import io.manbang.ebatis.core.domain.Highlighter;
 import io.manbang.ebatis.core.domain.HighlighterBuilder;
 import io.manbang.ebatis.core.domain.Range;
@@ -119,6 +120,9 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
 
     @Must(queryType = QueryType.MULTI_MATCH)
     private Cargo cargo;
+
+    @Must(queryType = QueryType.GEO_SHAPE)
+    private GeoShape cargoGeo;
 
     @Override
     public ScoreFunction getFunction() {
