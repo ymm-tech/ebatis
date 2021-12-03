@@ -1,6 +1,5 @@
-package io.manbang.ebatis.core.domain.geometry;
+package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.geometry.Rectangle;
 

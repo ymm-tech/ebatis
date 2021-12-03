@@ -1,6 +1,5 @@
-package io.manbang.ebatis.core.domain.geometry;
+package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.geometry.Circle;
 
@@ -10,7 +9,7 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2021/12/02 17:08
  */
-public class CircleGeometry implements Geometry, BuildProvider {
+class CircleGeometry implements Geometry, BuildProvider {
     private final double x;
     private final double y;
     private final double z;

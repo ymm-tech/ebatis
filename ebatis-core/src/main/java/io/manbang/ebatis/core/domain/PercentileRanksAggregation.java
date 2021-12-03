@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.domain;
 
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.PercentileRanksAggregationBuilder;
@@ -13,12 +14,16 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2021/07/21 10:06
  */
-public class PercentileRanksAggregation implements SubAggregation<PercentileRanksAggregation> {
+public class PercentileRanksAggregation implements SubAggregation<PercentileRanksAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
     private final String name;
     private final double[] values;
+    /**
+     * 子聚合
+     */
+    private final List<Aggregation> subAggregations = new ArrayList<>();
     /**
      * 聚合字段名称
      */
@@ -27,10 +32,6 @@ public class PercentileRanksAggregation implements SubAggregation<PercentileRank
     private boolean keyed = true;
     private Object missing;
     private Script script;
-    /**
-     * 子聚合
-     */
-    private final List<Aggregation> subAggregations = new ArrayList<>();
 
     public PercentileRanksAggregation(String name, double[] values) {
         if (values == null) {
@@ -83,13 +84,17 @@ public class PercentileRanksAggregation implements SubAggregation<PercentileRank
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         final PercentileRanksAggregationBuilder percentileRanks = AggregationBuilders.percentileRanks(name, values);
         percentileRanks.field(fieldName);
         percentileRanks.compression(compression);
         percentileRanks.keyed(keyed);
         if (!subAggregations.isEmpty()) {
-            subAggregations.forEach(subAgg -> percentileRanks.subAggregation(subAgg.toAggBuilder()));
+            subAggregations.forEach(subAgg -> {
+                final AggregationBuilder build = ((BuildProvider) subAgg).build();
+                percentileRanks.subAggregation(build);
+            });
         }
         if (Objects.nonNull(missing)) {
             percentileRanks.missing(missing);
@@ -97,6 +102,6 @@ public class PercentileRanksAggregation implements SubAggregation<PercentileRank
         if (Objects.nonNull(script)) {
             percentileRanks.script(script.toEsScript());
         }
-        return percentileRanks;
+        return (T) percentileRanks;
     }
 }

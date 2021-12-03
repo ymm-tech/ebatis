@@ -1,6 +1,4 @@
-package io.manbang.ebatis.core.domain.geometry;
-
-import io.manbang.ebatis.core.domain.Coordinate;
+package io.manbang.ebatis.core.domain;
 
 /**
  * @author weilong.hu

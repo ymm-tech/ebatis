@@ -1,6 +1,5 @@
 package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.domain.geometry.Geometry;
 import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -12,7 +11,7 @@ import static org.elasticsearch.common.geo.ShapeRelation.DISJOINT;
 import static org.elasticsearch.common.geo.ShapeRelation.INTERSECTS;
 import static org.elasticsearch.common.geo.ShapeRelation.WITHIN;
 
-public class DefaultGeoShape implements GeoShape, BuildProvider {
+class DefaultGeoShape implements GeoShape, BuildProvider {
     private final String name;
     private ShapeRelation relation = INTERSECTS;
     private Geometry shape;

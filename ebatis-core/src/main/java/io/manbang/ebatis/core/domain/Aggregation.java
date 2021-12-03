@@ -1,7 +1,5 @@
 package io.manbang.ebatis.core.domain;
 
-import org.elasticsearch.search.aggregations.AggregationBuilder;
-
 /**
  * @author weilong.hu
  */
@@ -77,10 +75,4 @@ public interface Aggregation {
         return new PercentileRanksAggregation(name, values);
     }
 
-    /**
-     * builder
-     *
-     * @return builder
-     */
-    AggregationBuilder toAggBuilder();
 }

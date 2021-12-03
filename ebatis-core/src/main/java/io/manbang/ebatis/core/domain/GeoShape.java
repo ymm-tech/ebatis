@@ -1,7 +1,5 @@
 package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.domain.geometry.Geometry;
-
 public interface GeoShape {
     static GeoShape geoShape(String name, Geometry shape) {
         return new DefaultGeoShape(name, shape);
