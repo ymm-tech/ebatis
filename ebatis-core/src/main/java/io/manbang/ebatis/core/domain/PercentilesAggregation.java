@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.domain;
 
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.PercentilesAggregationBuilder;
@@ -12,24 +13,23 @@ import java.util.List;
  * @author weilong.hu
  * @since 2021/07/21 09:38
  */
-public class PercentilesAggregation implements SubAggregation<PercentilesAggregation> {
+public class PercentilesAggregation implements SubAggregation<PercentilesAggregation>, BuildProvider {
+    private static final double[] DEFAULT_PERCENTS = new double[]{1, 5, 25, 50, 75, 95, 99};
     /**
      * 聚合名称
      */
     private final String name;
     /**
-     * 聚合字段名称
-     */
-    private String fieldName;
-
-    private static final double[] DEFAULT_PERCENTS = new double[]{1, 5, 25, 50, 75, 95, 99};
-    private double[] percents = DEFAULT_PERCENTS;
-    private double compression = 100.0;
-    private boolean keyed = true;
-    /**
      * 子聚合
      */
     private final List<Aggregation> subAggregations = new ArrayList<>();
+    /**
+     * 聚合字段名称
+     */
+    private String fieldName;
+    private double[] percents = DEFAULT_PERCENTS;
+    private double compression = 100.0;
+    private boolean keyed = true;
 
     public PercentilesAggregation(String name) {
         this.name = name;
@@ -76,14 +76,18 @@ public class PercentilesAggregation implements SubAggregation<PercentilesAggrega
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         final PercentilesAggregationBuilder percentiles = AggregationBuilders.percentiles(name).field(fieldName);
         percentiles.percentiles(percents);
         percentiles.compression(compression);
         percentiles.keyed(keyed);
         if (!subAggregations.isEmpty()) {
-            subAggregations.forEach(subAgg -> percentiles.subAggregation(subAgg.toAggBuilder()));
+            subAggregations.forEach(subAgg -> {
+                final AggregationBuilder build = ((BuildProvider) subAgg).build();
+                percentiles.subAggregation(build);
+            });
         }
-        return percentiles;
+        return (T) percentiles;
     }
 }

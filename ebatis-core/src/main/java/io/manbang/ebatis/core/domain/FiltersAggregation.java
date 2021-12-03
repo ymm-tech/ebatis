@@ -1,6 +1,7 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.filter.FiltersAggregationBuilder;
@@ -17,7 +18,7 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2021/4/19 16:54
  */
-public class FiltersAggregation implements SubAggregation<FiltersAggregation> {
+public class FiltersAggregation implements SubAggregation<FiltersAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
@@ -50,15 +51,20 @@ public class FiltersAggregation implements SubAggregation<FiltersAggregation> {
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         List<FiltersAggregator.KeyedFilter> keyedFilters = new ArrayList<>();
         for (Map.Entry<String, Object> entry : filters.entrySet()) {
             keyedFilters.add(new FiltersAggregator.KeyedFilter(entry.getKey(), QueryBuilderFactory.bool().create(null, entry.getValue())));
         }
         final FiltersAggregationBuilder filters = AggregationBuilders.filters(name, keyedFilters.toArray(new FiltersAggregator.KeyedFilter[0]));
         if (!subAggregations.isEmpty()) {
-            subAggregations.forEach(subAgg -> filters.subAggregation(subAgg.toAggBuilder()));
+            subAggregations.forEach(subAgg -> {
+                        final AggregationBuilder build = ((BuildProvider) subAgg).build();
+                        filters.subAggregation(build);
+                    }
+            );
         }
-        return filters;
+        return (T) filters;
     }
 }
