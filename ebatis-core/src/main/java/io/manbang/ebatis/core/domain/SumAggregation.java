@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.domain;
 
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
@@ -12,19 +13,19 @@ import java.util.List;
  * @author weilong.hu
  * @since 2021/5/21 11:04
  */
-public class SumAggregation implements SubAggregation<SumAggregation> {
+public class SumAggregation implements SubAggregation<SumAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
     private final String name;
     /**
-     * 聚合字段名称
-     */
-    private String fieldName;
-    /**
      * 子聚合
      */
     private final List<Aggregation> subAggregations = new ArrayList<>();
+    /**
+     * 聚合字段名称
+     */
+    private String fieldName;
 
     public SumAggregation(String name) {
         this.name = name;
@@ -46,9 +47,13 @@ public class SumAggregation implements SubAggregation<SumAggregation> {
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         final SumAggregationBuilder sum = AggregationBuilders.sum(name).field(fieldName);
-        subAggregations.forEach(sub -> sum.subAggregation(sub.toAggBuilder()));
-        return sum;
+        subAggregations.forEach(sub -> {
+            final AggregationBuilder aggregationBuilder = ((BuildProvider) sub).build();
+            sum.subAggregation(aggregationBuilder);
+        });
+        return (T) sum;
     }
 }

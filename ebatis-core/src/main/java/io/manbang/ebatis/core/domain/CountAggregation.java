@@ -1,14 +1,14 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.exception.AggregationInitializationException;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 
 /**
  * @author weilong.hu
  * @since 2021/06/23 09:34
  */
-public class CountAggregation implements SubAggregation<CountAggregation> {
+public class CountAggregation implements SubAggregation<CountAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
@@ -37,7 +37,8 @@ public class CountAggregation implements SubAggregation<CountAggregation> {
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
-        return AggregationBuilders.count(name).field(fieldName);
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
+        return (T) AggregationBuilders.count(name).field(fieldName);
     }
 }
