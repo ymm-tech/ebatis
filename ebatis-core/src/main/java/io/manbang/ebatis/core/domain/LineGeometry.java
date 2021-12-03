@@ -1,6 +1,5 @@
-package io.manbang.ebatis.core.domain.geometry;
+package io.manbang.ebatis.core.domain;
 
-import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.common.geo.builders.LineStringBuilder;
 
@@ -12,7 +11,7 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2021/12/02 17:19
  */
-public class LineGeometry implements Geometry, BuildProvider {
+class LineGeometry implements Geometry, BuildProvider {
     private final Coordinate[] points;
 
 

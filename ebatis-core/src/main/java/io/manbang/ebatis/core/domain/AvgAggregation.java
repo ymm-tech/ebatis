@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.domain;
 
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.avg.AvgAggregationBuilder;
@@ -13,25 +14,24 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2021/07/05 10:09
  */
-public class AvgAggregation implements SubAggregation<AvgAggregation> {
+public class AvgAggregation implements SubAggregation<AvgAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
     private final String name;
     /**
+     * 子聚合
+     */
+    private final List<Aggregation> subAggregations = new ArrayList<>();
+    /**
      * 聚合字段名称
      */
     private String fieldName;
-
     /**
      * 缺失参数定义了应该如何处理缺少值的文档。
      * 默认情况下，它们将被忽略，但也可以将它们视为有值。
      */
     private Object missing;
-    /**
-     * 子聚合
-     */
-    private final List<Aggregation> subAggregations = new ArrayList<>();
 
     public AvgAggregation(String name) {
         this.name = name;
@@ -62,12 +62,16 @@ public class AvgAggregation implements SubAggregation<AvgAggregation> {
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         final AvgAggregationBuilder avg = AggregationBuilders.avg(name).field(fieldName);
         if (Objects.nonNull(missing)) {
             avg.missing(missing);
         }
-        subAggregations.forEach(sub -> avg.subAggregation(sub.toAggBuilder()));
-        return avg;
+        subAggregations.forEach(sub -> {
+            final AggregationBuilder build = ((BuildProvider) sub).build();
+            avg.subAggregation(build);
+        });
+        return (T) avg;
     }
 }

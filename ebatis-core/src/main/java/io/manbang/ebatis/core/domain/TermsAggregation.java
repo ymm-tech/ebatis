@@ -2,6 +2,7 @@ package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.annotation.Order;
 import io.manbang.ebatis.core.domain.compatibility.CompatibleTermsAggregationBuilder;
+import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  * @author weilong.hu
  * @since 2020/7/6 16:46
  */
-public class TermsAggregation implements SubAggregation<TermsAggregation> {
+public class TermsAggregation implements SubAggregation<TermsAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
@@ -161,7 +162,8 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         CompatibleTermsAggregationBuilder agg = new CompatibleTermsAggregationBuilder(name, null)
                 .size(size)
                 .showTermDocCountError(showTermDocCountError)
@@ -184,12 +186,15 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
             agg.order(orders.stream().map(Order::order).collect(Collectors.toList()));
         }
         if (!subAggregations.isEmpty()) {
-            subAggregations.forEach(subAgg -> agg.subAggregation(subAgg.toAggBuilder()));
+            subAggregations.forEach(subAgg -> {
+                final AggregationBuilder aggregationBuilder = ((BuildProvider) subAgg).build();
+                agg.subAggregation(aggregationBuilder);
+            });
         }
 
         if (Objects.nonNull(metaData)) {
             agg.setMetaData(metaData);
         }
-        return agg;
+        return (T) agg;
     }
 }

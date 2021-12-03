@@ -5,10 +5,12 @@ import io.manbang.ebatis.core.domain.Aggregation;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.AggProvider;
+import io.manbang.ebatis.core.provider.BuildProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
 
 import java.util.Optional;
 
@@ -50,7 +52,8 @@ class AggRequestFactory extends AbstractRequestFactory<Agg, SearchRequest> {
             AggProvider aggProvider = (AggProvider) condition;
             if (ArrayUtils.isNotEmpty(aggProvider.getAggregations())) {
                 for (Aggregation agg : aggProvider.getAggregations()) {
-                    request.source().aggregation(agg.toAggBuilder());
+                    final AggregationBuilder build = ((BuildProvider) agg).build();
+                    request.source().aggregation(build);
                 }
             }
         }
