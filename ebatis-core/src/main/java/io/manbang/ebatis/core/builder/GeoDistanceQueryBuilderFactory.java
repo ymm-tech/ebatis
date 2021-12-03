@@ -1,8 +1,10 @@
 package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.GeoDistance;
+import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.domain.GeoDistanceRange;
 import io.manbang.ebatis.core.meta.ConditionMeta;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.elasticsearch.index.query.GeoDistanceQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -28,7 +30,9 @@ class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoDist
 
         if (condition instanceof GeoDistanceRange) {
             GeoDistanceRange distanceRange = (GeoDistanceRange) condition;
-            builder.distance(distanceRange.getDistance()).point(distanceRange.getCenter().toPoint());
+            final Coordinate center = distanceRange.getCenter();
+            final GeoPoint geoPoint = new GeoPoint(center.getX(), center.getY());
+            builder.distance(distanceRange.getDistance()).point(geoPoint);
         } else if (condition instanceof String) {
             builder.distance(String.valueOf(condition));
         } else if (condition instanceof Double) {
