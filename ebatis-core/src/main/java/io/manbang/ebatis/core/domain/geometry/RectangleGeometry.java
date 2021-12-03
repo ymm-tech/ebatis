@@ -1,4 +1,4 @@
-package io.manbang.ebatis.core.geometry;
+package io.manbang.ebatis.core.domain.geometry;
 
 import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.provider.BuildProvider;
@@ -27,6 +27,7 @@ public class RectangleGeometry implements Geometry, BuildProvider {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T build() {
         return (T) new Rectangle(min.getX(), max.getX(), max.getY(), min.getY(), min.getZ(), max.getZ());
     }

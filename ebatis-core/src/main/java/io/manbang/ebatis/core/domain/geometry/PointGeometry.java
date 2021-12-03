@@ -1,4 +1,4 @@
-package io.manbang.ebatis.core.geometry;
+package io.manbang.ebatis.core.domain.geometry;
 
 import io.manbang.ebatis.core.domain.Coordinate;
 import io.manbang.ebatis.core.provider.BuildProvider;
@@ -22,6 +22,7 @@ public class PointGeometry implements Geometry, BuildProvider {
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T build() {
         return (T) new Point(coordinate.getX(), coordinate.getY(), coordinate.getZ());
     }
