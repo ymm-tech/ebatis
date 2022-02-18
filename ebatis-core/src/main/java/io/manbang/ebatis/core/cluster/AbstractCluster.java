@@ -30,12 +30,14 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.sniff.Sniffer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -46,15 +48,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 @ToString(of = "name")
 public abstract class AbstractCluster implements Cluster {
+    public static final int DEFAULT_SNIFF_INTERVAL = (int) TimeUnit.SECONDS.toMillis(10);
+    public static final int DEFAULT_SNIFF_AFTER_FAILURE_DELAY = (int) TimeUnit.SECONDS.toMillis(10);
     private final AtomicBoolean highLevelClientInitialized = new AtomicBoolean(false);
     private final AtomicBoolean lowLevelClientInitialized = new AtomicBoolean(false);
     private final LazyInitializer<RestClient> lowLevelClientInitializer;
     private final LazyInitializer<RestHighLevelClient> highLevelClientInitializer;
-
     private final RestClientBuilder builder;
     private final HttpHost[] hosts;
-    private String name;
     private final Credentials credentials;
+    private Sniffer highLevelSniffer;
+    private Sniffer lowLevelSniffer;
+    private String name;
 
     public AbstractCluster(String hostname, int port) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, null);
@@ -84,7 +89,10 @@ public abstract class AbstractCluster implements Cluster {
             protected RestHighLevelClient initialize() {
                 log.info("创建高级ES集群客户端：{}", name);
                 highLevelClientInitialized.set(true);
-                return new RestHighLevelClient(builder);
+                final RestHighLevelClient restHighLevelClient = new RestHighLevelClient(builder);
+                highLevelSniffer = Sniffer.builder(restHighLevelClient.getLowLevelClient()).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
+                        .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+                return restHighLevelClient;
             }
         };
     }
@@ -95,7 +103,10 @@ public abstract class AbstractCluster implements Cluster {
             protected RestClient initialize() {
                 log.info("创建低级ES集群客户端：{}", name);
                 lowLevelClientInitialized.set(true);
-                return builder.build();
+                final RestClient build = builder.build();
+                lowLevelSniffer = Sniffer.builder(build).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
+                        .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+                return build;
             }
         };
     }
@@ -276,10 +287,12 @@ public abstract class AbstractCluster implements Cluster {
     public void close() throws IOException {
         if (highLevelClientInitialized.get()) {
             log.info("关闭HighLevelClient：{}", name);
+            highLevelSniffer.close();
             highLevelClient().close();
         }
         if (lowLevelClientInitialized.get()) {
             log.info("关闭LowLevelClient：{}", name);
+            lowLevelSniffer.close();
             lowLevelClient().close();
         }
     }
