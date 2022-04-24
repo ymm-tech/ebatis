@@ -7,6 +7,8 @@ import io.manbang.ebatis.core.meta.ConditionMeta;
 import io.manbang.ebatis.core.provider.MultiMatchFieldProvider;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 /**
  * @author 章多亮
  * @since 2020/1/16 18:59
@@ -40,7 +42,19 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<Compatib
             throw new ConditionNotSupportException("条件必须实现: MultiMatchFieldProvider");
         }
         String[] fields = ((MultiMatchFieldProvider) condition).getFields();
+        final CompatibleMultiMatchQueryBuilder multiMatchQueryBuilder = new CompatibleMultiMatchQueryBuilder(((MultiMatchFieldProvider) condition).text());
+        if (Objects.nonNull(fields)) {
+            for (String field : fields) {
+                final String[] split = StringUtils.split(field, "^");
+                if (split.length == 1) {
+                    multiMatchQueryBuilder.field(split[0]);
+                } else {
 
-        return new CompatibleMultiMatchQueryBuilder(((MultiMatchFieldProvider) condition).text(), fields);
+                    multiMatchQueryBuilder.field(split[0], Float.parseFloat(split[1]));
+                }
+
+            }
+        }
+        return multiMatchQueryBuilder;
     }
 }
