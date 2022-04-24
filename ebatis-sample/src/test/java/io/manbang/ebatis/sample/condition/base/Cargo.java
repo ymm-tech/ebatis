@@ -12,7 +12,7 @@ public class Cargo implements MultiMatchFieldProvider {
 
     @Override
     public String[] getFields() {
-        return new String[]{"title", "address"};
+        return new String[]{"title^1.2", "address"};
     }
 
     @Override
