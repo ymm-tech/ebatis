@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
+import java.util.Objects;
+
 /**
  * @author 章多亮
  * @since 2020/1/16 18:59
@@ -43,6 +45,19 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
         }
         String[] fields = ((MultiMatchFieldProvider) condition).getFields();
 
-        return QueryBuilders.multiMatchQuery(((MultiMatchFieldProvider) condition).text(), fields);
+        final MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery(((MultiMatchFieldProvider) condition).text());
+        if (Objects.nonNull(fields)) {
+            for (String field : fields) {
+                final String[] split = StringUtils.split(field, "^");
+                if (split.length == 1) {
+                    multiMatchQueryBuilder.field(split[0]);
+                } else {
+
+                    multiMatchQueryBuilder.field(split[0], Float.parseFloat(split[1]));
+                }
+
+            }
+        }
+        return multiMatchQueryBuilder;
     }
 }
