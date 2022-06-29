@@ -4,6 +4,8 @@ import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.Order;
 import io.manbang.ebatis.core.domain.Aggregation;
 import io.manbang.ebatis.core.domain.FiltersAggregation;
+import io.manbang.ebatis.core.domain.MaxAggregation;
+import io.manbang.ebatis.core.domain.MinAggregation;
 import io.manbang.ebatis.core.domain.PercentileRanksAggregation;
 import io.manbang.ebatis.core.domain.PercentilesAggregation;
 import io.manbang.ebatis.core.domain.TermsAggregation;
@@ -39,7 +41,9 @@ public class RecentOrderAggCondition extends SampleRecentOrderCondition implemen
                 time - TimeUnit.DAYS.toMillis(30),
                 time
         ).fieldName("updateTime");
-        return new Aggregation[]{terms1, terms2, filter, percentiles, percentileRanks};
+        final MinAggregation minCargoTime = Aggregation.min("minCargoTime").fieldName("cargoTime");
+        final MaxAggregation maxCargoTime = Aggregation.max("maxCargoTime").fieldName("cargoTime");
+        return new Aggregation[]{terms1, terms2, filter, percentiles, percentileRanks, minCargoTime, maxCargoTime};
     }
 
     @Data

@@ -75,4 +75,24 @@ public interface Aggregation {
         return new PercentileRanksAggregation(name, values);
     }
 
+    /**
+     * Create a new Min aggregation with the given name.
+     *
+     * @param name name
+     * @return MinAggregation
+     */
+    static MinAggregation min(String name) {
+        return new MinAggregation(name);
+    }
+
+    /**
+     * Create a new Max aggregation with the given name.
+     *
+     * @param name name
+     * @return MaxAggregation
+     */
+    static MaxAggregation max(String name) {
+        return new MaxAggregation(name);
+    }
+
 }
