@@ -1,10 +1,12 @@
 package io.manbang.ebatis.sample.condition;
 
 import io.manbang.ebatis.core.annotation.Field;
+import io.manbang.ebatis.core.annotation.Filter;
 import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.Nested;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.annotation.Should;
+import io.manbang.ebatis.core.domain.GeoDistanceRange;
 import io.manbang.ebatis.core.domain.GeoShape;
 import io.manbang.ebatis.core.domain.Highlighter;
 import io.manbang.ebatis.core.domain.HighlighterBuilder;
@@ -24,7 +26,9 @@ import io.manbang.ebatis.sample.condition.base.SecurityTran;
 import io.manbang.ebatis.sample.condition.base.Truck;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.elasticsearch.common.geo.GeoDistance;
 import org.elasticsearch.common.lucene.search.function.FieldValueFactorFunction;
+import org.elasticsearch.common.unit.DistanceUnit;
 
 import java.util.List;
 
@@ -124,6 +128,10 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
     @Must(queryType = QueryType.GEO_SHAPE)
     private GeoShape cargoGeo;
 
+    @Filter(queryType = QueryType.GEO_DISTANCE)
+    private GeoDistanceRange geoDistanceRange;
+
+
     @Override
     public ScoreFunction getFunction() {
         return ScoreFunction.fieldValueFactor("startCityId", 10, 10, FieldValueFactorFunction.Modifier.LN);
@@ -142,7 +150,10 @@ public class RecentOrderCondition extends SampleRecentOrderCondition implements 
 
     @Override
     public Sort[] getSorts() {
-        return new Sort[]{Sort.fieldDesc("cargoType")};
+        return new Sort[]{Sort.fieldDesc("cargoType")
+                , Sort.geoDistanceAsc("startLocation").addPoint(40.715d, -74.011d)
+                .unit(DistanceUnit.KILOMETERS).geoDistance(GeoDistance.PLANE)
+        };
     }
 
     @Override
