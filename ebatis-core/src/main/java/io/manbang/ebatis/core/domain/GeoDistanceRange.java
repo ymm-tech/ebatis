@@ -1,6 +1,7 @@
 package io.manbang.ebatis.core.domain;
 
 import lombok.Data;
+import org.elasticsearch.common.geo.GeoDistance;
 
 /**
  * @author 章多亮
@@ -10,4 +11,5 @@ import lombok.Data;
 public class GeoDistanceRange implements GeoRange {
     private final Coordinate center;
     private final String distance;
+    private final GeoDistance geoDistance;
 }

@@ -32,7 +32,7 @@ class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoDist
             GeoDistanceRange distanceRange = (GeoDistanceRange) condition;
             final Coordinate center = distanceRange.getCenter();
             final GeoPoint geoPoint = new GeoPoint(center.getX(), center.getY());
-            builder.distance(distanceRange.getDistance()).point(geoPoint);
+            builder.distance(distanceRange.getDistance()).point(geoPoint).geoDistance(distanceRange.getGeoDistance());
         } else if (condition instanceof String) {
             builder.distance(String.valueOf(condition));
         } else if (condition instanceof Double) {

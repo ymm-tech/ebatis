@@ -3,6 +3,7 @@ package io.manbang.ebatis.sample;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import io.manbang.ebatis.core.domain.Coordinate;
+import io.manbang.ebatis.core.domain.GeoDistanceRange;
 import io.manbang.ebatis.core.domain.GeoShape;
 import io.manbang.ebatis.core.domain.Geometry;
 import io.manbang.ebatis.core.domain.Page;
@@ -24,6 +25,7 @@ import io.manbang.ebatis.sample.mapper.RecentOrderSearchMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.geo.GeoDistance;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -398,6 +400,7 @@ public class EsQueryTest extends ESAbstractTest {
         condition.setTruck(new Truck());
         condition.setCargo(new Cargo());
         condition.setCargoGeo(GeoShape.geoShape("cargoPoint", Geometry.point(new Coordinate(119.380453, 32.361451))).contains());
+        condition.setGeoDistanceRange(new GeoDistanceRange(new Coordinate(26.297065d, 117.648705d), "150000m", GeoDistance.PLANE));
         return condition;
     }
 }
