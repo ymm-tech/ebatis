@@ -43,7 +43,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.targe>${java.version}</maven.compiler.targe>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <jackson.version>2.11.3</jackson.version>
+        <jackson.version>2.12.7.1</jackson.version>
         <commons-configuration2.version>2.6</commons-configuration2.version>
         <auto-service-annotations.version>1.0-rc5</auto-service-annotations.version>
         <auto-service.version>1.0-rc7</auto-service.version>
