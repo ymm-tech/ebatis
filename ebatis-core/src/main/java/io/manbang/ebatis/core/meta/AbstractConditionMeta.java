@@ -45,11 +45,9 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
     }
 
     protected String getName(E element) {
-        String n;
-
         Field fieldAnnotation = element.getAnnotation(Field.class);
         if (fieldAnnotation != null) {
-            n = fieldAnnotation.name();
+            String n = fieldAnnotation.name();
             if (StringUtils.isNotBlank(n)) {
                 return n;
             }
@@ -60,9 +58,9 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
             }
         }
 
-        JsonProperty jsonProperty = element.getAnnotation(JsonProperty.class);
-        if (jsonProperty != null) {
-            n = jsonProperty.value();
+        JsonProperty property = element.getAnnotation(JsonProperty.class);
+        if (property != null) {
+            String n = property.value();
             if (StringUtils.isNotBlank(n)) {
                 return n;
             }

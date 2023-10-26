@@ -1,10 +1,6 @@
 package io.manbang.ebatis.core.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @author duoliang.zhang
@@ -13,7 +9,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface MustNot {
+    QueryType value() default QueryType.AUTO;
+
     boolean nested() default false;
+
+    float boost() default 1.0f;
 
     QueryType queryType() default QueryType.AUTO;
 

@@ -1,10 +1,6 @@
 package io.manbang.ebatis.core.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * @author duoliang.zhang
@@ -14,10 +10,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Should {
+    QueryType value() default QueryType.AUTO;
+
     /**
      * @return 是否是嵌套条件
      */
     boolean nested() default false;
+
+    float boost() default 1.0f;
 
     /**
      * @return 最小匹配度

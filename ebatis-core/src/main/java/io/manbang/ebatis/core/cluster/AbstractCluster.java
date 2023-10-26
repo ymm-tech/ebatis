@@ -234,7 +234,7 @@ public abstract class AbstractCluster implements Cluster {
             }
         }
 
-        log.debug("{}", sb);
+        log.info("{}", sb);
     }
 
     private void printResponse(HttpResponse response, HttpContext context) {
@@ -245,7 +245,7 @@ public abstract class AbstractCluster implements Cluster {
             sb.append(header).append(System.lineSeparator());
         }
 
-        log.debug("{}", sb);
+        log.info("{}", sb);
     }
 
     @Override

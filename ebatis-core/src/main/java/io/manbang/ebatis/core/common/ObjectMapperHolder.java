@@ -24,6 +24,8 @@ public class ObjectMapperHolder {
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             mapper.setAnnotationIntrospector(new JacksonAnnotationIntrospector() {
+                private static final long serialVersionUID = -274762453278264130L;
+
                 @Override
                 public boolean hasIgnoreMarker(AnnotatedMember m) {
                     Ignore ann = _findAnnotation(m, Ignore.class);

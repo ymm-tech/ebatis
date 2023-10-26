@@ -9,6 +9,7 @@ import io.manbang.ebatis.core.exception.EbatisException;
 import io.manbang.ebatis.core.exception.ReadMethodInvokeException;
 import io.manbang.ebatis.core.exception.ReadMethodNotFoundException;
 import io.manbang.ebatis.core.generic.GenericType;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.BeanInfo;
@@ -18,6 +19,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -114,6 +116,16 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
         } else {
             return String.format("%s.%s", prefix, name);
         }
+    }
+
+     boolean isNested(Field field) {
+        return Arrays.stream(field.getAnnotations())
+                .map(annotation -> AnnotationUtils.findAttribute(annotation, "nested"))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(Boolean.class::cast)
+                .findFirst()
+                .orElse(Boolean.FALSE);
     }
 
     /**
