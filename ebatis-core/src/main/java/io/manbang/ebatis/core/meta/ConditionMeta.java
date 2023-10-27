@@ -80,6 +80,10 @@ public interface ConditionMeta {
      */
     String getName();
 
+    default boolean isNested() {
+        return false;
+    }
+
     default boolean isAssignableTo(Class<?> superType) {
         return superType.isAssignableFrom(getType());
     }

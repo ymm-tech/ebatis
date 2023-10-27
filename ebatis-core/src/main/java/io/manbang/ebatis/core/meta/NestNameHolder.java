@@ -5,6 +5,7 @@ import lombok.val;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.StringJoiner;
+import java.util.function.Consumer;
 
 public class NestNameHolder {
     private static final ThreadLocal<NestNameHolder> holder = ThreadLocal.withInitial(NestNameHolder::new);
@@ -28,6 +29,14 @@ public class NestNameHolder {
 
     public String prefix() {
         return toString();
+    }
+
+    public void ifPresent(Consumer<String> consumer) {
+        if (namePrefixes.isEmpty()) {
+            return;
+        }
+
+        consumer.accept(prefix());
     }
 
     @Override

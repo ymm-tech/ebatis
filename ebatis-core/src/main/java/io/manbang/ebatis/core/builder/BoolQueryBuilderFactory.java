@@ -4,6 +4,7 @@ import io.manbang.ebatis.core.annotation.Bool;
 import io.manbang.ebatis.core.meta.ClassMeta;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import io.manbang.ebatis.core.meta.FieldMeta;
+import io.manbang.ebatis.core.meta.NestNameHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -23,14 +24,25 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuild
     private BoolQueryBuilderFactory() {
     }
 
+    private Map<Class<? extends Annotation>, List<FieldMeta>> getQueryClauses(ConditionMeta meta, Object condition) {
+        return meta == null ? ClassMeta.of(condition.getClass()).getQueryClauses() : meta.getQueryClauses(condition);
+    }
+
     @Override
     protected BoolQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         BoolQueryBuilder builder = QueryBuilders.boolQuery();
 
-        Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = meta == null ?
-                ClassMeta.of(condition.getClass()).getQueryClauses() : meta.getQueryClauses(condition);
+        Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = getQueryClauses(meta, condition);
+
+        if (meta != null && meta.isNested()) {
+            NestNameHolder.get().push(meta.getName());
+        }
 
         queryClauses.forEach((key, fieldMetas) -> QueryClauseType.valueOf(key).addQueryBuilder(builder, fieldMetas, condition));
+
+        if (meta != null && meta.isNested()) {
+            NestNameHolder.get().pop();
+        }
 
         return builder;
     }

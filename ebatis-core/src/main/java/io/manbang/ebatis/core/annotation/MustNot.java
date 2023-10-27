@@ -9,8 +9,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface MustNot {
-    QueryType value() default QueryType.AUTO;
-
     boolean nested() default false;
 
     float boost() default 1.0f;

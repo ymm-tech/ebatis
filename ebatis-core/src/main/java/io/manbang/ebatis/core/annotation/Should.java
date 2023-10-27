@@ -10,8 +10,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 public @interface Should {
-    QueryType value() default QueryType.AUTO;
-
     /**
      * @return 是否是嵌套条件
      */

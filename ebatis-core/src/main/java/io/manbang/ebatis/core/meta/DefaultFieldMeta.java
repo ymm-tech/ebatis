@@ -19,7 +19,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +39,7 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     private final QueryBuilderFactory queryBuilderFactory;
     private final boolean termsQuery;
     private final Map<Class<? extends Annotation>, Optional<? extends Annotation>> metas = new ConcurrentHashMap<>();
+    private final boolean nested;
 
     DefaultFieldMeta(Field field) {
         super(field, field.getType(), field.getGenericType());
@@ -54,6 +54,9 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
 
         Optional<? extends Annotation> annotation = findAnnotation(queryClauseAnnotationClass);
         this.queryClauseAnnotation = annotation.orElse(null);
+        this.nested = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, "nested"))
+                .map(Boolean.class::cast)
+                .orElse(false);
 
         this.queryBuilderFactory = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO).getQueryBuilderFactory();
 
@@ -104,28 +107,19 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     }
 
     @Override
-    protected String getName(Field field) {
-        String name = super.getName(field);
-        name = StringUtils.isBlank(name) ? field.getName() : name;
+    protected String getNameFromChild(Field field) {
+        val name = getPrefix(field)
+                .map(prefix -> String.format("%s.%s", prefix, field.getName()))
+                .orElse(field.getName());
 
-        Class<?> declaringClass = field.getDeclaringClass();
-        String prefix = getPrefix(declaringClass);
 
-        if (prefix == null) {
-            return name;
+        val holder = NestNameHolder.get();
+        if (nested) {
+            holder.push(name);
+            return holder.toString();
         } else {
-            return String.format("%s.%s", prefix, name);
+            return name;
         }
-    }
-
-     boolean isNested(Field field) {
-        return Arrays.stream(field.getAnnotations())
-                .map(annotation -> AnnotationUtils.findAttribute(annotation, "nested"))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(Boolean.class::cast)
-                .findFirst()
-                .orElse(Boolean.FALSE);
     }
 
     /**
@@ -134,11 +128,12 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
      * @param clazz 字段所在类
      * @return 前缀
      */
-    private String getPrefix(Class<?> clazz) {
+    private Optional<String> getPrefix(Field field) {
+        val clazz = field.getDeclaringClass();
         if (clazz.isAnnotationPresent(Prefix.class)) {
-            return StringUtils.trimToNull(clazz.getAnnotation(Prefix.class).value());
+            return Optional.ofNullable(StringUtils.trimToNull(clazz.getAnnotation(Prefix.class).value()));
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
