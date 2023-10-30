@@ -22,5 +22,6 @@ public class RequirementCondition {
     private Range<Date> deadline;
     @Must(queryType = QueryType.TERMS)
     private String[] units;
+    @Must(nested = true, queryType = QueryType.BOOL)
     private ManufacturerCondition manufacturer;
 }

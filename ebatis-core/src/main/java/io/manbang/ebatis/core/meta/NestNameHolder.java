@@ -39,6 +39,14 @@ public class NestNameHolder {
         consumer.accept(prefix());
     }
 
+    public String format(String name) {
+        if (namePrefixes.isEmpty()) {
+            return name;
+        } else {
+            return prefix() + "." + name;
+        }
+    }
+
     @Override
     public String toString() {
         val joiner = new StringJoiner(".");

@@ -32,17 +32,13 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuild
     protected BoolQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         BoolQueryBuilder builder = QueryBuilders.boolQuery();
 
-        Map<Class<? extends Annotation>, List<FieldMeta>> queryClauses = getQueryClauses(meta, condition);
-
         if (meta != null && meta.isNested()) {
             NestNameHolder.get().push(meta.getName());
         }
 
-        queryClauses.forEach((key, fieldMetas) -> QueryClauseType.valueOf(key).addQueryBuilder(builder, fieldMetas, condition));
-
-        if (meta != null && meta.isNested()) {
-            NestNameHolder.get().pop();
-        }
+        getQueryClauses(meta, condition)
+                .forEach((key, fieldMetas) -> QueryClauseType.valueOf(key)
+                        .addQueryBuilder(builder, fieldMetas, condition));
 
         return builder;
     }

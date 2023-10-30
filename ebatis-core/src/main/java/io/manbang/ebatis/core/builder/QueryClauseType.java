@@ -5,18 +5,14 @@ import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.MustNot;
 import io.manbang.ebatis.core.annotation.Should;
 import io.manbang.ebatis.core.meta.FieldMeta;
+import io.manbang.ebatis.core.meta.NestNameHolder;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,45 +85,70 @@ public enum QueryClauseType {
     }
 
     private static void combineQueryBuilder(QueryClauseCombiner combiner, List<FieldMeta> fields, Object instance) {
-        List<QueryBuilder> builders = new LinkedList<>();
-
-        for (FieldMeta meta : fields) {
-            Object value = meta.getValue(instance);
-
-            QueryBuilderFactory queryBuilderFactory = meta.getQueryBuilderFactory();
-            //terms语句特殊处理，接收集合入参
-            if (meta.isTermsQuery()) {
-                QueryBuilder builder = queryBuilderFactory.create(meta, value);
-                if (builder != null) {
-                    builders.add(builder);
-                }
-            } else if (meta.isArray()) {
-                Optional.ofNullable(value)
-                        .map(Object[].class::cast)
-                        .map(Arrays::stream)
-                        .orElseGet(Stream::empty)
-                        .map(v -> queryBuilderFactory.create(meta, v))
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toCollection(() -> builders));
-            } else if (meta.isCollection()) {
-                Optional.ofNullable(value)
-                        .map(Collection.class::cast)
-                        .map(Collection::stream)
-                        .orElseGet(Stream::empty)
-                        .map(v -> queryBuilderFactory.create(meta, v))
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toCollection(() -> builders));
-            } else {
-                QueryBuilder builder = queryBuilderFactory.create(meta, value);
-                if (builder != null) {
-                    builders.add(builder);
-                }
-            }
-
-        }
+        List<QueryBuilder> builders = buildQueryBuilders(fields, instance);
         builders.forEach(combiner::combine);
     }
 
+    private static List<QueryBuilder> buildQueryBuilders(List<FieldMeta> fields, Object instance) {
+        val builders = new ArrayList<QueryBuilder>(fields.size());
+
+        for (FieldMeta meta : fields) {
+            try {
+                // Terms 查询的处理方式，跟其他的不一样，需要单独有限处理，其他条件如果遇到数组或者集合，都是一个个分开处理
+                if (meta.isTermsQuery()) {
+                    builderTermsQuery(meta, instance).ifPresent(builders::add);
+                } else if (meta.isArray()) {
+                    builders.addAll(buildArrayQuery(meta, instance));
+                } else if (meta.isCollection()) {
+                    builders.addAll(buildCollectionQuery(meta, instance));
+                } else {
+                    buildNormalQuery(meta, instance).ifPresent(builders::add);
+                }
+            } finally {
+                if (meta.isNested()) {
+                    NestNameHolder.get().pop();
+                }
+            }
+        }
+
+        return builders;
+    }
+
+    private static Optional<QueryBuilder> builderTermsQuery(FieldMeta meta, Object instance) {
+        QueryBuilderFactory queryBuilderFactory = QueryBuilderFactory.terms();
+        Object condition = meta.getValue(instance);
+        return Optional.ofNullable(queryBuilderFactory.create(meta, condition));
+    }
+
+    private static Optional<QueryBuilder> buildNormalQuery(FieldMeta meta, Object instance) {
+        QueryBuilderFactory queryBuilderFactory = meta.getQueryBuilderFactory();
+        Object condition = meta.getValue(instance);
+        return Optional.ofNullable(queryBuilderFactory.create(meta, condition));
+    }
+
+    private static List<QueryBuilder> buildArrayQuery(FieldMeta meta, Object instance) {
+        QueryBuilderFactory queryBuilderFactory = meta.getQueryBuilderFactory();
+        Object condition = meta.getValue(instance);
+        return Optional.ofNullable(condition)
+                .map(Object[].class::cast)
+                .map(Arrays::stream)
+                .orElseGet(Stream::empty)
+                .map(v -> queryBuilderFactory.create(meta, v))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    private static List<QueryBuilder> buildCollectionQuery(FieldMeta meta, Object instance) {
+        QueryBuilderFactory queryBuilderFactory = meta.getQueryBuilderFactory();
+        Object condition = meta.getValue(instance);
+        return Optional.ofNullable(condition)
+                .map(x -> (Collection<?>) x)
+                .map(Collection::stream)
+                .orElseGet(Stream::empty)
+                .map(v -> queryBuilderFactory.create(meta, v))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
 
     public Class<? extends Annotation> getQueryClauseClass() {
         return queryClauseClass;

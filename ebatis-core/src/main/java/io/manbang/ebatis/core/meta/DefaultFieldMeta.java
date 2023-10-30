@@ -108,24 +108,15 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
 
     @Override
     protected String getNameFromChild(Field field) {
-        val name = getPrefix(field)
+        return getPrefix(field)
                 .map(prefix -> String.format("%s.%s", prefix, field.getName()))
                 .orElse(field.getName());
-
-
-        val holder = NestNameHolder.get();
-        if (nested) {
-            holder.push(name);
-            return holder.toString();
-        } else {
-            return name;
-        }
     }
 
     /**
      * 获取字段前缀
      *
-     * @param clazz 字段所在类
+     * @param field 属性字段
      * @return 前缀
      */
     private Optional<String> getPrefix(Field field) {
@@ -135,6 +126,11 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public boolean isNested() {
+        return nested;
     }
 
     @Override
@@ -187,5 +183,11 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     @Override
     public boolean isTermsQuery() {
         return termsQuery;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("FieldMeta: name = %s, queryType = %s, nested = %s",
+                field.getName(), queryClauseAnnotationClass.getSimpleName(), nested);
     }
 }

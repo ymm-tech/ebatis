@@ -78,7 +78,7 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
 
     @Override
     public String getName() {
-        return name;
+        return NestNameHolder.get().format(name);
     }
 
     @Override
