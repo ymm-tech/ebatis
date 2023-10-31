@@ -15,7 +15,7 @@ public class RequirementCondition {
     private Long id;
     @Must(nested = true, queryType = QueryType.BOOL)
     private ModelCondition model;
-    @Must(queryType = QueryType.FUZZY)
+    @Must(queryType = QueryType.FUZZY, boost = 2.0f)
     private String batchNo;
     private Range<Long> expectedPrice;
     @Must(queryType = QueryType.RANGE)
