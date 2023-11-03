@@ -24,7 +24,7 @@ public class RequirementMapperTest {
         val condition = RequirementCondition.builder()
                 .id(8L)
                 .batchNo("chip-001")
-                .model(ModelCondition.builder().name("abc#001").build())
+                .model(ModelCondition.builder().termName("abc#001").build())
                 .manufacturer(ManufacturerCondition.builder().id(1L).name("德州仪器").build())
                 .build();
         val pageable = Pageable.first(100);
