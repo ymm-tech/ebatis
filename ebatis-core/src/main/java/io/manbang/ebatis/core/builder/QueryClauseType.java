@@ -5,7 +5,6 @@ import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.MustNot;
 import io.manbang.ebatis.core.annotation.Should;
 import io.manbang.ebatis.core.meta.FieldMeta;
-import io.manbang.ebatis.core.meta.NestNameHolder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -93,21 +92,15 @@ public enum QueryClauseType {
         val builders = new ArrayList<QueryBuilder>(fields.size());
 
         for (FieldMeta meta : fields) {
-            try {
-                // Terms 查询的处理方式，跟其他的不一样，需要单独有限处理，其他条件如果遇到数组或者集合，都是一个个分开处理
-                if (meta.isTermsQuery()) {
-                    builderTermsQuery(meta, instance).ifPresent(builders::add);
-                } else if (meta.isArray()) {
-                    builders.addAll(buildArrayQuery(meta, instance));
-                } else if (meta.isCollection()) {
-                    builders.addAll(buildCollectionQuery(meta, instance));
-                } else {
-                    buildNormalQuery(meta, instance).ifPresent(builders::add);
-                }
-            } finally {
-                if (meta.isNested()) {
-                    NestNameHolder.get().pop();
-                }
+            // Terms 查询的处理方式，跟其他的不一样，需要单独有限处理，其他条件如果遇到数组或者集合，都是一个个分开处理
+            if (meta.isTermsQuery()) {
+                builderTermsQuery(meta, instance).ifPresent(builders::add);
+            } else if (meta.isArray()) {
+                builders.addAll(buildArrayQuery(meta, instance));
+            } else if (meta.isCollection()) {
+                builders.addAll(buildCollectionQuery(meta, instance));
+            } else {
+                buildNormalQuery(meta, instance).ifPresent(builders::add);
             }
         }
 

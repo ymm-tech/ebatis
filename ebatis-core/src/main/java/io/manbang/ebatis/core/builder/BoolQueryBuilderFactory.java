@@ -36,9 +36,15 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuild
             NestNameHolder.get().push(meta.getName());
         }
 
-        getQueryClauses(meta, condition)
-                .forEach((key, fieldMetas) -> QueryClauseType.valueOf(key)
-                        .addQueryBuilder(builder, fieldMetas, condition));
+        try {
+            getQueryClauses(meta, condition)
+                    .forEach((key, fieldMetas) -> QueryClauseType.valueOf(key)
+                            .addQueryBuilder(builder, fieldMetas, condition));
+        } finally {
+            if (meta != null && meta.isNested()) {
+                NestNameHolder.get().pop();
+            }
+        }
 
         return builder;
     }
