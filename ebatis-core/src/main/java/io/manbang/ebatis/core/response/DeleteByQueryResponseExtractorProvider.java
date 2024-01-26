@@ -4,8 +4,9 @@ import com.google.auto.service.AutoService;
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.RequestType;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.BulkByScrollTask;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.rest.RestStatus;
 
 /**
  * @author 章多亮
@@ -21,10 +22,16 @@ public class DeleteByQueryResponseExtractorProvider extends AbstractResponseExtr
     protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
         Class<?> resultClass = genericType.resolve();
 
-        if (BulkByScrollResponse.class == resultClass) {
+        if (DeleteResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
-        } else if (BulkByScrollTask.Status.class == resultClass) {
-            return response -> ((BulkByScrollResponse) response).getStatus();
+        } else if (RestStatus.class == resultClass) {
+            return response -> ((DeleteResponse) response).status();
+        } else if (void.class == resultClass || Void.class == resultClass) {
+            return response -> null;
+        } else if (DocWriteResponse.Result.class == resultClass) {
+            return response -> ((DeleteResponse) response).getResult();
+        } else if (Boolean.class == resultClass || boolean.class == resultClass) {
+            return response -> ((DeleteResponse) response).getResult() == DocWriteResponse.Result.DELETED;
         } else {
             throw new UnsupportedOperationException();
         }

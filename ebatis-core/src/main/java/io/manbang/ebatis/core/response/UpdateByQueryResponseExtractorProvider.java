@@ -4,8 +4,8 @@ import com.google.auto.service.AutoService;
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.RequestType;
-import org.elasticsearch.index.reindex.BulkByScrollResponse;
-import org.elasticsearch.index.reindex.BulkByScrollTask;
+import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.update.UpdateResponse;
 
 /**
  * @author 章多亮
@@ -20,10 +20,14 @@ public class UpdateByQueryResponseExtractorProvider extends AbstractResponseExtr
     @Override
     protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
         Class<?> resultClass = genericType.resolve();
-        if (BulkByScrollResponse.class == resultClass) {
+        if (UpdateResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
-        } else if (BulkByScrollTask.Status.class == resultClass) {
-            return response -> ((BulkByScrollResponse) response).getStatus();
+        } else if (void.class == resultClass || Void.class == resultClass) {
+            return response -> null;
+        } else if (DocWriteResponse.Result.class == resultClass) {
+            return response -> ((UpdateResponse) response).getResult();
+        } else if (Boolean.class == resultClass || boolean.class == resultClass) {
+            return response -> ((UpdateResponse) response).getResult() == DocWriteResponse.Result.UPDATED;
         } else {
             throw new UnsupportedOperationException();
         }
