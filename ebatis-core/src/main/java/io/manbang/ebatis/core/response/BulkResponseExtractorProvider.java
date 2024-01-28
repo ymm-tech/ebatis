@@ -31,6 +31,8 @@ public class BulkResponseExtractorProvider extends AbstractResponseExtractorProv
             return response -> Lists.newArrayList(((BulkResponse) response).getItems());
         } else if (resultClass.isArray()) {
             return response -> ((BulkResponse) response).getItems();
+        } else if (void.class == resultClass || Void.class == resultClass) {
+            return response -> null;
         } else {
             throw new UnsupportedOperationException();
         }
