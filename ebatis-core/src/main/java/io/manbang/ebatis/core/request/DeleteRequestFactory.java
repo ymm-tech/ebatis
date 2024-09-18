@@ -10,6 +10,7 @@ import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.VersionProvider;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.index.VersionType;
 
 /**
  * @author 章多亮
@@ -49,6 +50,7 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
 
             if (condition instanceof VersionProvider) {
                 request.version(((VersionProvider) condition).version());
+                request.versionType(VersionType.EXTERNAL);
             }
 
             if (condition instanceof RoutingProvider) {

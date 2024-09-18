@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.VersionType;
 
 /**
  * @author 章多亮
@@ -64,6 +65,7 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
         if (doc instanceof VersionProvider) {
             request.version(((VersionProvider) doc).version());
+            request.versionType(VersionType.EXTERNAL);
         }
 
         if (doc instanceof RoutingProvider) {
