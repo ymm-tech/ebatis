@@ -43,6 +43,10 @@ public @interface Filter {
 
     MatchPhrasePrefix[] matchPhrasePrefix() default {};
 
+    MatchBoolPrefix[] matchBoolPrefix() default {};
+
+    Prefix[] prefix() default {};
+
     MultiMatch[] multiMatch() default {};
 
     Nested[] nest() default {};

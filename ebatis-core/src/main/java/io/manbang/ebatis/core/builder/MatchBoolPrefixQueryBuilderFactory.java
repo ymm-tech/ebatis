@@ -14,7 +14,6 @@ class MatchBoolPrefixQueryBuilderFactory extends AbstractQueryBuilderFactory<Mat
     @Override
     protected void setAnnotationMeta(MatchBoolPrefixQueryBuilder builder, MatchBoolPrefix annotation) {
         builder.operator(Operator.fromString(annotation.operator()))
-                .fuzziness(annotation.fuzziness())
                 .fuzzyTranspositions(annotation.fuzzyTranspositions())
                 .prefixLength(annotation.prefixLength())
                 .maxExpansions(annotation.maxExpansions());

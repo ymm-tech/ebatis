@@ -1,6 +1,8 @@
 package io.manbang.ebatis.sample;
 
+import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.proxy.MapperProxyFactory;
+import io.manbang.ebatis.sample.condition.SummaryCondition;
 import io.manbang.ebatis.sample.entity.Scene;
 import io.manbang.ebatis.sample.entity.Summary;
 import io.manbang.ebatis.sample.entity.Type;
@@ -50,5 +52,17 @@ public class SummaryMapperTest {
         summary.setUpdateTime(now);
 
         summaryMapper.update(summary);
+    }
+
+    @Test
+    public void testSearch() {
+        val condition = new SummaryCondition();
+        condition.setName("te");
+        condition.setScene(Scene.QUOTATION);
+
+        summaryMapper.search(condition, Pageable.first(10)).forEach(System.out::println);
+
+        condition.setName("te gd");
+        summaryMapper.search(condition, Pageable.first(10)).forEach(System.out::println);
     }
 }
