@@ -91,6 +91,14 @@ public interface QueryBuilderFactory {
         return DisMaxBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory matchBoolPrefix() {
+        return MatchBoolPrefixQueryBuilderFactory.INSTANCE;
+    }
+
+    static QueryBuilderFactory prefix() {
+        return PrefixQueryBuilderFactory.INSTANCE;
+    }
+
     /**
      * 创建查询构建器
      *

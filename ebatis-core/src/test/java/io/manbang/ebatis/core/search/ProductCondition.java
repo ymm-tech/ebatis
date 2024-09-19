@@ -2,7 +2,6 @@ package io.manbang.ebatis.core.search;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.manbang.ebatis.core.annotation.Field;
-import io.manbang.ebatis.core.annotation.Prefix;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.annotation.Should;
 import io.manbang.ebatis.core.domain.Range;
@@ -30,12 +29,10 @@ import lombok.Data;
  */
 
 @Data
-@Prefix("products")
 public class ProductCondition {
     @JsonProperty("base_price")
     private Range<Double> basePrice;
     @Field("product_name")
     @Should(queryType = QueryType.MATCH_PHRASE_PREFIX)
     private String name;
-
 }

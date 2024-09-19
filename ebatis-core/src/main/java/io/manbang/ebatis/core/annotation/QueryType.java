@@ -2,12 +2,14 @@ package io.manbang.ebatis.core.annotation;
 
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
 import io.manbang.ebatis.core.meta.FieldMeta;
+import lombok.Getter;
 import org.elasticsearch.index.query.QueryBuilder;
 
 /**
  * @author duoliang.zhang
  */
 
+@Getter
 public enum QueryType {
     /**
      * 自动匹配
@@ -42,7 +44,7 @@ public enum QueryType {
     MLT(null),
     MULTI_MATCH(QueryBuilderFactory.multiMatch()),
     NESTED(QueryBuilderFactory.nested()),
-    PREFIX(null),
+    PREFIX(QueryBuilderFactory.prefix()),
     QUERY_STRING(null),
     RANGE(QueryBuilderFactory.auto()),
     SCRIPT(null),
@@ -54,6 +56,7 @@ public enum QueryType {
     MATCH(QueryBuilderFactory.match()),
     MATCH_PHRASE(QueryBuilderFactory.matchPhrase()),
     MATCH_PHRASE_PREFIX(QueryBuilderFactory.matchPhrasePrefix()),
+    MATCH_BOOL_PREFIX(QueryBuilderFactory.matchBoolPrefix()),
     SPAN_CONTAINING(null),
     SPAN_FIRST(null),
     SPAN_NEAR(null),
@@ -67,10 +70,6 @@ public enum QueryType {
 
     QueryType(QueryBuilderFactory queryBuilderFactory) {
         this.queryBuilderFactory = queryBuilderFactory;
-    }
-
-    public QueryBuilderFactory getQueryBuilderFactory() {
-        return queryBuilderFactory;
     }
 
     public QueryBuilder createBuilder(FieldMeta fieldMeta, Object value) {

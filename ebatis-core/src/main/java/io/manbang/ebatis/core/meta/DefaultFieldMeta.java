@@ -1,6 +1,6 @@
 package io.manbang.ebatis.core.meta;
 
-import io.manbang.ebatis.core.annotation.Prefix;
+import io.manbang.ebatis.core.annotation.FieldPrefix;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
 import io.manbang.ebatis.core.common.AnnotationUtils;
@@ -121,8 +121,8 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
      */
     private Optional<String> getPrefix(Field field) {
         val clazz = field.getDeclaringClass();
-        if (clazz.isAnnotationPresent(Prefix.class)) {
-            return Optional.ofNullable(StringUtils.trimToNull(clazz.getAnnotation(Prefix.class).value()));
+        if (clazz.isAnnotationPresent(FieldPrefix.class)) {
+            return Optional.ofNullable(StringUtils.trimToNull(clazz.getAnnotation(FieldPrefix.class).value()));
         } else {
             return Optional.empty();
         }
