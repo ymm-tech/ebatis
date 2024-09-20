@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class SummaryCondition {
     @Must(queryType = QueryType.MATCH_BOOL_PREFIX,
-            matchBoolPrefix = @MatchBoolPrefix(prefixLength = 2))
+            matchBoolPrefix = @MatchBoolPrefix(prefixLength = 2, fuzzyTranspositions = false))
     private String name;
     @Must(queryType = QueryType.TERM)
     private Scene scene;
