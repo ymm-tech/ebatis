@@ -5,6 +5,7 @@ import io.manbang.ebatis.core.meta.ConditionMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.ZeroTermsQueryOption;
 
 /**
  * @author 章多亮
@@ -23,15 +24,14 @@ class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQueryBui
                 .fuzzyTranspositions(match.fuzzyTranspositions())
                 .lenient(match.lenient())
                 .maxExpansions(match.maxExpansions())
-                .zeroTermsQuery(match.zeroTermsQuery())
                 .fuzzyRewrite(StringUtils.trimToNull(match.fuzzyRewrite()))
                 .minimumShouldMatch(StringUtils.trimToNull(match.minimumShouldMatch()))
                 .fuzziness(StringUtils.trimToNull(match.fuzziness()))
                 .analyzer(StringUtils.trimToNull(match.analyzer()))
                 .prefixLength(match.prefixLength());
 
-        if (match.cutoffFrequency() >= 0 && match.cutoffFrequency() <= 1) {
-            builder.cutoffFrequency(match.cutoffFrequency());
+        if (!match.zeroTermsQuery().isEmpty()) {
+            builder.zeroTermsQuery(ZeroTermsQueryOption.valueOf(match.zeroTermsQuery().toUpperCase()));
         }
     }
 

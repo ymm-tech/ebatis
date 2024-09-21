@@ -1,8 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.apache.lucene.search.FuzzyQuery;
-import org.elasticsearch.index.search.MatchQuery;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,9 +14,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface MatchPhrasePrefix {
-    int slop() default MatchQuery.DEFAULT_PHRASE_SLOP;
+    int slop() default 0;
 
-    int maxExpansions() default FuzzyQuery.defaultMaxExpansions;
+    int maxExpansions() default 50;
 
     String analyzer() default "";
 }

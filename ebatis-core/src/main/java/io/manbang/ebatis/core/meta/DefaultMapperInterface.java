@@ -64,6 +64,7 @@ class DefaultMapperInterface implements MapperInterface {
             if (MappingRouter.class.equals(mappingRouterClazz)) {
                 return null;
             }
+            assert mappingRouterClazz != null;
             return mappingRouterClazz.newInstance();
         } catch (Exception e) {
             throw new InstanceException(e);

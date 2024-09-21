@@ -5,10 +5,9 @@ import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptProvider;
-import io.manbang.ebatis.core.provider.VersionProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 

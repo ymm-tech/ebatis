@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.support.single.instance.InstanceShardOperationRequest;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.core.TimeValue;
 
 import java.util.Optional;
 
@@ -49,7 +49,6 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
     protected UpdateRequest doCreate(MethodMeta meta, Object[] args) {
         UpdateRequest request = new UpdateRequest();
         request.index(meta.getIndex(meta, args));
-        setTypeIfNecessary(meta, args, request::type);
 
         ParameterMeta parameterMeta = meta.getConditionParameter();
         Object doc = parameterMeta.getValue(args);

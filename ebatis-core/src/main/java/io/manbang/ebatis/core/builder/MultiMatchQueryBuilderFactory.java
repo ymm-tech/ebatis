@@ -7,6 +7,7 @@ import io.manbang.ebatis.core.provider.MultiMatchFieldProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.ZeroTermsQueryOption;
 
 import java.util.Objects;
 
@@ -22,13 +23,12 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
 
     @Override
     protected void setAnnotationMeta(MultiMatchQueryBuilder builder, MultiMatch multiMatch) {
-        Float cutoffFrequency = multiMatch.cutoffFrequency() < 0 || multiMatch.cutoffFrequency() > 1 ? null : multiMatch.cutoffFrequency();
-
         builder.autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
-                .cutoffFrequency(cutoffFrequency)
                 .fuzziness(StringUtils.trimToNull(multiMatch.fuzziness()))
                 .fuzzyRewrite(StringUtils.trimToNull(multiMatch.fuzzyRewrite()))
                 .fuzzyTranspositions(multiMatch.fuzzyTranspositions())
+                .type(MultiMatchQueryBuilder.Type.valueOf(multiMatch.type().toUpperCase()))
+                .zeroTermsQuery(ZeroTermsQueryOption.valueOf(multiMatch.zeroTermsQuery().toUpperCase()))
                 .lenient(multiMatch.lenient())
                 .maxExpansions(multiMatch.maxExpansions())
                 .prefixLength(multiMatch.prefixLength())

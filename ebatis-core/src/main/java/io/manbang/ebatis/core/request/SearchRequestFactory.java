@@ -29,7 +29,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -91,7 +91,6 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
 
         // 1. 如果是一个入参
         SearchRequest request = Requests.searchRequest(meta.getIndices(meta, args));
-        setTypesIfNecessary(meta, args, request::types);
 
         // 获取语句构建器，不能的查询语句是不一样的
         QueryBuilderFactory factory = getQueryBuilderFactory(meta);

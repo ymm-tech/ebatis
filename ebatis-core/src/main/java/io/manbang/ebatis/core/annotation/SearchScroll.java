@@ -31,7 +31,7 @@ public @interface SearchScroll {
      * specify the scroll parameter in the query string, which tells Elasticsearch how long it should keep the “search context” alive
      *
      * @return initial search request timeout value
-     * @see org.elasticsearch.common.unit.TimeValue
+     * @see org.elasticsearch.core.TimeValue
      */
     String initialKeepAlive() default "1m";
 
@@ -39,7 +39,7 @@ public @interface SearchScroll {
      * If no scroll value is set for the SearchScrollRequest, the search context will expire once the initial scroll time expired (ie, the scroll time set in the initial search request).
      *
      * @return scroll request timeout value
-     * @see org.elasticsearch.common.unit.TimeValue
+     * @see org.elasticsearch.core.TimeValue
      */
     String keepAlive() default "1m";
 

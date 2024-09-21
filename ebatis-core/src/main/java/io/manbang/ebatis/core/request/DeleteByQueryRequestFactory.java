@@ -4,7 +4,7 @@ import io.manbang.ebatis.core.annotation.DeleteByQuery;
 import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 

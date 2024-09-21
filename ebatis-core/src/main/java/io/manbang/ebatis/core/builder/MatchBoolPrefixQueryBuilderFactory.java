@@ -4,6 +4,7 @@ import io.manbang.ebatis.core.annotation.MatchBoolPrefix;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import org.elasticsearch.index.query.MatchBoolPrefixQueryBuilder;
 import org.elasticsearch.index.query.Operator;
+import org.elasticsearch.index.query.QueryBuilders;
 
 class MatchBoolPrefixQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchBoolPrefixQueryBuilder, MatchBoolPrefix> {
     static final MatchBoolPrefixQueryBuilderFactory INSTANCE = new MatchBoolPrefixQueryBuilderFactory();
@@ -38,6 +39,6 @@ class MatchBoolPrefixQueryBuilderFactory extends AbstractQueryBuilderFactory<Mat
 
     @Override
     protected MatchBoolPrefixQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        return new MatchBoolPrefixQueryBuilder(meta.getName(), condition.toString());
+        return QueryBuilders.matchBoolPrefixQuery(meta.getName(), condition);
     }
 }

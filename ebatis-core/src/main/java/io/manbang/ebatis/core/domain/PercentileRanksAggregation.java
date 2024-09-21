@@ -4,6 +4,7 @@ import io.manbang.ebatis.core.provider.BuildProvider;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.PercentileRanksAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.PercentilesConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +89,7 @@ public class PercentileRanksAggregation implements SubAggregation<PercentileRank
     public <T> T build() {
         final PercentileRanksAggregationBuilder percentileRanks = AggregationBuilders.percentileRanks(name, values);
         percentileRanks.field(fieldName);
-        percentileRanks.compression(compression);
+        percentileRanks.percentilesConfig(new PercentilesConfig.TDigest(compression));
         percentileRanks.keyed(keyed);
         if (!subAggregations.isEmpty()) {
             subAggregations.forEach(subAgg -> {

@@ -7,7 +7,8 @@ import io.manbang.ebatis.core.domain.MetaSource;
 import io.manbang.ebatis.core.domain.ResponseMeta;
 import io.manbang.ebatis.core.exception.DocumentDeserializeException;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.common.collect.Tuple;
+import org.elasticsearch.common.text.Text;
+import org.elasticsearch.core.Tuple;
 import org.elasticsearch.search.SearchHit;
 
 import java.io.IOException;
@@ -60,7 +61,7 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
 
         if (document instanceof HighlightSource) {
             final Map<String, List<String>> highlightSourceMap = hit.getHighlightFields().values().stream()
-                    .map(h -> Tuple.tuple(h.getName(), Arrays.stream(h.fragments()).map(t -> t.string()).collect(Collectors.toList())))
+                    .map(h -> Tuple.tuple(h.getName(), Arrays.stream(h.fragments()).map(Text::string).collect(Collectors.toList())))
                     .collect(Collectors.toMap(Tuple::v1, Tuple::v2));
             final HighlightSource highlightSource = (HighlightSource) document;
             highlightSource.setHighlightSource(highlightSourceMap);

@@ -1,9 +1,11 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.provider.BuildProvider;
+import lombok.Getter;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.PercentilesAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.PercentilesConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +28,7 @@ public class PercentilesAggregation implements SubAggregation<PercentilesAggrega
     /**
      * 聚合字段名称
      */
+    @Getter
     private String fieldName;
     private double[] percents = DEFAULT_PERCENTS;
     private double compression = 100.0;
@@ -33,10 +36,6 @@ public class PercentilesAggregation implements SubAggregation<PercentilesAggrega
 
     public PercentilesAggregation(String name) {
         this.name = name;
-    }
-
-    public String getFieldName() {
-        return fieldName;
     }
 
     public PercentilesAggregation fieldName(String fieldName) {
@@ -80,7 +79,7 @@ public class PercentilesAggregation implements SubAggregation<PercentilesAggrega
     public <T> T build() {
         final PercentilesAggregationBuilder percentiles = AggregationBuilders.percentiles(name).field(fieldName);
         percentiles.percentiles(percents);
-        percentiles.compression(compression);
+        percentiles.percentilesConfig(new PercentilesConfig.TDigest(compression));
         percentiles.keyed(keyed);
         if (!subAggregations.isEmpty()) {
             subAggregations.forEach(subAgg -> {

@@ -24,7 +24,6 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
 
     @Override
     protected void setAnnotationMeta(DeleteRequest request, Delete delete) {
-        // TODO 还有很多参数没有设置
         request.setRefreshPolicy(delete.refreshPolicy())
                 .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(delete.waitForActiveShards()))
                 .versionType(delete.versionType())
@@ -34,7 +33,6 @@ public class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteR
     @Override
     protected DeleteRequest doCreate(MethodMeta meta, Object[] args) {
         DeleteRequest request = Requests.deleteRequest(meta.getIndex(meta, args));
-        setTypeIfNecessary(meta, args, request::type);
 
         ParameterMeta parameterMeta = meta.getConditionParameter();
 

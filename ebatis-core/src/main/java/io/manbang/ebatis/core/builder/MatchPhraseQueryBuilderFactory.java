@@ -5,6 +5,7 @@ import io.manbang.ebatis.core.meta.ConditionMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.ZeroTermsQueryOption;
 
 /**
  * @author 章多亮
@@ -18,9 +19,12 @@ class MatchPhraseQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchPh
 
     @Override
     protected void setAnnotationMeta(MatchPhraseQueryBuilder builder, MatchPhrase matchPhrase) {
-        builder.zeroTermsQuery(matchPhrase.zeroTermsQuery())
-                .slop(matchPhrase.slop())
+        builder.slop(matchPhrase.slop())
                 .analyzer(StringUtils.trimToNull(matchPhrase.analyzer()));
+
+        if (!matchPhrase.zeroTermsQuery().isEmpty()) {
+            builder.zeroTermsQuery(ZeroTermsQueryOption.valueOf(matchPhrase.zeroTermsQuery().toUpperCase()));
+        }
     }
 
     @Override

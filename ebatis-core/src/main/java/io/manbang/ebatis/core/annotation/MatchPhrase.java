@@ -1,6 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.index.search.MatchQuery;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -19,7 +18,8 @@ public @interface MatchPhrase {
 
     String analyzer() default "";
 
-    int slop() default MatchQuery.DEFAULT_PHRASE_SLOP;
+    int slop() default 0;
 
-    MatchQuery.ZeroTermsQuery zeroTermsQuery() default MatchQuery.ZeroTermsQuery.NONE;
+    String zeroTermsQuery() default "";
+
 }

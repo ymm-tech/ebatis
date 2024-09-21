@@ -12,7 +12,7 @@ import io.manbang.ebatis.core.meta.MapperMethod;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
-import org.elasticsearch.common.collect.Tuple;
+import org.elasticsearch.core.Tuple;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -31,7 +31,7 @@ class MapperProxy implements InvocationHandler {
     private final MapperInterface mapperInterface;
     private final String clusterRouterName;
     private final LazyInitializer<ClusterRouter> clusterRouter;
-    private final Map<? extends Class<?>, Object> mapperInstances;
+    private final Map<Class<?>, Object> mapperInstances;
 
     MapperProxy(Class<?> mapperType, String name) {
         this.mapperInterface = MapperInterface.of(mapperType);

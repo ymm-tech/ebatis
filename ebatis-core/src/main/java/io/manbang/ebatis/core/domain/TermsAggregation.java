@@ -2,6 +2,7 @@ package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.annotation.Order;
 import io.manbang.ebatis.core.provider.BuildProvider;
+import lombok.Getter;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -16,6 +17,7 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2020/7/6 16:46
  */
+@Getter
 public class TermsAggregation implements SubAggregation<TermsAggregation>, BuildProvider {
     /**
      * 聚合名称
@@ -35,7 +37,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
     /**
      * 桶聚合顺序
      */
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     /**
      * 返回多少桶聚合结果
@@ -45,7 +47,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
     /**
      * 子聚合
      */
-    private List<Aggregation> subAggregations = new ArrayList<>();
+    private final List<Aggregation> subAggregations = new ArrayList<>();
 
     private Map<String, Object> metaData;
 
@@ -61,17 +63,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
         this.name = name;
     }
 
-    public Script getScript() {
-        return script;
-    }
-
     public TermsAggregation script(Script script) {
         this.script = script;
         return this;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public TermsAggregation name(String name) {
@@ -79,21 +73,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
         return this;
     }
 
-    public String getFieldName() {
-        return fieldName;
-    }
-
     public TermsAggregation fieldName(String fieldName) {
         this.fieldName = fieldName;
         return this;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public TermsAggregation size(int size) {
@@ -101,21 +83,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
         return this;
     }
 
-    public List<Aggregation> getSubAggregations() {
-        return subAggregations;
-    }
-
-    public int getShardSize() {
-        return shardSize;
-    }
-
     public TermsAggregation shardSize(int shardSize) {
         this.shardSize = shardSize;
         return this;
-    }
-
-    public boolean isShowTermDocCountError() {
-        return showTermDocCountError;
     }
 
     public TermsAggregation showTermDocCountError(boolean showTermDocCountError) {
@@ -123,17 +93,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
         return this;
     }
 
-    public long getMinDocCount() {
-        return minDocCount;
-    }
-
     public TermsAggregation minDocCount(long minDocCount) {
         this.minDocCount = minDocCount;
         return this;
-    }
-
-    public long getShardMinDocCount() {
-        return shardMinDocCount;
     }
 
     public TermsAggregation shardMinDocCount(long shardMinDocCount) {
@@ -150,10 +112,6 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
     public TermsAggregation subAgg(Aggregation... aggs) {
         Collections.addAll(subAggregations, aggs);
         return this;
-    }
-
-    public Map<String, Object> getMetaData() {
-        return metaData;
     }
 
     public TermsAggregation metaData(Map<String, Object> metaData) {
@@ -193,7 +151,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation>, Build
         }
 
         if (Objects.nonNull(metaData)) {
-            agg.setMetaData(metaData);
+            agg.setMetadata(metaData);
         }
         return (T) agg;
     }

@@ -6,6 +6,8 @@ package io.manbang.ebatis.core.exception;
  */
 public class InstanceException extends EbatisException {
 
+    private static final long serialVersionUID = 6754131368747355793L;
+
     public InstanceException(Exception cause) {
         super(cause);
     }
