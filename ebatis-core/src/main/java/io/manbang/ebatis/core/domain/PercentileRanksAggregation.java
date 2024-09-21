@@ -1,6 +1,7 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.provider.BuildProvider;
+import lombok.Getter;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.metrics.PercentileRanksAggregationBuilder;
@@ -28,6 +29,7 @@ public class PercentileRanksAggregation implements SubAggregation<PercentileRank
     /**
      * 聚合字段名称
      */
+    @Getter
     private String fieldName;
     private double compression = 100.0;
     private boolean keyed = true;
@@ -43,10 +45,6 @@ public class PercentileRanksAggregation implements SubAggregation<PercentileRank
         }
         this.values = values;
         this.name = name;
-    }
-
-    public String getFieldName() {
-        return fieldName;
     }
 
     public PercentileRanksAggregation fieldName(String fieldName) {

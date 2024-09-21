@@ -15,4 +15,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Wildcard {
     String rewrite() default "";
+
+    boolean caseInsensitive() default false;
 }

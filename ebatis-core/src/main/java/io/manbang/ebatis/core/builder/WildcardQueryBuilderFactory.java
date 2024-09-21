@@ -15,11 +15,12 @@ class WildcardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQu
 
     @Override
     protected void setAnnotationMeta(WildcardQueryBuilder builder, Wildcard wildcard) {
-        builder.rewrite(StringUtils.trimToNull(wildcard.rewrite()));
+        builder.rewrite(StringUtils.trimToNull(wildcard.rewrite()))
+                .caseInsensitive(wildcard.caseInsensitive());
     }
 
     @Override
     protected WildcardQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        return QueryBuilders.wildcardQuery(meta.getName(), String.valueOf(condition));
+        return QueryBuilders.wildcardQuery(meta.getName(), "*" + condition + "*");
     }
 }
