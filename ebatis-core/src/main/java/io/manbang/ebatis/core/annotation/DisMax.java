@@ -14,4 +14,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface DisMax {
+    float boost() default 1.0f;
+
+    float tieBreaker() default 0.0f;
 }

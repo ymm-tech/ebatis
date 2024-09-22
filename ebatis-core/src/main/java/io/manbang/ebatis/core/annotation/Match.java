@@ -1,6 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.apache.lucene.search.FuzzyQuery;
 import org.elasticsearch.index.query.Operator;
 
 import java.lang.annotation.Documented;
@@ -16,11 +15,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Match {
-    int prefixLength() default FuzzyQuery.defaultPrefixLength;
+    int prefixLength() default 0;
 
-    int maxExpansions() default FuzzyQuery.defaultMaxExpansions;
+    int maxExpansions() default 50;
 
-    boolean fuzzyTranspositions() default FuzzyQuery.defaultTranspositions;
+    boolean fuzzyTranspositions() default true;
 
     String minimumShouldMatch() default "";
 

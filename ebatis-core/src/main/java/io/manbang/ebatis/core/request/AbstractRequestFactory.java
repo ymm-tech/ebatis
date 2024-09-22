@@ -2,12 +2,9 @@ package io.manbang.ebatis.core.request;
 
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.meta.MethodMeta;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.ActionRequest;
 
 import java.lang.annotation.Annotation;
-import java.util.function.Consumer;
 
 /**
  * @author 章多亮
@@ -30,19 +27,6 @@ public abstract class AbstractRequestFactory<A extends Annotation, R extends Act
         }
         return request;
     }
-
-    protected void setTypeIfNecessary(MethodMeta meta, Object[] args, Consumer<String> consumer) {
-        if (StringUtils.isNotBlank(meta.getType(meta, args))) {
-            consumer.accept(meta.getType(meta, args));
-        }
-    }
-
-    protected void setTypesIfNecessary(MethodMeta meta, Object[] args, Consumer<String[]> consumer) {
-        if (ArrayUtils.isNotEmpty(meta.getTypes(meta, args))) {
-            consumer.accept(meta.getTypes(meta, args));
-        }
-    }
-
 
     /**
      * 设置可选信息，通过注解传递过来

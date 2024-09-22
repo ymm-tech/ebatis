@@ -18,7 +18,8 @@ class FuzzyQueryBuilderFactory extends AbstractQueryBuilderFactory<FuzzyQueryBui
 
     @Override
     protected void setAnnotationMeta(FuzzyQueryBuilder builder, Fuzzy fuzzy) {
-        builder.fuzziness(Fuzziness.build(fuzzy.fuzziness()))
+        builder.boost(fuzzy.boost())
+                .fuzziness(Fuzziness.build(fuzzy.fuzziness()))
                 .maxExpansions(fuzzy.maxExpansions())
                 .prefixLength(fuzzy.prefixLength());
     }

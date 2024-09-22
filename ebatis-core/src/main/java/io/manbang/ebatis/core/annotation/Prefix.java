@@ -19,4 +19,6 @@ public @interface Prefix {
     float boost() default 1.0f;
 
     String rewrite() default "";
+
+    boolean caseInsensitive() default false;
 }

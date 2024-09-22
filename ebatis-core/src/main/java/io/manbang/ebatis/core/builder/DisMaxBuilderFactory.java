@@ -5,7 +5,6 @@ import io.manbang.ebatis.core.exception.ConditionNotSupportException;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import io.manbang.ebatis.core.provider.DisMaxProvider;
 import org.elasticsearch.index.query.DisMaxQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import java.util.Arrays;
@@ -15,11 +14,17 @@ import java.util.Optional;
  * @author weilong.hu
  * @since 2021/5/24 9:53
  */
-class DisMaxBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, DisMax> {
+class DisMaxBuilderFactory extends AbstractQueryBuilderFactory<DisMaxQueryBuilder, DisMax> {
     static final DisMaxBuilderFactory INSTANCE = new DisMaxBuilderFactory();
 
     @Override
-    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
+    protected void setAnnotationMeta(DisMaxQueryBuilder builder, DisMax disMax) {
+        builder.boost(disMax.boost())
+                .tieBreaker(disMax.tieBreaker());
+    }
+
+    @Override
+    protected DisMaxQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         if (!(condition instanceof DisMaxProvider)) {
             throw new ConditionNotSupportException("条件必须实现: DisMaxProvider");
         }

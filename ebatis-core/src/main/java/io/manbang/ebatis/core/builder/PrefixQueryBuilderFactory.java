@@ -9,11 +9,12 @@ class PrefixQueryBuilderFactory extends AbstractQueryBuilderFactory<PrefixQueryB
     static final PrefixQueryBuilderFactory INSTANCE = new PrefixQueryBuilderFactory();
 
     @Override
-    protected void setAnnotationMeta(PrefixQueryBuilder builder, Prefix annotation) {
-        builder.boost(annotation.boost());
+    protected void setAnnotationMeta(PrefixQueryBuilder builder, Prefix prefix) {
+        builder.boost(prefix.boost())
+                .caseInsensitive(prefix.caseInsensitive());
 
-        if (!annotation.rewrite().isEmpty()) {
-            builder.rewrite(annotation.rewrite());
+        if (!prefix.rewrite().isEmpty()) {
+            builder.rewrite(prefix.rewrite());
         }
     }
 

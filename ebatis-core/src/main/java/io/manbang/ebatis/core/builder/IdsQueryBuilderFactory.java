@@ -19,26 +19,28 @@ class IdsQueryBuilderFactory extends AbstractQueryBuilderFactory<IdsQueryBuilder
     }
 
     @Override
+    protected void setAnnotationMeta(IdsQueryBuilder builder, Ids annotation) {
+        builder.boost(annotation.boost());
+    }
+
+    @Override
     protected IdsQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         IdsQueryBuilder builder = QueryBuilders.idsQuery();
 
         if (meta.isBasicArrayOrCollection()) {
             if (meta.isArray()) {
-                String[] ids = Stream.of((Object[]) condition)
+                Stream.of((Object[]) condition)
                         .map(String::valueOf)
-                        .toArray(String[]::new);
-                builder.addIds(ids);
+                        .forEach(builder::addIds);
             } else if (meta.isCollection()) {
-                String[] ids = ((Collection<?>) condition).stream()
+                ((Collection<?>) condition).stream()
                         .map(String::valueOf)
-                        .toArray(String[]::new);
-
-                builder.addIds(ids);
+                        .forEach(builder::addIds);
             }
         } else if (meta.isBasic()) {
             builder.addIds(String.valueOf(condition));
         } else {
-            throw new IllegalArgumentException("Ids查询，类型不支持：" + meta);
+            throw new IllegalArgumentException("Ids查询，类型不支持，只支持数组、集合或者基本类型：" + meta);
         }
 
         return builder;

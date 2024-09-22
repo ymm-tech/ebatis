@@ -7,6 +7,7 @@ import io.manbang.ebatis.core.meta.FieldMeta;
 import io.manbang.ebatis.core.meta.NestNameHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import java.lang.annotation.Annotation;
@@ -18,7 +19,7 @@ import java.util.Map;
  * @author duoliang.zhang
  */
 @Slf4j
-class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuilder, Bool> {
+class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, Bool> {
     static final BoolQueryBuilderFactory INSTANCE = new BoolQueryBuilderFactory();
 
     private BoolQueryBuilderFactory() {
@@ -29,7 +30,7 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<BoolQueryBuild
     }
 
     @Override
-    protected BoolQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+    protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
         BoolQueryBuilder builder = QueryBuilders.boolQuery();
 
         if (meta != null && meta.isNested()) {

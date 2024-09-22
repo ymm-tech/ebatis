@@ -15,6 +15,11 @@ class BoostingQueryBuilderFactory extends AbstractQueryBuilderFactory<BoostingQu
     }
 
     @Override
+    protected void setAnnotationMeta(BoostingQueryBuilder builder, Boosting boosting) {
+        builder.boost(boosting.boost());
+    }
+
+    @Override
     protected BoostingQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         if (!(condition instanceof BoostingProvider)) {
             throw new ConditionNotSupportException("条件必须实现: BoostingProvider");

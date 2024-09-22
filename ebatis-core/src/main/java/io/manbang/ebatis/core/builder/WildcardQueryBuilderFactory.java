@@ -15,7 +15,8 @@ class WildcardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQu
 
     @Override
     protected void setAnnotationMeta(WildcardQueryBuilder builder, Wildcard wildcard) {
-        builder.rewrite(StringUtils.trimToNull(wildcard.rewrite()))
+        builder.boost(wildcard.boost())
+                .rewrite(StringUtils.trimToNull(wildcard.rewrite()))
                 .caseInsensitive(wildcard.caseInsensitive());
     }
 

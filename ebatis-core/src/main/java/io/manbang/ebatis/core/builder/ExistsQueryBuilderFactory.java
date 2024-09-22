@@ -17,10 +17,15 @@ class ExistsQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder
     }
 
     @Override
+    protected void setAnnotationMeta(QueryBuilder builder, Exists exists) {
+        builder.boost(exists.boost());
+    }
+
+    @Override
     protected QueryBuilder doCreate(ConditionMeta meta, Object condition) {
         Boolean bool = (Boolean) condition;
         ExistsQueryBuilder existsQuery = QueryBuilders.existsQuery(meta.getName());
-        if (bool) {
+        if (Boolean.TRUE == bool) {
             return existsQuery;
         } else {
             return QueryBuilders.boolQuery().mustNot(existsQuery);

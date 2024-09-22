@@ -17,4 +17,6 @@ public @interface Wildcard {
     String rewrite() default "";
 
     boolean caseInsensitive() default false;
+
+    float boost() default 1.0f;
 }

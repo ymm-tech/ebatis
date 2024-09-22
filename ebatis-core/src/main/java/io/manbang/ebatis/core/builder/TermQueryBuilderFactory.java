@@ -16,6 +16,12 @@ class TermQueryBuilderFactory extends AbstractQueryBuilderFactory<TermQueryBuild
     }
 
     @Override
+    protected void setAnnotationMeta(TermQueryBuilder builder, Term term) {
+        builder.boost(term.boost())
+                .caseInsensitive(term.caseInsensitive());
+    }
+
+    @Override
     protected TermQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         return QueryBuilders.termQuery(meta.getName(), condition);
     }

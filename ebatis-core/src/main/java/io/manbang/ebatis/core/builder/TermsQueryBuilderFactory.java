@@ -18,6 +18,11 @@ class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBui
     }
 
     @Override
+    protected void setAnnotationMeta(TermsQueryBuilder builder, Terms terms) {
+        builder.boost(terms.boost());
+    }
+
+    @Override
     protected TermsQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         String name = meta.getName();
         if (meta.isArray()) {
