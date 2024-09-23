@@ -16,5 +16,5 @@ import java.lang.annotation.Target;
 public @interface Term {
     float boost() default 1.0f;
 
-    boolean caseInsensitive() default false;
+    boolean caseInsensitive() default true;
 }

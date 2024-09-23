@@ -1,6 +1,10 @@
 package io.manbang.ebatis.core.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author duoliang.zhang
@@ -15,63 +19,65 @@ public @interface Filter {
 
     QueryType queryType() default QueryType.AUTO;
 
-    Bool[] bool() default {};
+    Bool bool() default @Bool;
 
-    Boosting[] boosting() default {};
+    Boosting boosting() default @Boosting;
 
-    DisMax[] disMax() default {};
+    DisMax disMax() default @DisMax;
 
-    Fuzzy[] fuzzy() default {};
+    Exists exists() default @Exists;
 
-    FunctionScore[] functionScore() default {};
+    Fuzzy fuzzy() default @Fuzzy;
 
-    GeoBoundingBox[] geoBoundingBox() default {};
+    FunctionScore functionScore() default @FunctionScore;
 
-    GeoDistance[] geoDistance() default {};
+    GeoBoundingBox geoBoundingBox() default @GeoBoundingBox;
 
-    GeoPolygon[] geoPolygon() default {};
+    GeoDistance geoDistance() default @GeoDistance;
 
-    GeoShape[] geoShape() default {};
+    GeoPolygon geoPolygon() default @GeoPolygon;
 
-    Ids[] ids() default {};
+    GeoShape geoShape() default @GeoShape;
 
-    Match[] match() default {};
+    Ids ids() default @Ids;
 
-    MatchAll[] matchAll() default {};
+    Match match() default @Match;
 
-    MatchPhrase[] matchPhrase() default {};
+    MatchAll matchAll() default @MatchAll;
 
-    MatchPhrasePrefix[] matchPhrasePrefix() default {};
+    MatchPhrase matchPhrase() default @MatchPhrase;
 
-    MatchBoolPrefix[] matchBoolPrefix() default {};
+    MatchPhrasePrefix matchPhrasePrefix() default @MatchPhrasePrefix;
 
-    Prefix[] prefix() default {};
+    MatchBoolPrefix matchBoolPrefix() default @MatchBoolPrefix;
 
-    MultiMatch[] multiMatch() default {};
+    Prefix prefix() default @Prefix;
 
-    Nested[] nest() default {};
+    MultiMatch multiMatch() default @MultiMatch;
 
-    Range[] range() default {};
+    Nested nest() default @Nested(path = "");
 
-    Script[] script() default {};
+    Range range() default @Range;
 
-    SpanContaining[] spanContaining() default {};
+    Script script() default @Script;
 
-    SpanFirst[] spanFirst() default {};
+    SpanContaining spanContaining() default @SpanContaining;
 
-    SpanNear[] spanNear() default {};
+    SpanFirst spanFirst() default @SpanFirst;
 
-    SpanNot[] spanNot() default {};
+    SpanNear spanNear() default @SpanNear;
 
-    SpanOr[] spanOr() default {};
+    SpanNot spanNot() default @SpanNot;
 
-    SpanTerm[] spanTerm() default {};
+    SpanOr spanOr() default @SpanOr;
 
-    SpanWithin[] spanWithin() default {};
+    SpanTerm spanTerm() default @SpanTerm;
 
-    Term[] term() default {};
+    SpanWithin spanWithin() default @SpanWithin;
 
-    Terms[] terms() default {};
+    Term term() default @Term;
 
-    Wildcard[] wildcard() default {};
+    Terms terms() default @Terms;
+
+    Wildcard wildcard() default @Wildcard;
 }

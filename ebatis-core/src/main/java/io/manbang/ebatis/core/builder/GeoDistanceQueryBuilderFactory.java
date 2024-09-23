@@ -19,9 +19,10 @@ class GeoDistanceQueryBuilderFactory extends AbstractQueryBuilderFactory<GeoDist
     }
 
     @Override
-    protected void setAnnotationMeta(GeoDistanceQueryBuilder builder, GeoDistance annotation) {
-        builder.setValidationMethod(annotation.validationMethod());
-        builder.ignoreUnmapped(annotation.ignoreUnmapped());
+    protected void setAnnotationMeta(GeoDistanceQueryBuilder builder, GeoDistance geoDistance) {
+        builder.boost(geoDistance.boost())
+                .ignoreUnmapped(geoDistance.ignoreUnmapped())
+                .setValidationMethod(geoDistance.validationMethod());
     }
 
     @Override

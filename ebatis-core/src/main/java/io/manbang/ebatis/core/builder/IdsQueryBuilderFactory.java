@@ -19,8 +19,8 @@ class IdsQueryBuilderFactory extends AbstractQueryBuilderFactory<IdsQueryBuilder
     }
 
     @Override
-    protected void setAnnotationMeta(IdsQueryBuilder builder, Ids annotation) {
-        builder.boost(annotation.boost());
+    protected void setAnnotationMeta(IdsQueryBuilder builder, Ids ids) {
+        builder.boost(ids.boost());
     }
 
     @Override

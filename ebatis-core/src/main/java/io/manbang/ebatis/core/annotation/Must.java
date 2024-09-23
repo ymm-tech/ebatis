@@ -19,65 +19,65 @@ public @interface Must {
 
     QueryType queryType() default QueryType.AUTO;
 
-    Bool[] bool() default {};
+    Bool bool() default @Bool;
 
-    Boosting[] boosting() default {};
+    Boosting boosting() default @Boosting;
 
-    DisMax[] disMax() default {};
+    DisMax disMax() default @DisMax;
 
-    Exists[] exists() default {};
+    Exists exists() default @Exists;
 
-    Fuzzy[] fuzzy() default {};
+    Fuzzy fuzzy() default @Fuzzy;
 
-    FunctionScore[] functionScore() default {};
+    FunctionScore functionScore() default @FunctionScore;
 
-    GeoBoundingBox[] geoBoundingBox() default {};
+    GeoBoundingBox geoBoundingBox() default @GeoBoundingBox;
 
-    GeoDistance[] geoDistance() default {};
+    GeoDistance geoDistance() default @GeoDistance;
 
-    GeoPolygon[] geoPolygon() default {};
+    GeoPolygon geoPolygon() default @GeoPolygon;
 
-    GeoShape[] geoShape() default {};
+    GeoShape geoShape() default @GeoShape;
 
-    Ids[] ids() default {};
+    Ids ids() default @Ids;
 
-    Match[] match() default {};
+    Match match() default @Match;
 
-    MatchAll[] matchAll() default {};
+    MatchAll matchAll() default @MatchAll;
 
-    MatchPhrase[] matchPhrase() default {};
+    MatchPhrase matchPhrase() default @MatchPhrase;
 
-    MatchPhrasePrefix[] matchPhrasePrefix() default {};
+    MatchPhrasePrefix matchPhrasePrefix() default @MatchPhrasePrefix;
 
-    MatchBoolPrefix[] matchBoolPrefix() default {};
+    MatchBoolPrefix matchBoolPrefix() default @MatchBoolPrefix;
 
-    Prefix[] prefix() default {};
+    Prefix prefix() default @Prefix;
 
-    MultiMatch[] multiMatch() default {};
+    MultiMatch multiMatch() default @MultiMatch;
 
-    Nested[] nest() default {};
+    Nested nest() default @Nested(path = "");
 
-    Range[] range() default {};
+    Range range() default @Range;
 
-    Script[] script() default {};
+    Script script() default @Script;
 
-    SpanContaining[] spanContaining() default {};
+    SpanContaining spanContaining() default @SpanContaining;
 
-    SpanFirst[] spanFirst() default {};
+    SpanFirst spanFirst() default @SpanFirst;
 
-    SpanNear[] spanNear() default {};
+    SpanNear spanNear() default @SpanNear;
 
-    SpanNot[] spanNot() default {};
+    SpanNot spanNot() default @SpanNot;
 
-    SpanOr[] spanOr() default {};
+    SpanOr spanOr() default @SpanOr;
 
-    SpanTerm[] spanTerm() default {};
+    SpanTerm spanTerm() default @SpanTerm;
 
-    SpanWithin[] spanWithin() default {};
+    SpanWithin spanWithin() default @SpanWithin;
 
-    Term[] term() default {};
+    Term term() default @Term;
 
-    Terms[] terms() default {};
+    Terms terms() default @Terms;
 
-    Wildcard[] wildcard() default {};
+    Wildcard wildcard() default @Wildcard;
 }

@@ -13,26 +13,27 @@ class MatchBoolPrefixQueryBuilderFactory extends AbstractQueryBuilderFactory<Mat
     }
 
     @Override
-    protected void setAnnotationMeta(MatchBoolPrefixQueryBuilder builder, MatchBoolPrefix annotation) {
-        builder.operator(Operator.fromString(annotation.operator()))
-                .fuzzyTranspositions(annotation.fuzzyTranspositions())
-                .prefixLength(annotation.prefixLength())
-                .maxExpansions(annotation.maxExpansions());
+    protected void setAnnotationMeta(MatchBoolPrefixQueryBuilder builder, MatchBoolPrefix matchBoolPrefix) {
+        builder.boost(matchBoolPrefix.boost())
+                .operator(Operator.fromString(matchBoolPrefix.operator()))
+                .fuzzyTranspositions(matchBoolPrefix.fuzzyTranspositions())
+                .prefixLength(matchBoolPrefix.prefixLength())
+                .maxExpansions(matchBoolPrefix.maxExpansions());
 
-        if (!annotation.fuzziness().isEmpty()) {
-            builder.fuzziness(annotation.fuzziness());
+        if (!matchBoolPrefix.fuzziness().isEmpty()) {
+            builder.fuzziness(matchBoolPrefix.fuzziness());
         }
 
-        if (!annotation.minimumShouldMatch().isEmpty()) {
-            builder.minimumShouldMatch(annotation.minimumShouldMatch());
+        if (!matchBoolPrefix.minimumShouldMatch().isEmpty()) {
+            builder.minimumShouldMatch(matchBoolPrefix.minimumShouldMatch());
         }
 
-        if (!annotation.fuzzyRewrite().isEmpty()) {
-            builder.fuzzyRewrite(annotation.fuzzyRewrite());
+        if (!matchBoolPrefix.fuzzyRewrite().isEmpty()) {
+            builder.fuzzyRewrite(matchBoolPrefix.fuzzyRewrite());
         }
 
-        if (!annotation.analyzer().isEmpty()) {
-            builder.analyzer(annotation.analyzer());
+        if (!matchBoolPrefix.analyzer().isEmpty()) {
+            builder.analyzer(matchBoolPrefix.analyzer());
         }
 
     }

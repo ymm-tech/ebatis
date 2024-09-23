@@ -22,4 +22,5 @@ public @interface MatchPhrase {
 
     String zeroTermsQuery() default "";
 
+    float boost() default 1.0f;
 }

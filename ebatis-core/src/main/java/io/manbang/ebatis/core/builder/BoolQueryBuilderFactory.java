@@ -6,6 +6,7 @@ import io.manbang.ebatis.core.meta.ConditionMeta;
 import io.manbang.ebatis.core.meta.FieldMeta;
 import io.manbang.ebatis.core.meta.NestNameHolder;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -38,16 +39,33 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
         }
 
         try {
-            getQueryClauses(meta, condition)
-                    .forEach((key, fieldMetas) -> QueryClauseType.valueOf(key)
-                            .addQueryBuilder(builder, fieldMetas, condition));
+            val clauses = getQueryClauses(meta, condition);
+            for (val clause : clauses.entrySet()) {
+                val clauseType = QueryClauseType.valueOf(clause.getKey());
+                clauseType.addQueryBuilder(builder, clause.getValue(), condition);
+            }
+
+            if (builder.hasClauses()) {
+                val mustSize = builder.must().size();
+                val mustNotSize = builder.mustNot().size();
+                val shouldSize = builder.should().size();
+                val filterSize = builder.filter().size();
+
+                if (mustNotSize > 0 || shouldSize > 0 || filterSize > 0) {
+                    return builder;
+                }
+
+                if (mustSize == 1) {
+                    return builder.must().get(0);
+                }
+            }
+
+            return null;
         } finally {
             if (meta != null && meta.isNested()) {
                 NestNameHolder.get().pop();
             }
         }
-
-        return builder;
     }
 }
 

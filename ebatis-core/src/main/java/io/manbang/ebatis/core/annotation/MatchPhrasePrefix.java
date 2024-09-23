@@ -19,4 +19,6 @@ public @interface MatchPhrasePrefix {
     int maxExpansions() default 50;
 
     String analyzer() default "";
+
+    float boost() default 1.0f;
 }

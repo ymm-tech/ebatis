@@ -18,7 +18,8 @@ class MatchPhrasePrefixQueryBuilderFactory extends AbstractQueryBuilderFactory<M
 
     @Override
     protected void setAnnotationMeta(MatchPhrasePrefixQueryBuilder builder, MatchPhrasePrefix matchPhrasePrefix) {
-        builder.maxExpansions(matchPhrasePrefix.maxExpansions())
+        builder.boost(matchPhrasePrefix.boost())
+                .maxExpansions(matchPhrasePrefix.maxExpansions())
                 .slop(matchPhrasePrefix.slop())
                 .analyzer(StringUtils.trimToNull(matchPhrasePrefix.analyzer()));
     }

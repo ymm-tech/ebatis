@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration scan="true" scanPeriod="10 seconds">
+    <!-- 定义日志输出的格式 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%highlight(%-5level) %d{HH:mm:ss.SSS} [%thread] %cyan(%logger{36}).%M\(%F:%L\) %-5n- %blue(%msg%n)</pattern>
+        </encoder>
+    </appender>
+    <!-- 定义根日志记录器 -->
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

@@ -19,7 +19,8 @@ class MatchPhraseQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchPh
 
     @Override
     protected void setAnnotationMeta(MatchPhraseQueryBuilder builder, MatchPhrase matchPhrase) {
-        builder.slop(matchPhrase.slop())
+        builder.boost(matchPhrase.boost())
+                .slop(matchPhrase.slop())
                 .analyzer(StringUtils.trimToNull(matchPhrase.analyzer()));
 
         if (!matchPhrase.zeroTermsQuery().isEmpty()) {

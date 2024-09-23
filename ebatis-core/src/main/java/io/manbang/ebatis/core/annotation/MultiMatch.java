@@ -49,4 +49,6 @@ public @interface MultiMatch {
     String zeroTermsQuery() default "NONE";
 
     String type() default "BEST_FIELDS";
+
+    float boost() default 1.0f;
 }

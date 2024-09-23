@@ -5,13 +5,20 @@ import io.manbang.ebatis.core.annotation.Must;
 import io.manbang.ebatis.core.annotation.MustNot;
 import io.manbang.ebatis.core.annotation.Should;
 import io.manbang.ebatis.core.meta.FieldMeta;
+import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,6 +27,7 @@ import java.util.stream.Stream;
  *
  * @author 章多亮
  */
+@Getter
 public enum QueryClauseType {
     /**
      * 必须满足条件
@@ -143,11 +151,11 @@ public enum QueryClauseType {
                 .collect(Collectors.toList());
     }
 
-    public Class<? extends Annotation> getQueryClauseClass() {
-        return queryClauseClass;
-    }
-
     public abstract void addQueryBuilder(BoolQueryBuilder builder, List<FieldMeta> fields, Object instance);
+
+    public boolean isMustNot() {
+        return MUST_NOT == this;
+    }
 
     @FunctionalInterface
     private interface QueryClauseCombiner {

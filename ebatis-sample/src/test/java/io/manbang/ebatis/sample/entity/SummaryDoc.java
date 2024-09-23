@@ -13,7 +13,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Summary implements VersionProvider, IdProvider {
+public class SummaryDoc implements VersionProvider, IdProvider {
     @Ignore
     private long version;
     private Long id;
@@ -31,7 +31,13 @@ public class Summary implements VersionProvider, IdProvider {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updateTime;
+    private Model model;
 
+    @Data
+    public static class Model {
+        private Long id;
+        private String name;
+    }
     @Override
     public long version() {
         return version;

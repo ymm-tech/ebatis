@@ -19,7 +19,8 @@ class MatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchQueryBui
 
     @Override
     protected void setAnnotationMeta(MatchQueryBuilder builder, Match match) {
-        builder.autoGenerateSynonymsPhraseQuery(match.autoGenerateSynonymsPhraseQuery())
+        builder.boost(match.boost())
+                .autoGenerateSynonymsPhraseQuery(match.autoGenerateSynonymsPhraseQuery())
                 .operator(match.operator())
                 .fuzzyTranspositions(match.fuzzyTranspositions())
                 .lenient(match.lenient())

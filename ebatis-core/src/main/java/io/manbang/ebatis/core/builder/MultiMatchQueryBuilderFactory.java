@@ -23,7 +23,8 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
 
     @Override
     protected void setAnnotationMeta(MultiMatchQueryBuilder builder, MultiMatch multiMatch) {
-        builder.autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
+        builder.boost(multiMatch.boost())
+                .autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
                 .fuzziness(StringUtils.trimToNull(multiMatch.fuzziness()))
                 .fuzzyRewrite(StringUtils.trimToNull(multiMatch.fuzzyRewrite()))
                 .fuzzyTranspositions(multiMatch.fuzzyTranspositions())

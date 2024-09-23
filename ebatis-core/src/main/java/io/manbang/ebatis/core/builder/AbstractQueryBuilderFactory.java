@@ -1,7 +1,6 @@
 package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.QueryType;
-import io.manbang.ebatis.core.common.AnnotationUtils;
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -33,18 +32,10 @@ abstract class AbstractQueryBuilderFactory<B extends QueryBuilder, A extends Ann
         B builder = doCreate(meta, condition);
 
         if (meta != null) {
-            setBoost(meta, builder);
             meta.findAttributeAnnotation(attributeAnnotationClass).ifPresent(attr -> setAnnotationMeta(builder, attr));
         }
 
         return builder;
-    }
-
-    private void setBoost(ConditionMeta meta, B builder) {
-        meta.getQueryClauseAnnotation()
-                .flatMap(annotation -> AnnotationUtils.findAttribute(annotation, "boost"))
-                .map(Float.class::cast)
-                .ifPresent(builder::boost);
     }
 
     /**

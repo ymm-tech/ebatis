@@ -20,5 +20,5 @@ public @interface Prefix {
 
     String rewrite() default "";
 
-    boolean caseInsensitive() default false;
+    boolean caseInsensitive() default true;
 }

@@ -38,4 +38,6 @@ public @interface Match {
     String analyzer() default "";
 
     String fuzziness() default "AUTO";
+
+    float boost() default 1.0f;
 }
