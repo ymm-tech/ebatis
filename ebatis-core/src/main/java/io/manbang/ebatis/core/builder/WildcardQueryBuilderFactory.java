@@ -2,6 +2,7 @@ package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.Wildcard;
 import io.manbang.ebatis.core.meta.ConditionMeta;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
@@ -22,6 +23,8 @@ class WildcardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQu
 
     @Override
     protected WildcardQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        return QueryBuilders.wildcardQuery(meta.getName(), "*" + condition + "*");
+        val wildcard = meta.getAttributeAnnotation(Wildcard.class);
+        val query = wildcard.matchType().wrap(condition);
+        return QueryBuilders.wildcardQuery(meta.getName(), query);
     }
 }

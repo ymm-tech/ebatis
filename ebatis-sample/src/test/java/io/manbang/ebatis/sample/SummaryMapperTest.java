@@ -12,6 +12,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 public class SummaryMapperTest {
     private static SummaryMapper summaryMapper;
@@ -46,10 +47,16 @@ public class SummaryMapperTest {
         summary.setScene(Scene.QUOTATION);
         summary.setType(Type.SUM);
         summary.setValue(100L);
-        summary.setVersion(3);
+        summary.setVersion(1);
+
+        val brand = new SummaryDoc.Brand();
+        brand.setId(1L);
+        brand.setName("Galaxy of Sang sum");
+
         val model = new SummaryDoc.Model();
         model.setId(1L);
         model.setName("STM518,EOL-317");
+        model.setBrand(brand);
         summary.setModel(model);
         val now = LocalDateTime.now();
         summary.setCreateTime(now);
@@ -80,6 +87,32 @@ public class SummaryMapperTest {
         val model = new SummaryCondition.ModelCondition();
         model.setName("eol");
         condition.setModel(model);
+
+        summaryMapper.search(condition, Pageable.first(10)).forEach(System.out::println);
+    }
+
+    @Test
+    public void testEnumTermsSearch() {
+        val condition = new SummaryCondition();
+        condition.setTypes(Collections.singletonList(Type.SUM));
+        summaryMapper.search(condition, Pageable.first(10)).forEach(System.out::println);
+    }
+
+    @Test
+    public void testSearchByBrand() {
+        val condition = new SummaryCondition();
+
+        val branch = new SummaryCondition.Branch();
+        branch.setName("Sang sum");
+        val brand = new SummaryCondition.Brand();
+        brand.setId(1L);
+        brand.setName("Galaxy of Sang sum");
+        brand.setBranch(branch);
+
+        val model = new SummaryCondition.ModelCondition();
+        model.setBrand(brand);
+        condition.setModel(model);
+        condition.setName("STM518");
 
         summaryMapper.search(condition, Pageable.first(10)).forEach(System.out::println);
     }

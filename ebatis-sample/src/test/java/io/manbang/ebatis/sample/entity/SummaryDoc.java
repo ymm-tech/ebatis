@@ -37,6 +37,13 @@ public class SummaryDoc implements VersionProvider, IdProvider {
     public static class Model {
         private Long id;
         private String name;
+        private Brand brand;
+    }
+
+    @Data
+    public static class Brand {
+        private Long id;
+        private String name;
     }
     @Override
     public long version() {

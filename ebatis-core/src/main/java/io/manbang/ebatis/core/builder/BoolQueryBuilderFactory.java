@@ -35,7 +35,7 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
         BoolQueryBuilder builder = QueryBuilders.boolQuery();
 
         if (meta != null && meta.isNested()) {
-            NestNameHolder.get().push(meta.getName());
+            NestNameHolder.get().push(meta.getShortName());
         }
 
         try {
@@ -58,9 +58,11 @@ class BoolQueryBuilderFactory extends AbstractQueryBuilderFactory<QueryBuilder, 
                 if (mustSize == 1) {
                     return builder.must().get(0);
                 }
+            } else {
+                return null;
             }
 
-            return null;
+            return builder;
         } finally {
             if (meta != null && meta.isNested()) {
                 NestNameHolder.get().pop();

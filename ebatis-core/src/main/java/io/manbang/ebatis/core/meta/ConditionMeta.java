@@ -80,6 +80,8 @@ public interface ConditionMeta {
      */
     String getName();
 
+    String getShortName();
+
     default boolean isNested() {
         return false;
     }
@@ -96,6 +98,10 @@ public interface ConditionMeta {
      * @return 属性注解
      */
     <A extends Annotation> Optional<A> findAttributeAnnotation(Class<A> annotationClass);
+
+    default <A extends Annotation> A getAttributeAnnotation(Class<A> annotationClass) {
+        return findAttributeAnnotation(annotationClass).orElseThrow(() -> new IllegalArgumentException("Can not find annotation " + annotationClass.getName() + " on " + getType()));
+    }
 
     /**
      * 获取type

@@ -82,6 +82,11 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
     }
 
     @Override
+    public String getShortName() {
+        return name;
+    }
+
+    @Override
     public Class<?> getType() {
         return type;
     }

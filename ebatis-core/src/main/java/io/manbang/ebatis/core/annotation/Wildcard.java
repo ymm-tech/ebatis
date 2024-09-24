@@ -24,4 +24,6 @@ public @interface Wildcard {
     boolean caseInsensitive() default true;
 
     float boost() default 1.0f;
+
+    MatchType matchType() default MatchType.CONTAINS;
 }
