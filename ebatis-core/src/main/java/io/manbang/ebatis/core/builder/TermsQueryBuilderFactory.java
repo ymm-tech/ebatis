@@ -22,9 +22,7 @@ class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBui
 
     @Override
     protected void setAnnotationMeta(TermsQueryBuilder builder, Terms terms) {
-        if (builder != null) {
-            builder.boost(terms.boost());
-        }
+        builder.boost(terms.boost());
     }
 
     @Override
@@ -40,7 +38,7 @@ class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBui
         }
 
         if (terms.isEmpty()) {
-            return null;
+            return QueryBuilders.termsQuery(name, terms);
         }
 
         val componentType = terms.iterator().next().getClass();
