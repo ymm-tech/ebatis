@@ -22,7 +22,9 @@ class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBui
 
     @Override
     protected void setAnnotationMeta(TermsQueryBuilder builder, Terms terms) {
-        builder.boost(terms.boost());
+        if (builder != null) {
+            builder.boost(terms.boost());
+        }
     }
 
     @Override
