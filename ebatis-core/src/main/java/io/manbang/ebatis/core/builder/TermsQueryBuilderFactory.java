@@ -3,12 +3,12 @@ package io.manbang.ebatis.core.builder;
 import io.manbang.ebatis.core.annotation.Terms;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import lombok.val;
-import org.apache.commons.lang3.ClassUtils;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @author 章多亮
@@ -37,16 +37,13 @@ class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBui
             throw new IllegalArgumentException(meta.toString());
         }
 
-        if (terms.isEmpty()) {
-            return QueryBuilders.termsQuery(name, terms);
-        }
+        Object termValue = terms.iterator().next();
+        if (termValue instanceof Enum) {
+            val names = terms.stream()
+                    .map(Enum.class::cast)
+                    .map(Enum::name)
+                    .collect(Collectors.toList());
 
-        val componentType = terms.iterator().next().getClass();
-        if (ClassUtils.isPrimitiveOrWrapper(componentType)
-                || componentType == String.class) {
-            return QueryBuilders.termsQuery(name, terms);
-        } else if (componentType.isEnum()) {
-            val names = terms.stream().map(Object::toString).toArray(String[]::new);
             return QueryBuilders.termsQuery(name, names);
         }
 
