@@ -37,6 +37,10 @@ class TermsQueryBuilderFactory extends AbstractQueryBuilderFactory<TermsQueryBui
             throw new IllegalArgumentException(meta.toString());
         }
 
+        if (terms.isEmpty()) {
+            return null;
+        }
+
         Object termValue = terms.iterator().next();
         if (termValue instanceof Enum) {
             val names = terms.stream()
