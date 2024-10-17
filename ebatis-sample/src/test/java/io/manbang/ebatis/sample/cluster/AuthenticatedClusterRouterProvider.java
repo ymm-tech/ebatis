@@ -10,7 +10,7 @@ import io.manbang.ebatis.core.cluster.Credentials;
 public class AuthenticatedClusterRouterProvider implements ClusterRouterProvider {
     @Override
     public ClusterRouter getClusterRouter(String name) {
-        if ("summary".equals(name)) {
+        if ("chip".equals(name)) {
             Cluster cluster = Cluster.simple("127.0.0.1", 9200, Credentials.basic("elastic", "kingdom"));
             return ClusterRouter.single(cluster);
         }

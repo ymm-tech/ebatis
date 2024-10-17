@@ -10,7 +10,7 @@ import io.manbang.ebatis.sample.entity.SummaryDoc;
 import io.manbang.ebatis.spring.annotation.EasyMapper;
 import org.elasticsearch.index.VersionType;
 
-@EasyMapper(indices = "chip_summary", clusterRouter = "summary")
+@EasyMapper(indices = "chip_summary", clusterRouter = "chip")
 public interface SummaryMapper {
     @Index(versionType = VersionType.EXTERNAL)
     String index(SummaryDoc summary);
