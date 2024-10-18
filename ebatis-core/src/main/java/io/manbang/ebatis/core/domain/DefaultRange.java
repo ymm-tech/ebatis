@@ -6,6 +6,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -16,7 +19,7 @@ import java.util.Objects;
  *
  * @param <T> 扩展数据类型
  */
-class DefaultRange<T extends Comparable<T>> implements Range<T> {
+class DefaultRange<T> implements Range<T> {
     private final T min;
     private final T max;
     private IntervalType leftIntervalType;
@@ -47,6 +50,10 @@ class DefaultRange<T extends Comparable<T>> implements Range<T> {
             return ((Date) value).getTime();
         } else if (value instanceof Calendar) {
             return ((Calendar) value).getTimeInMillis();
+        } else if (value instanceof LocalDateTime) {
+            return ((LocalDateTime) value).toInstant(ZoneOffset.UTC).toEpochMilli();
+        } else if (value instanceof LocalDate) {
+            return ((LocalDate) value).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
         } else {
             return value;
         }

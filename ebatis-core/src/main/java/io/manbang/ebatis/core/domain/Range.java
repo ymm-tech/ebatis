@@ -7,7 +7,7 @@ import org.elasticsearch.index.query.QueryBuilder;
  *
  * @param <T> 可比较的类型
  */
-public interface Range<T extends Comparable<T>> {
+public interface Range<T> {
     /**
      * 创建指定上下界限的范围，默认左右两边均为开区间
      *
@@ -16,7 +16,7 @@ public interface Range<T extends Comparable<T>> {
      * @param <T> 比较类型发型
      * @return 范围
      */
-    static <T extends Comparable<T>> Range<T> of(T min, T max) {
+    static <T> Range<T> of(T min, T max) {
         return new DefaultRange<>(min, max);
     }
 
@@ -27,7 +27,7 @@ public interface Range<T extends Comparable<T>> {
      * @param <T> 比较类型泛型
      * @return 范围
      */
-    static <T extends Comparable<T>> Range<T> lt(T max) {
+    static <T> Range<T> lt(T max) {
         return new DefaultRange<>(null, max).openRight();
     }
 
@@ -38,7 +38,7 @@ public interface Range<T extends Comparable<T>> {
      * @param <T> 比较类型泛型
      * @return 范围
      */
-    static <T extends Comparable<T>> Range<T> le(T max) {
+    static <T> Range<T> le(T max) {
         return new DefaultRange<>(null, max).closeRight();
     }
 
@@ -49,7 +49,7 @@ public interface Range<T extends Comparable<T>> {
      * @param <T> 比较类型泛型
      * @return 范围
      */
-    static <T extends Comparable<T>> Range<T> gt(T min) {
+    static <T> Range<T> gt(T min) {
         return new DefaultRange<>(min, null).openLeft();
     }
 
@@ -60,7 +60,7 @@ public interface Range<T extends Comparable<T>> {
      * @param <T> 比较类型泛型
      * @return 范围
      */
-    static <T extends Comparable<T>> Range<T> ge(T min) {
+    static <T> Range<T> ge(T min) {
         return new DefaultRange<>(min, null).closeLeft();
     }
 
