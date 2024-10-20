@@ -39,20 +39,25 @@ public class RequirementMapperTest {
     @Test
     public void groupByStatus() {
         val condition = new AggGroupByStatusCondition();
-        val manufacturer = ManufacturerCondition.builder()
-                .id(10000L).build();
-        condition.setManufacturer(manufacturer);
+        condition.setManufacturerId(100051L);
 
         val aggregations = requirementMapper.groupByStatus(condition);
 
-        ParsedStringTerms agg = aggregations.get(AggGroupByStatusCondition.AGG_NAME);
-        val buckets = agg.getBuckets();
-        for (Terms.Bucket bucket : buckets) {
+        ParsedStringTerms groupByStatus = aggregations.get(AggGroupByStatusCondition.GROUP_BY_STATUS);
+        val statusBuckets = groupByStatus.getBuckets();
+        for (Terms.Bucket bucket : statusBuckets) {
             val key = bucket.getKeyAsString();
             val count = bucket.getDocCount();
-            log.info("key:{},count:{}", key, count);
+            log.info("StatusBucket: {} = {}", key, count);
         }
 
+        ParsedStringTerms groupByCreateTime = aggregations.get(AggGroupByStatusCondition.GROUP_BY_CREATE_TIME);
+        val timeBuckets = groupByCreateTime.getBuckets();
+        for (Terms.Bucket bucket : timeBuckets) {
+            val key = bucket.getKeyAsString();
+            val count = bucket.getDocCount();
+            log.info("TimeBucket: {} = {}", key, count);
+        }
         Assert.assertNotNull(aggregations);
     }
 

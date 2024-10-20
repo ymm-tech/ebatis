@@ -16,6 +16,6 @@ public interface RequirementMapper {
     @Search
     Page<RequirementDoc> search(RequirementCondition condition, Pageable pageable);
 
-    @Agg
+    @Agg(aggOnly = true)
     Aggregations groupByStatus(AggGroupByStatusCondition condition);
 }
