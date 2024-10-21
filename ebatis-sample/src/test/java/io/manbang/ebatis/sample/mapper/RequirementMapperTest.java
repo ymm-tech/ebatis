@@ -1,6 +1,7 @@
 package io.manbang.ebatis.sample.mapper;
 
 import io.manbang.ebatis.core.domain.Pageable;
+import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.proxy.MapperProxyFactory;
 import io.manbang.ebatis.sample.model.AggGroupByStatusCondition;
 import io.manbang.ebatis.sample.model.ManufacturerCondition;
@@ -14,6 +15,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Slf4j
 public class RequirementMapperTest {
     private static RequirementMapper requirementMapper;
@@ -21,6 +25,19 @@ public class RequirementMapperTest {
     @BeforeClass
     public static void setup() {
         requirementMapper = MapperProxyFactory.getMapperProxy(RequirementMapper.class);
+    }
+
+    @Test
+    public void timeRangeSearch() {
+        val condition = RequirementCondition.builder()
+                .batchNo("x")
+                .createTime(Range.lt(LocalDateTime.now()))
+                .deadline(Range.le(LocalDate.now()))
+                .build();
+        val pageable = Pageable.first(100);
+        val docs = requirementMapper.search(condition, pageable);
+        docs.forEach(doc -> log.info("{}", doc));
+
     }
 
     @Test

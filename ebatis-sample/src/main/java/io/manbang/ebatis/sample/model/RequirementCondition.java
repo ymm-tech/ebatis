@@ -6,7 +6,8 @@ import io.manbang.ebatis.core.domain.Range;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -15,13 +16,16 @@ public class RequirementCondition {
     private Long id;
     @Must(nested = true, queryType = QueryType.BOOL)
     private ModelCondition model;
-    @Must(queryType = QueryType.FUZZY, boost = 2.0f)
+    @Must(queryType = QueryType.WILDCARD, boost = 2.0f)
     private String batchNo;
     private Range<Long> expectedPrice;
     @Must(queryType = QueryType.RANGE)
-    private Range<Date> deadline;
+    private Range<LocalDate> deadline;
+    private Range<LocalDateTime> createTime;
+    private Range<LocalDateTime> updateTime;
     @Must(queryType = QueryType.TERMS)
     private String[] units;
     @Must(nested = true, queryType = QueryType.BOOL)
     private ManufacturerCondition manufacturer;
+
 }
