@@ -30,6 +30,7 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
                 .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(updateByQuery.waitForActiveShards()))
                 .setShouldStoreResult(updateByQuery.shouldStoreResult())
                 .setBatchSize(updateByQuery.batchSize())
+                .setPipeline(StringUtils.trimToNull(updateByQuery.pipeline()))
                 .setConflicts(updateByQuery.conflicts());
 
         SearchRequest searchRequest = request.getSearchRequest();

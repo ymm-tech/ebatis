@@ -1,6 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.index.VersionType;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -78,5 +77,5 @@ public @interface Delete {
      *
      * @return 刷新策略
      */
-    String refreshPolicy() default "false";
+    RefreshPolicy refreshPolicy() default RefreshPolicy.NONE;
 }

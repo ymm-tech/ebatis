@@ -5,15 +5,14 @@ import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.IdProvider;
+import io.manbang.ebatis.core.provider.ParentTaskProvider;
+import io.manbang.ebatis.core.provider.ReplicaVersionProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptProvider;
-import org.apache.commons.lang3.StringUtils;
+import lombok.val;
 import org.elasticsearch.action.index.IndexRequest;
-import org.elasticsearch.action.support.single.instance.InstanceShardOperationRequest;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.core.TimeValue;
-
-import java.util.Optional;
 
 /**
  * @author 章多亮
@@ -28,21 +27,14 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
     @Override
     protected void setAnnotationMeta(UpdateRequest request, Update update) {
         request.fetchSource(update.fetchSource())
-                .timeout(StringUtils.isBlank(update.timeout()) ? InstanceShardOperationRequest.DEFAULT_TIMEOUT :
-                        TimeValue.parseTimeValue(update.timeout(), "更新超时时间"))
+                .timeout(update.timeout())
                 .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(update.waitForActiveShards()))
                 .detectNoop(update.detectNoop())
                 .docAsUpsert(update.docAsUpsert())
                 .retryOnConflict(update.retryOnConflict())
-                .setRefreshPolicy(update.refreshPolicy())
+                .setRefreshPolicy(WriteRequest.RefreshPolicy.valueOf(update.refreshPolicy().name()))
+                .setRequireAlias(update.requireAlias())
                 .scriptedUpsert(update.scriptedUpsert());
-
-        // 如果指定的Id
-        if (StringUtils.isNotBlank(update.id())) {
-            // 并且是 Partial Document更新
-            Optional.ofNullable(request.doc())
-                    .ifPresent(doc -> doc.id(String.valueOf(doc.sourceAsMap().get(update.id()))));
-        }
     }
 
     @Override
@@ -53,25 +45,32 @@ class UpdateRequestFactory extends AbstractRequestFactory<Update, UpdateRequest>
         ParameterMeta parameterMeta = meta.getConditionParameter();
         Object doc = parameterMeta.getValue(args);
 
-        if (parameterMeta.isBasic()) {
-            request.id(String.valueOf(doc));
+        if (doc instanceof IdProvider) {
+            request.id(((IdProvider) doc).id());
+        }
+
+        // 脚本更新
+        if (doc instanceof ScriptProvider) {
+            request.script(((ScriptProvider) doc).getScript().toEsScript());
         } else {
-            if (doc instanceof IdProvider) {
-                request.id(((IdProvider) doc).id());
-            }
+            // Partial Document 更新
+            IndexRequest indexRequest = RequestFactory.index().create(meta, args);
+            request.doc(indexRequest);
+        }
 
-            // 脚本更新
-            if (doc instanceof ScriptProvider) {
-                request.script(((ScriptProvider) doc).getScript().toEsScript());
-            } else {
-                // Partial Document 更新
-                IndexRequest indexRequest = RequestFactory.index().create(meta, args);
-                request.doc(indexRequest);
-            }
+        if (doc instanceof ReplicaVersionProvider) {
+            val provider = (ReplicaVersionProvider) doc;
+            request.setIfPrimaryTerm(provider.primaryTerm());
+            request.setIfSeqNo(provider.seqNo());
+        }
 
-            if (doc instanceof RoutingProvider) {
-                request.routing(((RoutingProvider) doc).routing());
-            }
+        if (doc instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) doc).routing());
+        }
+
+        if (doc instanceof ParentTaskProvider) {
+            val provider = ((ParentTaskProvider) doc);
+            request.setParentTask(provider.nodeId(), provider.taskId());
         }
 
         return request;

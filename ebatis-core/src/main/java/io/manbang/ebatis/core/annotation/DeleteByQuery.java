@@ -38,4 +38,51 @@ public @interface DeleteByQuery {
      * @return 毫秒
      */
     long scrollKeepAlive() default 0;
+
+    float requestsPerSecond() default Float.POSITIVE_INFINITY;
+
+    /**
+     * 第一次重试尝试之前需要等待的初始时间
+     * <table>
+     *     <thead>
+     *     <tr>
+     *               <th>单位</th>
+     *               <th>描述</th>
+     *           </tr>
+     *     </thead>
+     *     <tbody>
+     *         <tr>
+     *             <td>nanos</td>
+     *             <td>纳秒</td>
+     *         </tr>
+     *         <tr>
+     *             <td>micros</td>
+     *             <td>微秒</td>
+     *         </tr>
+     *         <tr>
+     *             <td>ms</td>
+     *             <td>毫秒</td>
+     *         </tr>
+     *         <tr>
+     *             <td>s</td>
+     *             <td>秒</td>
+     *         </tr>
+     *         <tr>
+     *              <td>m</td>
+     *              <td>分</td>
+     *          </tr>
+     *          <tr>
+     *              <td>h</td>
+     *              <td>小时</td>
+     *           </tr>
+     *           <tr>
+     *               <td>d</td>
+     *               <td>天</td>
+     *           </tr>
+     *     </tbody>
+     * </table>
+     *
+     * @return 等待时间
+     */
+    String retryBackoffInitialTime() default "500ms";
 }

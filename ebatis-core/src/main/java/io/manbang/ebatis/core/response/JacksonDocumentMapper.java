@@ -40,7 +40,8 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
     public T mapRow(SearchHit hit, int index) {
         T document;
         try {
-            document = ObjectMapperHolder.objectMapper().readValue(hit.getSourceRef().toBytesRef().bytes, entityClass);
+            document = ObjectMapperHolder.objectMapper()
+                    .readValue(hit.getSourceRef().array(), entityClass);
         } catch (IOException e) {
             log.error("反序列化文档异常", e);
             throw new DocumentDeserializeException(e);
@@ -48,9 +49,10 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
 
         if (document instanceof MetaSource) {
             MetaSource source = (MetaSource) document;
-            ResponseMeta meta = MetaSource.of(hit);
+            ResponseMeta meta = DocumentMapper.of(hit);
             source.setResponseMeta(meta);
         }
+
         if (document instanceof AdditionalSource) {
             Map<String, List<Object>> additionalSourceMap = hit.getFields().values().stream()
                     .map(e -> Tuple.tuple(e.getName(), e.getValues()))
@@ -68,6 +70,7 @@ public class JacksonDocumentMapper<T> implements DocumentMapper<T> {
         }
         return document;
     }
+
 
     @Override
     public Class<T> getEntityClass() {

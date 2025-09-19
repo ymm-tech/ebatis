@@ -26,6 +26,8 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(deleteByQuery.waitForActiveShards()))
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
+                .setRequestsPerSecond(deleteByQuery.requestsPerSecond())
+                .setRetryBackoffInitialTime(TimeValue.parseTimeValue(deleteByQuery.retryBackoffInitialTime(), "DeleteByQueryRequestFactory.retryBackoffInitialTime"))
                 .setConflicts(deleteByQuery.conflicts());
 
         int maxDocs = deleteByQuery.maxDocs();
@@ -45,9 +47,8 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
         SearchSourceBuilder source = searchRequest.source();
 
         DeleteByQueryRequest request = new DeleteByQueryRequest(meta.getIndices(meta, args));
-        request.getSearchRequest().source(source);
-        request.setRouting(searchRequest.routing());
-        searchRequest.source(source);
+        request.setQuery(source.query());
+
         return request;
     }
 }

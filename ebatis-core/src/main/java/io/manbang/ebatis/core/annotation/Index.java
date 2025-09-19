@@ -1,8 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.action.DocWriteRequest;
-import org.elasticsearch.index.VersionType;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,13 +25,25 @@ public @interface Index {
      *
      * @return 创建索引的方式
      */
-    DocWriteRequest.OpType opType() default DocWriteRequest.OpType.INDEX;
+    OpType opType() default OpType.INDEX;
 
     VersionType versionType() default VersionType.INTERNAL;
 
     String parent() default "";
 
+    /**
+     * 设置预处理管道名称，管道必须预先在集群中创建好
+     *
+     * @return 管道名称
+     */
     String pipeline() default "";
+
+    /**
+     * 最后一个管道名称
+     *
+     * @return 管道名称
+     */
+    String finalPipeline() default "";
 
     /**
      * 数字 + 时间单位（s/m/h）
@@ -43,7 +52,12 @@ public @interface Index {
      */
     String timeout() default "1m";
 
-    String refreshPolicy() default "false";
+    /**
+     * @return 刷新策略
+     */
+    RefreshPolicy refreshPolicy() default RefreshPolicy.NONE;
+
+    boolean requireAlias() default false;
 
     /**
      * 获取等待的主分片和副本分片数量，默认只需要主分片活跃就可以
