@@ -37,7 +37,7 @@ public @interface DeleteByQuery {
     /**
      * @return 毫秒
      */
-    long scrollKeepAlive() default 0;
+    String scrollKeepAlive() default "0";
 
     float requestsPerSecond() default Float.POSITIVE_INFINITY;
 

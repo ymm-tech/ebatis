@@ -36,7 +36,7 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
     protected void setAnnotationMeta(IndexRequest request, Index index) {
         val versionType = VersionType.valueOf(index.versionType().name());
         if (request.version() >= 0 && versionType == VersionType.INTERNAL) {
-            throw new IllegalArgumentException("提供了版本号，版本类型，就不能是内部版本类型： VersionType.INTERNAL，请设置 Index#versionType = VersionType.EXTERNAL | VersionType.EXTERNAL_GTE");
+            throw new IllegalArgumentException(String.format("提供了版本号: %s，版本类型就不能是内部版本类型： VersionType.INTERNAL，请设置 Index#versionType = VersionType.EXTERNAL | VersionType.EXTERNAL_GTE", request.version()));
         }
 
         request.setRefreshPolicy(WriteRequest.RefreshPolicy.valueOf(index.refreshPolicy().name()))
@@ -60,7 +60,6 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
         }
 
         if (doc instanceof VersionProvider) {
-            // 版本类型，有 Index#versionType 设置
             request.version(((VersionProvider) doc).version());
         }
 

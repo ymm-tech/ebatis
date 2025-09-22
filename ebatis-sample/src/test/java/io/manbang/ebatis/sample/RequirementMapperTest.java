@@ -1,8 +1,11 @@
-package io.manbang.ebatis.sample.mapper;
+package io.manbang.ebatis.sample;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.manbang.ebatis.core.common.ObjectMapperHolder;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.proxy.MapperProxyFactory;
+import io.manbang.ebatis.sample.mapper.RequirementMapper;
 import io.manbang.ebatis.sample.model.AggGroupByStatusCondition;
 import io.manbang.ebatis.sample.model.ManufacturerCondition;
 import io.manbang.ebatis.sample.model.ModelCondition;
@@ -24,8 +27,28 @@ public class RequirementMapperTest {
 
     @BeforeClass
     public static void setup() {
+        ObjectMapperHolder.objectMapper().registerModule(new JavaTimeModule());
         requirementMapper = MapperProxyFactory.getMapperProxy(RequirementMapper.class);
     }
+
+    @Test
+    public void findById() {
+        val r = requirementMapper.findById(101890L);
+        log.info("{}", r);
+    }
+
+    @Test
+    public void searchById() {
+        val condition = RequirementCondition.builder()
+                .id(101890L)
+                .model(ModelCondition.builder().id(136L).wildcardName("SN").build())
+                .batchNo("+")
+                .build();
+        val pageable = Pageable.first(100);
+        val docs = requirementMapper.search(condition, pageable);
+        docs.forEach(doc -> log.info("{}", doc));
+    }
+
 
     @Test
     public void timeRangeSearch() {

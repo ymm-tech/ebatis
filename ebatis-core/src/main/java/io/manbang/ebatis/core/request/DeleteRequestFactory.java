@@ -45,17 +45,16 @@ class DeleteRequestFactory extends AbstractRequestFactory<Delete, DeleteRequest>
         DeleteRequest request = Requests.deleteRequest(meta.getIndex(meta, args));
 
         ParameterMeta parameterMeta = meta.getConditionParameter();
-
         Object condition = parameterMeta.getValue(args);
+
         if (parameterMeta.isBasic()) {
             request.id(String.valueOf(condition));
+        } else if (condition instanceof IdProvider) {
+            request.id(((IdProvider) condition).id());
         } else {
-            if (condition instanceof IdProvider) {
-                request.id(((IdProvider) condition).id());
-            } else {
-                throw new ConditionNotSupportException(meta.toString());
-            }
+            throw new ConditionNotSupportException("必须要提供文档 id，入参要么是基本类型，要么必须实现 IdProvider 接口：" + meta);
         }
+
 
         if (condition instanceof VersionProvider) {
             request.version(((VersionProvider) condition).version());

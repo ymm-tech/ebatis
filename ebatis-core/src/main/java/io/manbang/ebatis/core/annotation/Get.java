@@ -1,7 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.index.VersionType;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

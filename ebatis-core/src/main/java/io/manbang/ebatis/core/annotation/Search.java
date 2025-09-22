@@ -39,4 +39,22 @@ public @interface Search {
     String timeout() default "1m";
 
     boolean trackTotalHits() default false;
+
+    /**
+     * 可选的值：true|false|null|""
+     *
+     * @return 默认值：""
+     */
+    String allowPartialSearchResults() default "";
+
+    /**
+     * 为单个请求显式地启用或禁用分片级别的请求缓存。
+     * <p>
+     * 可选的值：true|false|null|""
+     *
+     * @return 默认值: ""
+     */
+    String requestCache() default "";
+
+    String scrollKeepAlive() default "";
 }

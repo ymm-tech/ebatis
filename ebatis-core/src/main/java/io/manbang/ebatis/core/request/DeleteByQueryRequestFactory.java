@@ -27,17 +27,13 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
                 .setRequestsPerSecond(deleteByQuery.requestsPerSecond())
+                .setScroll(TimeValue.parseTimeValue(deleteByQuery.scrollKeepAlive(), "DeleteByQueryRequestFactory.scrollKeepAlive"))
                 .setRetryBackoffInitialTime(TimeValue.parseTimeValue(deleteByQuery.retryBackoffInitialTime(), "DeleteByQueryRequestFactory.retryBackoffInitialTime"))
                 .setConflicts(deleteByQuery.conflicts());
 
         int maxDocs = deleteByQuery.maxDocs();
         if (maxDocs > 0) {
             request.setMaxDocs(maxDocs);
-        }
-
-        long keepAlive = deleteByQuery.scrollKeepAlive();
-        if (keepAlive > 0) {
-            request.setScroll(TimeValue.timeValueMillis(keepAlive));
         }
     }
 

@@ -16,8 +16,6 @@ import java.lang.annotation.Target;
 public @interface Update {
     boolean fetchSource() default false;
 
-    String parent() default "";
-
     String timeout() default "1m";
 
     RefreshPolicy refreshPolicy() default RefreshPolicy.NONE;
