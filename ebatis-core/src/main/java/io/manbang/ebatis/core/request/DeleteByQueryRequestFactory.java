@@ -3,6 +3,8 @@ package io.manbang.ebatis.core.request;
 import io.manbang.ebatis.core.annotation.DeleteByQuery;
 import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
@@ -27,9 +29,13 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
                 .setRequestsPerSecond(deleteByQuery.requestsPerSecond())
-                .setScroll(TimeValue.parseTimeValue(deleteByQuery.scrollKeepAlive(), "DeleteByQueryRequestFactory.scrollKeepAlive"))
                 .setRetryBackoffInitialTime(TimeValue.parseTimeValue(deleteByQuery.retryBackoffInitialTime(), "DeleteByQueryRequestFactory.retryBackoffInitialTime"))
                 .setConflicts(deleteByQuery.conflicts());
+
+        val keepAlive = StringUtils.trimToNull(deleteByQuery.scrollKeepAlive());
+        if (keepAlive != null) {
+            request.setScroll(TimeValue.parseTimeValue(keepAlive, "DeleteByQueryRequestFactory.scrollKeepAlive"));
+        }
 
         int maxDocs = deleteByQuery.maxDocs();
         if (maxDocs > 0) {
