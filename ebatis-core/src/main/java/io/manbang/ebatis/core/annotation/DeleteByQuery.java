@@ -43,7 +43,9 @@ public @interface DeleteByQuery {
 
     /**
      * 第一次重试尝试之前需要等待的初始时间
+     *
      * <table>
+     *     <caption>单位</caption>
      *     <thead>
      *     <tr>
      *               <th>单位</th>
