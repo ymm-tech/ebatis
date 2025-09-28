@@ -38,8 +38,10 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     private final Annotation queryClauseAnnotation;
     private final QueryBuilderFactory queryBuilderFactory;
     private final boolean termsQuery;
+    private final boolean idsQuery;
     private final Map<Class<? extends Annotation>, Optional<? extends Annotation>> metas = new ConcurrentHashMap<>();
     private final boolean nested;
+    private final QueryType queryType;
 
     DefaultFieldMeta(Field field) {
         super(field, field.getType(), field.getGenericType());
@@ -58,14 +60,18 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
                 .map(Boolean.class::cast)
                 .orElse(false);
 
-        this.queryBuilderFactory = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO).getQueryBuilderFactory();
+        this.queryType = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO);
 
-        this.termsQuery = queryBuilderFactory == QueryBuilderFactory.terms();
+        this.queryBuilderFactory = queryType.getQueryBuilderFactory();
+
+        this.termsQuery = queryType == QueryType.TERMS;
+        this.idsQuery = queryType == QueryType.IDS;
+
         validate();
     }
 
     private void validate() {
-        boolean isExists = queryBuilderFactory == QueryBuilderFactory.exists();
+        boolean isExists = queryType == QueryType.EXISTS;
         boolean isBoolean = Boolean.TYPE == field.getType() || Boolean.class == field.getType();
         if (isExists && !isBoolean) {
             throw new ConditionNotSupportException(field + ":Exists query must be boolean or Boolean!");
@@ -183,6 +189,11 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     @Override
     public boolean isTermsQuery() {
         return termsQuery;
+    }
+
+    @Override
+    public boolean isIdsQuery() {
+        return idsQuery;
     }
 
     @Override

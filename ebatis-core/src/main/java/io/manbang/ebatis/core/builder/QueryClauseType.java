@@ -103,6 +103,8 @@ public enum QueryClauseType {
             // Terms 查询的处理方式，跟其他的不一样，需要单独有限处理，其他条件如果遇到数组或者集合，都是一个个分开处理
             if (meta.isTermsQuery()) {
                 builderTermsQuery(meta, instance).ifPresent(builders::add);
+            } else if (meta.isIdsQuery()) {
+                buildIdsQuery(meta, instance).ifPresent(builders::add);
             } else if (meta.isArray()) {
                 builders.addAll(buildArrayQuery(meta, instance));
             } else if (meta.isCollection()) {
@@ -113,6 +115,12 @@ public enum QueryClauseType {
         }
 
         return builders;
+    }
+
+    private static Optional<QueryBuilder> buildIdsQuery(FieldMeta meta, Object instance) {
+        QueryBuilderFactory queryBuilderFactory = QueryBuilderFactory.ids();
+        Object condition = meta.getValue(instance);
+        return Optional.ofNullable(queryBuilderFactory.create(meta, condition));
     }
 
     private static Optional<QueryBuilder> builderTermsQuery(FieldMeta meta, Object instance) {

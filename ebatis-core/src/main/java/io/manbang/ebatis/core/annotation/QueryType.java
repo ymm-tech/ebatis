@@ -48,7 +48,7 @@ public enum QueryType {
     QUERY_STRING(null),
     RANGE(QueryBuilderFactory.auto()),
     SCRIPT(null),
-    IDS(null),
+    IDS(QueryBuilderFactory.ids()),
     TERM(QueryBuilderFactory.term()),
     TERMS(QueryBuilderFactory.terms()),
     EXISTS(QueryBuilderFactory.exists()),

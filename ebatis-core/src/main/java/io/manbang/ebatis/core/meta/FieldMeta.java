@@ -25,4 +25,6 @@ public interface FieldMeta extends AnnotatedMeta<Field>, ConditionMeta {
     QueryBuilderFactory getQueryBuilderFactory();
 
     boolean isTermsQuery();
+
+    boolean isIdsQuery();
 }
