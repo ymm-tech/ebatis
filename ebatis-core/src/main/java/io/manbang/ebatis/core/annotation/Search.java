@@ -38,6 +38,12 @@ public @interface Search {
 
     String timeout() default "1m";
 
+
+    /**
+     * 是否统计总数
+     *
+     * @return 默认值：false
+     */
     boolean trackTotalHits() default false;
 
     /**

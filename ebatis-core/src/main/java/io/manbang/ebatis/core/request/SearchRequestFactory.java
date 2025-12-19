@@ -18,6 +18,7 @@ import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.CollapseProvider;
 import io.manbang.ebatis.core.provider.HighlighterProvider;
+import io.manbang.ebatis.core.provider.PointTimeProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptFieldProvider;
 import io.manbang.ebatis.core.provider.SearchAfterProvider;
@@ -31,6 +32,7 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.lang.annotation.Annotation;
@@ -181,6 +183,11 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         }
         if (condition instanceof SearchAfterProvider) {
             searchSource.searchAfter(((SearchAfterProvider) condition).sortValues());
+        }
+
+        if (condition instanceof PointTimeProvider) {
+            val builder = new PointInTimeBuilder(((PointTimeProvider) condition).pitId());
+            searchSource.pointInTimeBuilder(builder);
         }
 
         if (condition instanceof HighlighterProvider) {
