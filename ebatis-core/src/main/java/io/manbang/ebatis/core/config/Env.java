@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.InputStream;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -15,6 +14,9 @@ import java.util.Properties;
 public class Env {
     private static final String DEBUG_ENABLED = "ebatis.debugEnabled";
     private static final String OFFLINE_ENABLED = "ebatis.offlineEnabled";
+    private static final String SNIFF_ENABLED = "ebatis.sniffEnabled";
+    private static final String EAGER_INIT = "ebatis.eagerInit";
+
     private static final String CLUSTER_ROUTER_NAME = "ebatis.clusterRouter";
 
     /**
@@ -32,18 +34,33 @@ public class Env {
      */
     @Getter
     private static String clusterRouterName;
+    /**
+     * 集群嗅探功能是否开启
+     */
+    @Getter
+    private static boolean sniffEnabled;
+    @Getter
+    private static boolean eagerInit;
 
     static {
+        loadEnvConfig();
+    }
+
+    private static void loadEnvConfig() {
         try (InputStream in = Env.class.getClassLoader().getResourceAsStream("ebatis.properties")) {
-            if (Objects.nonNull(in)) {
-                Properties cfg = new Properties();
-                cfg.load(in);
-                debugEnabled = Boolean.parseBoolean(cfg.getProperty(DEBUG_ENABLED));
-                offlineEnabled = Boolean.parseBoolean(cfg.getProperty(OFFLINE_ENABLED));
-                clusterRouterName = cfg.getProperty(CLUSTER_ROUTER_NAME);
-            } else {
-                log.info("未检测到ebatis.properties配置,默认不开启调试模式,离线模式.");
+            if (in == null) {
+                return;
             }
+
+            Properties cfg = new Properties();
+            cfg.load(in);
+
+            debugEnabled = Boolean.parseBoolean(cfg.getProperty(DEBUG_ENABLED));
+            offlineEnabled = Boolean.parseBoolean(cfg.getProperty(OFFLINE_ENABLED));
+            sniffEnabled = Boolean.parseBoolean(cfg.getProperty(SNIFF_ENABLED));
+            eagerInit = Boolean.parseBoolean(cfg.getProperty(EAGER_INIT));
+            clusterRouterName = cfg.getProperty(CLUSTER_ROUTER_NAME);
+
         } catch (Exception e) {
             log.error("配置文件载入失败", e);
         }

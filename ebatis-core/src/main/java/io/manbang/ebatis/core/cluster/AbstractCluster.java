@@ -7,8 +7,10 @@ import io.manbang.ebatis.core.domain.HttpConfig;
 import io.manbang.ebatis.core.exception.ClusterCreationException;
 import io.manbang.ebatis.core.request.CatRequest;
 import io.manbang.ebatis.core.response.CatResponse;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.apache.http.Header;
@@ -54,6 +56,10 @@ public abstract class AbstractCluster implements Cluster {
     private final AtomicBoolean lowLevelClientInitialized = new AtomicBoolean(false);
     private final LazyInitializer<RestClient> lowLevelClientInitializer;
     private final LazyInitializer<RestHighLevelClient> highLevelClientInitializer;
+    /**
+     * 获取ES集群构建器
+     */
+    @Getter
     private final RestClientBuilder builder;
     private final HttpHost[] hosts;
     private final Credentials credentials;
@@ -61,19 +67,19 @@ public abstract class AbstractCluster implements Cluster {
     private Sniffer lowLevelSniffer;
     private String name;
 
-    public AbstractCluster(String hostname, int port) {
+    protected AbstractCluster(String hostname, int port) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, null);
     }
 
-    public AbstractCluster(String hostname, int port, Credentials credentials) {
+    protected AbstractCluster(String hostname, int port, Credentials credentials) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, credentials);
     }
 
-    public AbstractCluster(HttpHost[] hosts) {
+    protected AbstractCluster(HttpHost[] hosts) {
         this(hosts, null);
     }
 
-    public AbstractCluster(HttpHost[] hosts, Credentials credentials) {
+    protected AbstractCluster(HttpHost[] hosts, Credentials credentials) {
         this.credentials = credentials;
         this.hosts = hosts;
         this.builder = custom(createBuilder(hosts));
@@ -81,6 +87,11 @@ public abstract class AbstractCluster implements Cluster {
 
         this.lowLevelClientInitializer = createLowLevelClientInitializer();
         this.highLevelClientInitializer = createHighLevelClientInitializer();
+
+        if (Env.isEagerInit()) {
+            highLevelClient();
+            lowLevelClient();
+        }
     }
 
     private LazyInitializer<RestHighLevelClient> createHighLevelClientInitializer() {
@@ -88,13 +99,22 @@ public abstract class AbstractCluster implements Cluster {
             @Override
             protected RestHighLevelClient initialize() {
                 log.info("创建高级ES集群客户端：{}", name);
+                val client = buildRestHighLevelClient();
                 highLevelClientInitialized.set(true);
-                final RestHighLevelClient restHighLevelClient = new RestHighLevelClient(builder);
-                highLevelSniffer = Sniffer.builder(restHighLevelClient.getLowLevelClient()).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
-                        .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
-                return restHighLevelClient;
+                return client;
             }
         };
+    }
+
+    private RestHighLevelClient buildRestHighLevelClient() {
+        val restHighLevelClient = new RestHighLevelClient(builder);
+
+        if (Env.isSniffEnabled()) {
+            highLevelSniffer = Sniffer.builder(restHighLevelClient.getLowLevelClient()).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
+                    .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+        }
+
+        return restHighLevelClient;
     }
 
     private LazyInitializer<RestClient> createLowLevelClientInitializer() {
@@ -102,13 +122,21 @@ public abstract class AbstractCluster implements Cluster {
             @Override
             protected RestClient initialize() {
                 log.info("创建低级ES集群客户端：{}", name);
+                val client = buildRestClient();
                 lowLevelClientInitialized.set(true);
-                final RestClient build = builder.build();
-                lowLevelSniffer = Sniffer.builder(build).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
-                        .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
-                return build;
+                return client;
             }
         };
+    }
+
+    private RestClient buildRestClient() {
+        val client = builder.build();
+
+        if (Env.isSniffEnabled()) {
+            lowLevelSniffer = Sniffer.builder(client).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
+                    .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+        }
+        return client;
     }
 
     protected HttpHost[] getHosts() {
@@ -127,15 +155,6 @@ public abstract class AbstractCluster implements Cluster {
      */
     protected void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * 获取ES集群构建器
-     *
-     * @return ES集群客户端构建器
-     */
-    public RestClientBuilder getBuilder() {
-        return builder;
     }
 
     /**
@@ -287,12 +306,16 @@ public abstract class AbstractCluster implements Cluster {
     public void close() throws IOException {
         if (highLevelClientInitialized.get()) {
             log.info("关闭HighLevelClient：{}", name);
-            highLevelSniffer.close();
+            if (highLevelSniffer != null) {
+                highLevelSniffer.close();
+            }
             highLevelClient().close();
         }
         if (lowLevelClientInitialized.get()) {
             log.info("关闭LowLevelClient：{}", name);
-            lowLevelSniffer.close();
+            if (lowLevelSniffer != null) {
+                lowLevelSniffer.close();
+            }
             lowLevelClient().close();
         }
     }
