@@ -11,6 +11,24 @@ import org.elasticsearch.search.sort.SortMode;
  */
 public interface Sort {
     /**
+     * 创建相关性分数升序排序对象
+     *
+     * @return 排序对象
+     */
+    static Sort scoreAsc() {
+        return new DefaultScoreSort(SortDirection.ASC);
+    }
+
+    /**
+     * 创建相关性分数降序排序对象
+     *
+     * @return 排序对象
+     */
+    static Sort scoreDesc() {
+        return new DefaultScoreSort(SortDirection.DESC);
+    }
+
+    /**
      * 创建指定字段升序排序对象
      *
      * @param name 排序字段名

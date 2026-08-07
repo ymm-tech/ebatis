@@ -17,7 +17,8 @@ class TermQueryBuilderFactory extends AbstractQueryBuilderFactory<TermQueryBuild
 
     @Override
     protected void setAnnotationMeta(TermQueryBuilder builder, Term term) {
-        builder.boost(term.boost());
+        builder.caseInsensitive(term.caseInsensitive())
+                .boost(term.boost());
     }
 
     @Override
