@@ -19,4 +19,6 @@ public @interface Fuzzy {
     int prefixLength() default 0;
 
     int maxExpansions() default 50;
+
+    float boost() default 1.0f;
 }

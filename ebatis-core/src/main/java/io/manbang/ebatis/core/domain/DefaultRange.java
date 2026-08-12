@@ -1,12 +1,17 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.exception.ConditionNotSupportException;
+import org.elasticsearch.common.geo.ShapeRelation;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 
 
 /**
@@ -14,12 +19,13 @@ import java.util.Date;
  *
  * @param <T> 扩展数据类型
  */
-class DefaultRange<T extends Comparable<T>> implements Range<T> {
+class DefaultRange<T> implements Range<T> {
     private final T min;
     private final T max;
     private IntervalType leftIntervalType;
     private IntervalType rightIntervalType;
     private String name;
+    private ShapeRelation relation;
 
     public DefaultRange(T min, T max) {
         this.min = min;
@@ -44,6 +50,10 @@ class DefaultRange<T extends Comparable<T>> implements Range<T> {
             return ((Date) value).getTime();
         } else if (value instanceof Calendar) {
             return ((Calendar) value).getTimeInMillis();
+        } else if (value instanceof LocalDateTime) {
+            return ((LocalDateTime) value).toInstant(ZoneOffset.UTC).toEpochMilli();
+        } else if (value instanceof LocalDate) {
+            return ((LocalDate) value).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
         } else {
             return value;
         }
@@ -74,12 +84,40 @@ class DefaultRange<T extends Comparable<T>> implements Range<T> {
     }
 
     @Override
+    public Range<T> intersects() {
+        relation = ShapeRelation.INTERSECTS;
+        return this;
+    }
+
+    @Override
+    public Range<T> disjoint() {
+        relation = ShapeRelation.DISJOINT;
+        return this;
+    }
+
+    @Override
+    public Range<T> within() {
+        relation = ShapeRelation.WITHIN;
+        return this;
+    }
+
+    @Override
+    public Range<T> contains() {
+        relation = ShapeRelation.CONTAINS;
+        return this;
+    }
+
+    @Override
     public QueryBuilder toBuilder() {
         Object left = getValue(min);
         Object right = getValue(max);
 
         RangeQueryBuilder builder = QueryBuilders.rangeQuery(name);
 
+        //设置范围关系
+        if (Objects.nonNull(relation)) {
+            builder.relation(relation.getRelationName());
+        }
         // 如果左界限为空，右界限肯定不是空值，因为上面已经判断了，左右界限同时为空的场景
         if (left == null) {
             rightIntervalType.right(builder, right);

@@ -1,8 +1,6 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.search.MatchQuery;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -18,13 +16,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface MultiMatch {
-
-    /**
-     * 获取需要匹配的字段列表
-     *
-     * @return 字段列表
-     */
-    String[] fields() default {};
 
     Operator operator() default Operator.OR;
 
@@ -55,7 +46,9 @@ public @interface MultiMatch {
 
     boolean fuzzyTranspositions() default true;
 
-    MatchQuery.ZeroTermsQuery zeroTermsQuery() default MatchQuery.ZeroTermsQuery.NONE;
+    String zeroTermsQuery() default "NONE";
 
-    MultiMatchQueryBuilder.Type type() default MultiMatchQueryBuilder.Type.BEST_FIELDS;
+    String type() default "BEST_FIELDS";
+
+    float boost() default 1.0f;
 }

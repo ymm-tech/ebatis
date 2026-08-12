@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ebatis</artifactId>
         <groupId>io.manbang</groupId>
-        <version>7.5.1.2.RELEASE</version>
+        <version>7.15.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,9 +16,13 @@
         <dependency>
             <groupId>io.manbang</groupId>
             <artifactId>ebatis-spring</artifactId>
-            <version>7.5.1.2.RELEASE</version>
+            <version>7.15.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
@@ -27,6 +31,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
         <dependency>

@@ -1,13 +1,15 @@
 package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.MultiMatch;
-import io.manbang.ebatis.core.exception.EbatisException;
+import io.manbang.ebatis.core.exception.ConditionNotSupportException;
 import io.manbang.ebatis.core.meta.ConditionMeta;
 import io.manbang.ebatis.core.provider.MultiMatchFieldProvider;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.ZeroTermsQueryOption;
+
+import java.util.Objects;
 
 /**
  * @author 章多亮
@@ -21,13 +23,13 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
 
     @Override
     protected void setAnnotationMeta(MultiMatchQueryBuilder builder, MultiMatch multiMatch) {
-        Float cutoffFrequency = multiMatch.cutoffFrequency() < 0 || multiMatch.cutoffFrequency() > 1 ? null : multiMatch.cutoffFrequency();
-
-        builder.autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
-                .cutoffFrequency(cutoffFrequency)
+        builder.boost(multiMatch.boost())
+                .autoGenerateSynonymsPhraseQuery(multiMatch.autoGenerateSynonymsPhraseQuery())
                 .fuzziness(StringUtils.trimToNull(multiMatch.fuzziness()))
                 .fuzzyRewrite(StringUtils.trimToNull(multiMatch.fuzzyRewrite()))
                 .fuzzyTranspositions(multiMatch.fuzzyTranspositions())
+                .type(MultiMatchQueryBuilder.Type.valueOf(multiMatch.type().toUpperCase()))
+                .zeroTermsQuery(ZeroTermsQueryOption.valueOf(multiMatch.zeroTermsQuery().toUpperCase()))
                 .lenient(multiMatch.lenient())
                 .maxExpansions(multiMatch.maxExpansions())
                 .prefixLength(multiMatch.prefixLength())
@@ -39,14 +41,23 @@ class MultiMatchQueryBuilderFactory extends AbstractQueryBuilderFactory<MultiMat
 
     @Override
     protected MultiMatchQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        MultiMatch multiMatch = meta.findAttributeAnnotation(MultiMatch.class).orElseThrow(EbatisException::new);
-
-        String[] fields = multiMatch.fields();
-
-        if (condition instanceof MultiMatchFieldProvider) {
-            fields = ArrayUtils.addAll(fields, ((MultiMatchFieldProvider) condition).getFields());
+        if (!(condition instanceof MultiMatchFieldProvider)) {
+            throw new ConditionNotSupportException("条件必须实现: MultiMatchFieldProvider");
         }
+        String[] fields = ((MultiMatchFieldProvider) condition).getFields();
 
-        return QueryBuilders.multiMatchQuery(String.valueOf(condition), fields);
+        final MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery(((MultiMatchFieldProvider) condition).text());
+        if (Objects.nonNull(fields)) {
+            for (String field : fields) {
+                final String[] split = StringUtils.split(field, "^");
+                if (split.length == 1) {
+                    multiMatchQueryBuilder.field(split[0]);
+                } else {
+                    multiMatchQueryBuilder.field(split[0], Float.parseFloat(split[1]));
+                }
+
+            }
+        }
+        return multiMatchQueryBuilder;
     }
 }

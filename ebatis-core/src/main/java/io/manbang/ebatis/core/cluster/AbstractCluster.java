@@ -7,8 +7,10 @@ import io.manbang.ebatis.core.domain.HttpConfig;
 import io.manbang.ebatis.core.exception.ClusterCreationException;
 import io.manbang.ebatis.core.request.CatRequest;
 import io.manbang.ebatis.core.response.CatResponse;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.apache.commons.lang3.concurrent.LazyInitializer;
 import org.apache.http.Header;
@@ -30,12 +32,14 @@ import org.elasticsearch.client.ResponseListener;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.sniff.Sniffer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -46,29 +50,36 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 @ToString(of = "name")
 public abstract class AbstractCluster implements Cluster {
+    public static final int DEFAULT_SNIFF_INTERVAL = (int) TimeUnit.SECONDS.toMillis(10);
+    public static final int DEFAULT_SNIFF_AFTER_FAILURE_DELAY = (int) TimeUnit.SECONDS.toMillis(10);
     private final AtomicBoolean highLevelClientInitialized = new AtomicBoolean(false);
     private final AtomicBoolean lowLevelClientInitialized = new AtomicBoolean(false);
     private final LazyInitializer<RestClient> lowLevelClientInitializer;
     private final LazyInitializer<RestHighLevelClient> highLevelClientInitializer;
-
+    /**
+     * 获取ES集群构建器
+     */
+    @Getter
     private final RestClientBuilder builder;
     private final HttpHost[] hosts;
-    private String name;
     private final Credentials credentials;
+    private Sniffer highLevelSniffer;
+    private Sniffer lowLevelSniffer;
+    private String name;
 
-    public AbstractCluster(String hostname, int port) {
+    protected AbstractCluster(String hostname, int port) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, null);
     }
 
-    public AbstractCluster(String hostname, int port, Credentials credentials) {
+    protected AbstractCluster(String hostname, int port, Credentials credentials) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, credentials);
     }
 
-    public AbstractCluster(HttpHost[] hosts) {
+    protected AbstractCluster(HttpHost[] hosts) {
         this(hosts, null);
     }
 
-    public AbstractCluster(HttpHost[] hosts, Credentials credentials) {
+    protected AbstractCluster(HttpHost[] hosts, Credentials credentials) {
         this.credentials = credentials;
         this.hosts = hosts;
         this.builder = custom(createBuilder(hosts));
@@ -76,6 +87,11 @@ public abstract class AbstractCluster implements Cluster {
 
         this.lowLevelClientInitializer = createLowLevelClientInitializer();
         this.highLevelClientInitializer = createHighLevelClientInitializer();
+
+        if (Env.isEagerInit()) {
+            highLevelClient();
+            lowLevelClient();
+        }
     }
 
     private LazyInitializer<RestHighLevelClient> createHighLevelClientInitializer() {
@@ -83,10 +99,22 @@ public abstract class AbstractCluster implements Cluster {
             @Override
             protected RestHighLevelClient initialize() {
                 log.info("创建高级ES集群客户端：{}", name);
+                val client = buildRestHighLevelClient();
                 highLevelClientInitialized.set(true);
-                return new RestHighLevelClient(builder);
+                return client;
             }
         };
+    }
+
+    private RestHighLevelClient buildRestHighLevelClient() {
+        val restHighLevelClient = new RestHighLevelClient(builder);
+
+        if (Env.isSniffEnabled()) {
+            highLevelSniffer = Sniffer.builder(restHighLevelClient.getLowLevelClient()).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
+                    .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+        }
+
+        return restHighLevelClient;
     }
 
     private LazyInitializer<RestClient> createLowLevelClientInitializer() {
@@ -94,10 +122,21 @@ public abstract class AbstractCluster implements Cluster {
             @Override
             protected RestClient initialize() {
                 log.info("创建低级ES集群客户端：{}", name);
+                val client = buildRestClient();
                 lowLevelClientInitialized.set(true);
-                return builder.build();
+                return client;
             }
         };
+    }
+
+    private RestClient buildRestClient() {
+        val client = builder.build();
+
+        if (Env.isSniffEnabled()) {
+            lowLevelSniffer = Sniffer.builder(client).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
+                    .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+        }
+        return client;
     }
 
     protected HttpHost[] getHosts() {
@@ -116,15 +155,6 @@ public abstract class AbstractCluster implements Cluster {
      */
     protected void setName(String name) {
         this.name = name;
-    }
-
-    /**
-     * 获取ES集群构建器
-     *
-     * @return ES集群客户端构建器
-     */
-    public RestClientBuilder getBuilder() {
-        return builder;
     }
 
     /**
@@ -223,7 +253,7 @@ public abstract class AbstractCluster implements Cluster {
             }
         }
 
-        log.debug("{}", sb);
+        log.info("{}", sb);
     }
 
     private void printResponse(HttpResponse response, HttpContext context) {
@@ -234,7 +264,7 @@ public abstract class AbstractCluster implements Cluster {
             sb.append(header).append(System.lineSeparator());
         }
 
-        log.debug("{}", sb);
+        log.info("{}", sb);
     }
 
     @Override
@@ -276,10 +306,16 @@ public abstract class AbstractCluster implements Cluster {
     public void close() throws IOException {
         if (highLevelClientInitialized.get()) {
             log.info("关闭HighLevelClient：{}", name);
+            if (highLevelSniffer != null) {
+                highLevelSniffer.close();
+            }
             highLevelClient().close();
         }
         if (lowLevelClientInitialized.get()) {
             log.info("关闭LowLevelClient：{}", name);
+            if (lowLevelSniffer != null) {
+                lowLevelSniffer.close();
+            }
             lowLevelClient().close();
         }
     }

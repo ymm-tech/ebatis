@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * @author 章多亮
@@ -44,35 +45,44 @@ abstract class AbstractConditionMeta<E extends AnnotatedElement> implements Cond
         this.name = getName(element);
     }
 
-    protected String getName(E element) {
-        String n;
-
+    private Optional<String> getNameFromAnnotation(E element) {
         Field fieldAnnotation = element.getAnnotation(Field.class);
         if (fieldAnnotation != null) {
-            n = fieldAnnotation.name();
+            String n = fieldAnnotation.name();
             if (StringUtils.isNotBlank(n)) {
-                return n;
+                return Optional.of(n);
             }
 
             n = fieldAnnotation.value();
             if (StringUtils.isNotBlank(n)) {
-                return n;
+                return Optional.of(n);
             }
         }
 
-        JsonProperty jsonProperty = element.getAnnotation(JsonProperty.class);
-        if (jsonProperty != null) {
-            n = jsonProperty.value();
+        JsonProperty property = element.getAnnotation(JsonProperty.class);
+        if (property != null) {
+            String n = property.value();
             if (StringUtils.isNotBlank(n)) {
-                return n;
+                return Optional.of(n);
             }
         }
-
-        return null;
+        return Optional.empty();
     }
+
+    protected String getName(E element) {
+        return getNameFromAnnotation(element)
+                .orElseGet(() -> getNameFromChild(element));
+    }
+
+    protected abstract String getNameFromChild(E element);
 
     @Override
     public String getName() {
+        return NestNameHolder.get().format(name);
+    }
+
+    @Override
+    public String getShortName() {
         return name;
     }
 

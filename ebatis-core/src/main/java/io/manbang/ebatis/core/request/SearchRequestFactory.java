@@ -9,7 +9,6 @@ import io.manbang.ebatis.core.annotation.SearchScroll;
 import io.manbang.ebatis.core.annotation.UpdateByQuery;
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
 import io.manbang.ebatis.core.common.AnnotationUtils;
-import io.manbang.ebatis.core.domain.Collapse;
 import io.manbang.ebatis.core.domain.ContextHolder;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.domain.ScriptField;
@@ -18,16 +17,22 @@ import io.manbang.ebatis.core.meta.MetaUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.CollapseProvider;
+import io.manbang.ebatis.core.provider.HighlighterProvider;
+import io.manbang.ebatis.core.provider.PointTimeProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptFieldProvider;
+import io.manbang.ebatis.core.provider.SearchAfterProvider;
 import io.manbang.ebatis.core.provider.SortProvider;
 import io.manbang.ebatis.core.provider.SourceProvider;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.builder.PointInTimeBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import java.lang.annotation.Annotation;
@@ -37,6 +42,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+
+import static io.manbang.ebatis.core.domain.HighlighterBuilderUtils.toHighlighterBuilder;
 
 /**
  * @author 章多亮
@@ -69,8 +77,29 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         request.preference(StringUtils.trimToNull(search.preference()))
                 .searchType(search.searchType());
 
+        val allowPartialSearchResults = StringUtils.trimToNull(search.allowPartialSearchResults());
+        if (allowPartialSearchResults != null) {
+            request.allowPartialSearchResults(Boolean.parseBoolean(allowPartialSearchResults));
+        }
+
+        val requestCache = StringUtils.trimToNull(search.requestCache());
+        if (requestCache != null) {
+            request.requestCache(Boolean.parseBoolean(requestCache));
+        }
+
+        String keepAlive = StringUtils.trimToNull(search.scrollKeepAlive());
+        if (keepAlive != null) {
+            request.scroll(keepAlive);
+        }
+
+        // source 配置
+        val source = request.source();
+        source.timeout(TimeValue.parseTimeValue(StringUtils.trimToNull(search.timeout()), "search timeout"));
         if (search.countOnly()) {
-            request.source().fetchSource(false).size(0);
+            source.fetchSource(false).size(0);
+        }
+        if (search.trackTotalHits()) {
+            source.trackTotalHits(true);
         }
     }
 
@@ -82,8 +111,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         Object condition = conditionMeta.map(p -> p.getValue(args)).orElse(null);
 
         // 1. 如果是一个入参
-        SearchRequest request = Requests.searchRequest(meta.getIndices());
-        setTypesIfNecessary(meta, request::types);
+        SearchRequest request = Requests.searchRequest(meta.getIndices(meta, args));
 
         // 获取语句构建器，不能的查询语句是不一样的
         QueryBuilderFactory factory = getQueryBuilderFactory(meta);
@@ -96,19 +124,25 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
 
         // 设置分页参数
         meta.getPageableParameter()
-                .map(p -> p.getValue(args))
-                .map(Pageable.class::cast)
-                .ifPresent(p -> {
-                    // 设个上下文是为了创建Page
-                    ContextHolder.setPageable(p);
-                    searchSource.from(p.getFrom()).size(p.getSize());
-                });
+                .map(p -> p.<Pageable>getNarrowValue(args))
+                .ifPresent(setFromSize(searchSource));
 
-        setProviderMeta(condition, searchSource, meta, request);
+        setSearchSourceProviderMeta(searchSource, meta, condition);
 
         request.source(searchSource);
+        if (condition instanceof RoutingProvider) {
+            request.routing(((RoutingProvider) condition).routing());
+        }
 
         return request;
+    }
+
+    private Consumer<Pageable> setFromSize(SearchSourceBuilder searchSource) {
+        return p -> {
+            // 设个上下文是为了创建Page
+            ContextHolder.setPageable(p);
+            searchSource.from(p.getFrom()).size(p.getSize());
+        };
     }
 
     private QueryBuilderFactory getQueryBuilderFactory(MethodMeta meta) {
@@ -117,7 +151,8 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(this::fromAnnotation)
-                .findFirst().orElseThrow(IllegalArgumentException::new));
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new));
     }
 
     private QueryBuilderFactory fromAnnotation(Annotation searchAnnotation) {
@@ -125,36 +160,61 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         return queryType.orElse(QueryType.AUTO).getQueryBuilderFactory();
     }
 
-    private void setProviderMeta(Object condition, SearchSourceBuilder searchSource, MethodMeta meta, SearchRequest request) {
+    private static void setSearchSourceProviderMeta(SearchSourceBuilder searchSource, MethodMeta meta, Object condition) {
         if (condition instanceof ScriptFieldProvider) {
-            ScriptField[] fields = ((ScriptFieldProvider) condition).getScriptFields();
+            val fields = ((ScriptFieldProvider) condition).getScriptFields();
             for (ScriptField field : fields) {
                 searchSource.scriptField(field.getName(), field.getScript().toEsScript());
             }
         }
 
         if (condition instanceof SortProvider) {
-            Sort[] sorts = ((SortProvider) condition).getSorts();
+            val sorts = ((SortProvider) condition).getSorts();
             for (Sort sort : sorts) {
                 searchSource.sort(sort.toSortBuilder());
             }
         }
+
+        setFetchSource(searchSource, meta, condition);
+
+        if (condition instanceof CollapseProvider) {
+            val collapse = ((CollapseProvider) condition).getCollapse();
+            searchSource.collapse(collapse.toCollapseBuilder());
+        }
+        if (condition instanceof SearchAfterProvider) {
+            searchSource.searchAfter(((SearchAfterProvider) condition).sortValues());
+        }
+
+        if (condition instanceof PointTimeProvider) {
+            val builder = new PointInTimeBuilder(((PointTimeProvider) condition).pitId());
+            searchSource.pointInTimeBuilder(builder);
+        }
+
+        if (condition instanceof HighlighterProvider) {
+            searchSource.highlighter(toHighlighterBuilder(((HighlighterProvider) condition).highlighterBuilder()));
+        }
+    }
+
+    private static void setFetchSource(SearchSourceBuilder searchSource, MethodMeta meta, Object condition) {
         if (meta.unwrappedReturnType().map(MetaUtils::isBasic).orElse(false)) {
             searchSource.fetchSource(false);
         } else {
             if (condition instanceof SourceProvider) {
-                SourceProvider sourceProvider = (SourceProvider) condition;
-                searchSource.fetchSource(sourceProvider.getIncludeFields(), sourceProvider.getExcludeFields());
+                val sourceProvider = (SourceProvider) condition;
+                val includeFields = sourceProvider.getIncludeFields();
+                if (includeFields == null || includeFields.length == 0) {
+                    searchSource.fetchSource(false);
+                } else {
+                    searchSource.fetchSource(includeFields, sourceProvider.getExcludeFields());
+                }
             } else {
-                searchSource.fetchSource(meta.getIncludeFields(), ArrayUtils.EMPTY_STRING_ARRAY);
+                val includeFields = meta.getIncludeFields();
+                if (includeFields == null || includeFields.length == 0) {
+                    searchSource.fetchSource(false);
+                } else {
+                    searchSource.fetchSource(includeFields, ArrayUtils.EMPTY_STRING_ARRAY);
+                }
             }
-        }
-        if (condition instanceof CollapseProvider) {
-            Collapse collapse = ((CollapseProvider) condition).getCollapse();
-            searchSource.collapse(collapse.toCollapseBuilder());
-        }
-        if (condition instanceof RoutingProvider) {
-            request.routing(((RoutingProvider) condition).getRouting());
         }
     }
 }

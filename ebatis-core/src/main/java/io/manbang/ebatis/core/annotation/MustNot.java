@@ -15,61 +15,69 @@ import java.lang.annotation.Target;
 public @interface MustNot {
     boolean nested() default false;
 
+    float boost() default 1.0f;
+
     QueryType queryType() default QueryType.AUTO;
 
-    Bool[] bool() default {};
+    Bool bool() default @Bool;
 
-    Boosting[] boosting() default {};
+    Boosting boosting() default @Boosting;
 
-    DisMax[] disMax() default {};
+    DisMax disMax() default @DisMax;
 
-    Fuzzy[] fuzzy() default {};
+    Exists exists() default @Exists;
 
-    FunctionScore[] functionScore() default {};
+    Fuzzy fuzzy() default @Fuzzy;
 
-    GeoBoundingBox[] geoBoundingBox() default {};
+    FunctionScore functionScore() default @FunctionScore;
 
-    GeoDistance[] geoDistance() default {};
+    GeoBoundingBox geoBoundingBox() default @GeoBoundingBox;
 
-    GeoPolygon[] geoPolygon() default {};
+    GeoDistance geoDistance() default @GeoDistance;
 
-    GeoShape[] geoShape() default {};
+    GeoPolygon geoPolygon() default @GeoPolygon;
 
-    Ids[] ids() default {};
+    GeoShape geoShape() default @GeoShape;
 
-    Match[] match() default {};
+    Ids ids() default @Ids;
 
-    MatchAll[] matchAll() default {};
+    Match match() default @Match;
 
-    MatchPhrase[] matchPhrase() default {};
+    MatchAll matchAll() default @MatchAll;
 
-    MatchPhrasePrefix[] matchPhrasePrefix() default {};
+    MatchPhrase matchPhrase() default @MatchPhrase;
 
-    MultiMatch[] multiMatch() default {};
+    MatchPhrasePrefix matchPhrasePrefix() default @MatchPhrasePrefix;
 
-    Nested[] nest() default {};
+    MatchBoolPrefix matchBoolPrefix() default @MatchBoolPrefix;
 
-    Range[] range() default {};
+    Prefix prefix() default @Prefix;
 
-    Script[] script() default {};
+    MultiMatch multiMatch() default @MultiMatch;
 
-    SpanContaining[] spanContaining() default {};
+    Nested nest() default @Nested(path = "");
 
-    SpanFirst[] spanFirst() default {};
+    Range range() default @Range;
 
-    SpanNear[] spanNear() default {};
+    Script script() default @Script;
 
-    SpanNot[] spanNot() default {};
+    SpanContaining spanContaining() default @SpanContaining;
 
-    SpanOr[] spanOr() default {};
+    SpanFirst spanFirst() default @SpanFirst;
 
-    SpanTerm[] spanTerm() default {};
+    SpanNear spanNear() default @SpanNear;
 
-    SpanWithin[] spanWithin() default {};
+    SpanNot spanNot() default @SpanNot;
 
-    Term[] term() default {};
+    SpanOr spanOr() default @SpanOr;
 
-    Terms[] terms() default {};
+    SpanTerm spanTerm() default @SpanTerm;
 
-    Wildcard[] wildcard() default {};
+    SpanWithin spanWithin() default @SpanWithin;
+
+    Term term() default @Term;
+
+    Terms terms() default @Terms;
+
+    Wildcard wildcard() default @Wildcard;
 }

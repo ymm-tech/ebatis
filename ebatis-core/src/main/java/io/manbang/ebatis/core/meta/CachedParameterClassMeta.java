@@ -30,7 +30,7 @@ class CachedParameterClassMeta extends AbstractClassMeta implements ParameterCla
             clazz = type.resolve();
         }
         if (!clazz.isAssignableFrom(parameterType)) {
-            throw new EbatisException("形参类型和实参类型不兼容");
+            throw new EbatisException(String.format("%s is not assignable from %s", clazz, parameterType));
         }
         return new CachedParameterClassMeta(parameter, parameterType);
     }

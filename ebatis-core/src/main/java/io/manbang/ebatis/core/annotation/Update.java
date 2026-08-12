@@ -1,8 +1,5 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.elasticsearch.action.support.WriteRequest;
-import org.elasticsearch.index.VersionType;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,15 +14,11 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Update {
-    String id() default "";
-
     boolean fetchSource() default false;
 
-    String parent() default "";
+    String timeout() default "1m";
 
-    String timeout() default "";
-
-    WriteRequest.RefreshPolicy refreshPolicy() default WriteRequest.RefreshPolicy.NONE;
+    RefreshPolicy refreshPolicy() default RefreshPolicy.NONE;
 
     boolean scriptedUpsert() default false;
 
@@ -35,7 +28,7 @@ public @interface Update {
 
     int retryOnConflict() default 0;
 
-    VersionType versionType() default VersionType.INTERNAL;
+    boolean requireAlias() default false;
 
     String waitForActiveShards() default "-2";
 }

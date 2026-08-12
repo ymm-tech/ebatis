@@ -1,6 +1,8 @@
 package io.manbang.ebatis.core.domain;
 
 import io.manbang.ebatis.core.annotation.Order;
+import io.manbang.ebatis.core.provider.BuildProvider;
+import lombok.Getter;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
@@ -15,7 +17,8 @@ import java.util.Objects;
  * @author weilong.hu
  * @since 2020/7/6 16:46
  */
-public class TermsAggregation implements SubAggregation<TermsAggregation> {
+@Getter
+public class TermsAggregation implements SubAggregation<TermsAggregation>, BuildProvider {
     /**
      * 聚合名称
      */
@@ -34,7 +37,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
     /**
      * 桶聚合顺序
      */
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     /**
      * 返回多少桶聚合结果
@@ -44,7 +47,7 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
     /**
      * 子聚合
      */
-    private List<Aggregation> subAggregations = new ArrayList<>();
+    private final List<Aggregation> subAggregations = new ArrayList<>();
 
     private Map<String, Object> metaData;
 
@@ -60,17 +63,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         this.name = name;
     }
 
-    public Script getScript() {
-        return script;
-    }
-
     public TermsAggregation script(Script script) {
         this.script = script;
         return this;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public TermsAggregation name(String name) {
@@ -78,21 +73,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         return this;
     }
 
-    public String getFieldName() {
-        return fieldName;
-    }
-
     public TermsAggregation fieldName(String fieldName) {
         this.fieldName = fieldName;
         return this;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public int getSize() {
-        return size;
     }
 
     public TermsAggregation size(int size) {
@@ -100,21 +83,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         return this;
     }
 
-    public List<Aggregation> getSubAggregations() {
-        return subAggregations;
-    }
-
-    public int getShardSize() {
-        return shardSize;
-    }
-
     public TermsAggregation shardSize(int shardSize) {
         this.shardSize = shardSize;
         return this;
-    }
-
-    public boolean isShowTermDocCountError() {
-        return showTermDocCountError;
     }
 
     public TermsAggregation showTermDocCountError(boolean showTermDocCountError) {
@@ -122,17 +93,9 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         return this;
     }
 
-    public long getMinDocCount() {
-        return minDocCount;
-    }
-
     public TermsAggregation minDocCount(long minDocCount) {
         this.minDocCount = minDocCount;
         return this;
-    }
-
-    public long getShardMinDocCount() {
-        return shardMinDocCount;
     }
 
     public TermsAggregation shardMinDocCount(long shardMinDocCount) {
@@ -151,17 +114,14 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
         return this;
     }
 
-    public Map<String, Object> getMetaData() {
-        return metaData;
-    }
-
     public TermsAggregation metaData(Map<String, Object> metaData) {
         this.metaData = metaData;
         return this;
     }
 
     @Override
-    public AggregationBuilder toAggBuilder() {
+    @SuppressWarnings("unchecked")
+    public <T> T build() {
         TermsAggregationBuilder agg = AggregationBuilders.terms(name)
                 .size(size)
                 .showTermDocCountError(showTermDocCountError)
@@ -184,12 +144,15 @@ public class TermsAggregation implements SubAggregation<TermsAggregation> {
             orders.forEach(order -> agg.order(order.order()));
         }
         if (!subAggregations.isEmpty()) {
-            subAggregations.forEach(subAgg -> agg.subAggregation(subAgg.toAggBuilder()));
+            subAggregations.forEach(subAgg -> {
+                final AggregationBuilder build = ((BuildProvider) subAgg).build();
+                agg.subAggregation(build);
+            });
         }
 
         if (Objects.nonNull(metaData)) {
-            agg.setMetaData(metaData);
+            agg.setMetadata(metaData);
         }
-        return agg;
+        return (T) agg;
     }
 }

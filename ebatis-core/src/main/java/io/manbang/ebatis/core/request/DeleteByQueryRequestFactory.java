@@ -3,8 +3,10 @@ package io.manbang.ebatis.core.request;
 import io.manbang.ebatis.core.annotation.DeleteByQuery;
 import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -26,16 +28,18 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
                 .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(deleteByQuery.waitForActiveShards()))
                 .setShouldStoreResult(deleteByQuery.shouldStoreResult())
                 .setBatchSize(deleteByQuery.batchSize())
+                .setRequestsPerSecond(deleteByQuery.requestsPerSecond())
+                .setRetryBackoffInitialTime(TimeValue.parseTimeValue(deleteByQuery.retryBackoffInitialTime(), "DeleteByQueryRequestFactory.retryBackoffInitialTime"))
                 .setConflicts(deleteByQuery.conflicts());
+
+        val keepAlive = StringUtils.trimToNull(deleteByQuery.scrollKeepAlive());
+        if (keepAlive != null) {
+            request.setScroll(TimeValue.parseTimeValue(keepAlive, "DeleteByQueryRequestFactory.scrollKeepAlive"));
+        }
 
         int maxDocs = deleteByQuery.maxDocs();
         if (maxDocs > 0) {
             request.setMaxDocs(maxDocs);
-        }
-
-        long keepAlive = deleteByQuery.scrollKeepAlive();
-        if (keepAlive > 0) {
-            request.setScroll(TimeValue.timeValueMillis(keepAlive));
         }
     }
 
@@ -44,10 +48,9 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
         SearchRequest searchRequest = RequestFactory.search().create(meta, args);
         SearchSourceBuilder source = searchRequest.source();
 
-        DeleteByQueryRequest request = new DeleteByQueryRequest(meta.getIndices());
-        request.getSearchRequest().source(source);
-        request.setRouting(searchRequest.routing());
-        searchRequest.source(source);
+        DeleteByQueryRequest request = new DeleteByQueryRequest(meta.getIndices(meta, args));
+        request.setQuery(source.query());
+
         return request;
     }
 }

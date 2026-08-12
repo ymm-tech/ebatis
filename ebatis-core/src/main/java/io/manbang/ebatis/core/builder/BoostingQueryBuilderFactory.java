@@ -1,8 +1,12 @@
 package io.manbang.ebatis.core.builder;
 
 import io.manbang.ebatis.core.annotation.Boosting;
+import io.manbang.ebatis.core.exception.ConditionNotSupportException;
 import io.manbang.ebatis.core.meta.ConditionMeta;
+import io.manbang.ebatis.core.provider.BoostingProvider;
 import org.elasticsearch.index.query.BoostingQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 
 class BoostingQueryBuilderFactory extends AbstractQueryBuilderFactory<BoostingQueryBuilder, Boosting> {
     static final BoostingQueryBuilderFactory INSTANCE = new BoostingQueryBuilderFactory();
@@ -11,7 +15,18 @@ class BoostingQueryBuilderFactory extends AbstractQueryBuilderFactory<BoostingQu
     }
 
     @Override
+    protected void setAnnotationMeta(BoostingQueryBuilder builder, Boosting boosting) {
+        builder.boost(boosting.boost());
+    }
+
+    @Override
     protected BoostingQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        return null;
+        if (!(condition instanceof BoostingProvider)) {
+            throw new ConditionNotSupportException("条件必须实现: BoostingProvider");
+        }
+        final BoostingProvider provider = (BoostingProvider) condition;
+        final QueryBuilder positive = QueryBuilderFactory.bool().create(null, provider.positive());
+        final QueryBuilder negative = QueryBuilderFactory.bool().create(null, provider.negative());
+        return QueryBuilders.boostingQuery(positive, negative).negativeBoost(provider.negativeBoost());
     }
 }

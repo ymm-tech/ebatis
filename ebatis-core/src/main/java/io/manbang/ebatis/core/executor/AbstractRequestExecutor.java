@@ -31,7 +31,7 @@ public abstract class AbstractRequestExecutor<R extends ActionRequest> implement
 
     @Override
     public Object execute(Cluster cluster, MethodMeta meta, Object[] args) {
-        interceptor.preRequest(args);
+        interceptor.preRequest(args, cluster, meta);
         R request = requestFactory.create(meta, args);
         //打印request
         interceptor.postRequest(new DefaultRequestInfo<>(request, args));

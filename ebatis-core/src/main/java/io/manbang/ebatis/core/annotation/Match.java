@@ -1,8 +1,6 @@
 package io.manbang.ebatis.core.annotation;
 
-import org.apache.lucene.search.FuzzyQuery;
 import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.search.MatchQuery;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -17,19 +15,19 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD})
 public @interface Match {
-    int prefixLength() default FuzzyQuery.defaultPrefixLength;
+    int prefixLength() default 0;
 
-    int maxExpansions() default FuzzyQuery.defaultMaxExpansions;
+    int maxExpansions() default 50;
 
-    boolean fuzzyTranspositions() default FuzzyQuery.defaultTranspositions;
+    boolean fuzzyTranspositions() default true;
 
     String minimumShouldMatch() default "";
 
     String fuzzyRewrite() default "";
 
-    boolean lenient() default MatchQuery.DEFAULT_LENIENCY;
+    boolean lenient() default false;
 
-    MatchQuery.ZeroTermsQuery zeroTermsQuery() default MatchQuery.ZeroTermsQuery.NONE;
+    String zeroTermsQuery() default "NONE";
 
     float cutoffFrequency() default -1;
 
@@ -39,5 +37,7 @@ public @interface Match {
 
     String analyzer() default "";
 
-    String fuzziness() default "";
+    String fuzziness() default "AUTO";
+
+    float boost() default 1.0f;
 }

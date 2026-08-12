@@ -11,6 +11,10 @@ public class ActiveShardCountUtils {
     private static final String ACTIVE_SHARD_COUNT_DEFAULT = "-2";
     private static final String ALL_ACTIVE_SHARDS = "-1";
 
+    private ActiveShardCountUtils() {
+        throw new UnsupportedOperationException();
+    }
+
     public static ActiveShardCount getActiveShardCount(String waitForActiveShards) {
         if (StringUtils.isBlank(waitForActiveShards)) {
             return ActiveShardCount.DEFAULT;

@@ -15,4 +15,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface Wildcard {
     String rewrite() default "";
+
+    /**
+     * 是否大小写不敏感, 默认为大小写不敏感
+     *
+     * @return <code>true</code> 大小写不敏感, <code>false</code> 大小写敏感
+     */
+    boolean caseInsensitive() default true;
+
+    float boost() default 1.0f;
+
+    MatchType matchType() default MatchType.CONTAINS;
 }

@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.interceptor;
 
+import io.manbang.ebatis.core.cluster.Cluster;
+import io.manbang.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionResponse;
 
@@ -10,10 +12,10 @@ import java.util.List;
  * @since 2020-04-22
  */
 public class Interceptors implements Interceptor {
-    private List<Interceptor> interceptors;
+    private final List<Interceptor> chainedInterceptors;
 
     public Interceptors(List<Interceptor> interceptors) {
-        this.interceptors = interceptors;
+        this.chainedInterceptors = interceptors;
     }
 
     @Override
@@ -23,26 +25,26 @@ public class Interceptors implements Interceptor {
 
     @Override
     public void handleException(Throwable throwable) {
-        interceptors.forEach(i -> i.handleException(throwable));
+        chainedInterceptors.forEach(i -> i.handleException(throwable));
     }
 
     @Override
-    public void preRequest(Object[] args) {
-        interceptors.forEach(i -> i.preRequest(args));
+    public void preRequest(Object[] args, Cluster cluster, MethodMeta meta) {
+        chainedInterceptors.forEach(i -> i.preRequest(args, cluster, meta));
     }
 
     @Override
     public <T extends ActionRequest> void postRequest(RequestInfo<T> requestInfo) {
-        interceptors.forEach(i -> i.postRequest(requestInfo));
+        chainedInterceptors.forEach(i -> i.postRequest(requestInfo));
     }
 
     @Override
     public <T extends ActionRequest> void preResponse(PreResponseInfo<T> preResponseInfo) {
-        interceptors.forEach(i -> i.preResponse(preResponseInfo));
+        chainedInterceptors.forEach(i -> i.preResponse(preResponseInfo));
     }
 
     @Override
     public <T extends ActionRequest, R extends ActionResponse> void postResponse(PostResponseInfo<T, R> postResponseInfo) {
-        interceptors.forEach(i -> i.postResponse(postResponseInfo));
+        chainedInterceptors.forEach(i -> i.postResponse(postResponseInfo));
     }
 }

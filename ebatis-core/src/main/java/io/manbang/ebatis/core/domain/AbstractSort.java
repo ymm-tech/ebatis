@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.domain;
 
+import org.elasticsearch.search.sort.NestedSortBuilder;
 import org.elasticsearch.search.sort.SortMode;
 
 import java.util.function.Consumer;
@@ -12,6 +13,7 @@ abstract class AbstractSort implements Sort {
     private final String name;
     private final SortDirection direction;
     private SortMode sortMode;
+    private NestedSort nestedSort;
 
     protected AbstractSort() {
         this(null, null);
@@ -41,6 +43,18 @@ abstract class AbstractSort implements Sort {
     public Sort sortMode(SortMode sortMode) {
         this.sortMode = sortMode;
         return this;
+    }
+
+    @Override
+    public Sort nested(NestedSort nestedSort) {
+        this.nestedSort = nestedSort;
+        return this;
+    }
+
+    protected void setNestedSort(Consumer<NestedSortBuilder> consumer) {
+        if (nestedSort != null) {
+            consumer.accept(nestedSort.toNestedSortBuilder());
+        }
     }
 
     protected void setSortMode(Consumer<SortMode> consumer) {

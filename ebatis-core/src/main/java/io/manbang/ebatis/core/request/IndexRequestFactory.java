@@ -1,19 +1,25 @@
 package io.manbang.ebatis.core.request;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.manbang.ebatis.core.annotation.Index;
 import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.common.ObjectMapperHolder;
+import io.manbang.ebatis.core.exception.EbatisException;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.provider.IdProvider;
+import io.manbang.ebatis.core.provider.ParentTaskProvider;
+import io.manbang.ebatis.core.provider.ReplicaVersionProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.VersionProvider;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.Requests;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.VersionType;
 
 /**
  * @author 章多亮
@@ -28,48 +34,59 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
 
     @Override
     protected void setAnnotationMeta(IndexRequest request, Index index) {
-        request.setRefreshPolicy(index.refreshPolicy())
-                .versionType(index.versionType())
-                .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(index.waitForActiveShards()))
-                .timeout(index.timeout())
-                .opType(index.opType());
-
-        if (StringUtils.isNotBlank(index.id())) {
-            request.id(String.valueOf(request.sourceAsMap().get(index.id())));
+        val versionType = VersionType.valueOf(index.versionType().name());
+        if (request.version() >= 0 && versionType == VersionType.INTERNAL) {
+            throw new IllegalArgumentException(String.format("提供了版本号: %s，版本类型就不能是内部版本类型： VersionType.INTERNAL，请设置 Index#versionType = VersionType.EXTERNAL | VersionType.EXTERNAL_GTE", request.version()));
         }
 
-        request.setPipeline(StringUtils.trimToNull(index.pipeline()));
+        request.setRefreshPolicy(WriteRequest.RefreshPolicy.valueOf(index.refreshPolicy().name()))
+                .versionType(versionType)
+                .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(index.waitForActiveShards()))
+                .timeout(index.timeout())
+                .opType(DocWriteRequest.OpType.valueOf(index.opType().name()))
+                .setPipeline(StringUtils.trimToNull(index.finalPipeline()))
+                .setFinalPipeline(StringUtils.trimToNull(index.finalPipeline()));
     }
 
     @Override
     protected IndexRequest doCreate(MethodMeta meta, Object[] args) {
-        IndexRequest request = Requests.indexRequest(meta.getIndex());
-        setTypeIfNecessary(meta, request::type);
-
-        Object doc = meta.getConditionParameter().getValue(args);
-
-        ObjectMapper mapper = ObjectMapperHolder.objectMapper();
-        byte[] source;
-        try {
-            source = mapper.writeValueAsBytes(doc);
-        } catch (JsonProcessingException e) {
-            log.error("条件转换成JSON字节数组异常：{}", doc, e);
-            source = new byte[0];
-        }
+        val request = Requests.indexRequest(meta.getIndex(meta, args));
+        val doc = meta.getConditionParameter().getValue(args);
+        val source = getSource(doc);
 
         request.source(source, XContentType.JSON);
         if (doc instanceof IdProvider) {
-            request.id(((IdProvider) doc).getId());
+            request.id(((IdProvider) doc).id());
         }
 
         if (doc instanceof VersionProvider) {
-            request.version(((VersionProvider) doc).getVersion());
+            request.version(((VersionProvider) doc).version());
         }
 
         if (doc instanceof RoutingProvider) {
-            request.routing(((RoutingProvider) doc).getRouting());
+            request.routing(((RoutingProvider) doc).routing());
+        }
+
+        if (doc instanceof ReplicaVersionProvider) {
+            val provider = (ReplicaVersionProvider) doc;
+            request.setIfSeqNo(provider.seqNo());
+            request.setIfPrimaryTerm(provider.primaryTerm());
+        }
+
+        if (doc instanceof ParentTaskProvider) {
+            val provider = (ParentTaskProvider) doc;
+            request.setParentTask(provider.nodeId(), provider.taskId());
         }
 
         return request;
+    }
+
+    private byte[] getSource(Object doc) {
+        try {
+            return ObjectMapperHolder.objectMapper().writeValueAsBytes(doc);
+        } catch (JsonProcessingException e) {
+            log.error("条件转换成JSON字节数组异常：{}", doc, e);
+            throw new EbatisException("序列化文档异常", e);
+        }
     }
 }

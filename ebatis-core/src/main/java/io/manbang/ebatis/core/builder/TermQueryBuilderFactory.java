@@ -16,7 +16,17 @@ class TermQueryBuilderFactory extends AbstractQueryBuilderFactory<TermQueryBuild
     }
 
     @Override
+    protected void setAnnotationMeta(TermQueryBuilder builder, Term term) {
+        builder.caseInsensitive(builder.value() instanceof String && term.caseInsensitive())
+                .boost(term.boost());
+    }
+
+    @Override
     protected TermQueryBuilder doCreate(ConditionMeta meta, Object condition) {
+        if (condition instanceof Enum) {
+            return QueryBuilders.termQuery(meta.getName(), ((Enum<?>) condition).name());
+        }
+
         return QueryBuilders.termQuery(meta.getName(), condition);
     }
 }

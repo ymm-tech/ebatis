@@ -11,4 +11,11 @@ public interface MultiMatchFieldProvider extends Provider {
      * @return 字段列表
      */
     String[] getFields();
+
+    /**
+     * 查询文本
+     *
+     * @return 查询文本条件
+     */
+    Object text();
 }

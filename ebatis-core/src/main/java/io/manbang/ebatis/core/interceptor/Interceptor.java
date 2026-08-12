@@ -1,5 +1,7 @@
 package io.manbang.ebatis.core.interceptor;
 
+import io.manbang.ebatis.core.cluster.Cluster;
+import io.manbang.ebatis.core.meta.MethodMeta;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.ActionResponse;
 
@@ -27,33 +29,37 @@ public interface Interceptor {
     /**
      * 入参拼装请求之前
      *
-     * @param args args
+     * @param args    args
+     * @param cluster cluster
+     * @param meta    meta
      */
-    default void preRequest(Object[] args) {
+    default void preRequest(Object[] args, Cluster cluster, MethodMeta meta) {
     }
 
     /**
      * 入参拼装请求之后
+     *
      * @param requestInfo request
-     * @param <T> T extends ActionRequest
+     * @param <T>         T extends ActionRequest
      */
     default <T extends ActionRequest> void postRequest(RequestInfo<T> requestInfo) {
     }
 
     /**
      * 请求发送之前
+     *
      * @param preResponseInfo response info
-     * @param <T> T extends ActionRequest
+     * @param <T>             T extends ActionRequest
      */
     default <T extends ActionRequest> void preResponse(PreResponseInfo<T> preResponseInfo) {
     }
 
     /**
      * 请求响应之后
-     * @param postResponseInfo post response
-     * @param <T> T extends ActionRequest
-     * @param <R> R extends ActionResponse
      *
+     * @param postResponseInfo post response
+     * @param <T>              T extends ActionRequest
+     * @param <R>              R extends ActionResponse
      */
     default <T extends ActionRequest, R extends ActionResponse> void postResponse(PostResponseInfo<T, R> postResponseInfo) {
     }

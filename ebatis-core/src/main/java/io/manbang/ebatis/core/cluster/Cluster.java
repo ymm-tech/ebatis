@@ -93,7 +93,7 @@ public interface Cluster extends Closeable {
      * @return 集群
      */
     static Cluster simple(HttpHost[] hosts) {
-        return simple(hosts, null, null);
+        return simple(hosts, null);
     }
 
     /**

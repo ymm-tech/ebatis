@@ -1,6 +1,6 @@
 package io.manbang.ebatis.core.meta;
 
-import io.manbang.ebatis.core.annotation.Prefix;
+import io.manbang.ebatis.core.annotation.FieldPrefix;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
 import io.manbang.ebatis.core.common.AnnotationUtils;
@@ -9,6 +9,7 @@ import io.manbang.ebatis.core.exception.EbatisException;
 import io.manbang.ebatis.core.exception.ReadMethodInvokeException;
 import io.manbang.ebatis.core.exception.ReadMethodNotFoundException;
 import io.manbang.ebatis.core.generic.GenericType;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.beans.BeanInfo;
@@ -37,7 +38,10 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     private final Annotation queryClauseAnnotation;
     private final QueryBuilderFactory queryBuilderFactory;
     private final boolean termsQuery;
+    private final boolean idsQuery;
     private final Map<Class<? extends Annotation>, Optional<? extends Annotation>> metas = new ConcurrentHashMap<>();
+    private final boolean nested;
+    private final QueryType queryType;
 
     DefaultFieldMeta(Field field) {
         super(field, field.getType(), field.getGenericType());
@@ -52,15 +56,22 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
 
         Optional<? extends Annotation> annotation = findAnnotation(queryClauseAnnotationClass);
         this.queryClauseAnnotation = annotation.orElse(null);
+        this.nested = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, "nested"))
+                .map(Boolean.class::cast)
+                .orElse(false);
 
-        this.queryBuilderFactory = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO).getQueryBuilderFactory();
+        this.queryType = annotation.flatMap(a -> AnnotationUtils.findAttribute(a, QueryType.class)).orElse(QueryType.AUTO);
 
-        this.termsQuery = queryBuilderFactory == QueryBuilderFactory.terms();
+        this.queryBuilderFactory = queryType.getQueryBuilderFactory();
+
+        this.termsQuery = queryType == QueryType.TERMS;
+        this.idsQuery = queryType == QueryType.IDS;
+
         validate();
     }
 
     private void validate() {
-        boolean isExists = queryBuilderFactory == QueryBuilderFactory.exists();
+        boolean isExists = queryType == QueryType.EXISTS;
         boolean isBoolean = Boolean.TYPE == field.getType() || Boolean.class == field.getType();
         if (isExists && !isBoolean) {
             throw new ConditionNotSupportException(field + ":Exists query must be boolean or Boolean!");
@@ -102,32 +113,30 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     }
 
     @Override
-    protected String getName(Field field) {
-        String name = super.getName(field);
-        name = StringUtils.isBlank(name) ? field.getName() : name;
-
-        Class<?> declaringClass = field.getDeclaringClass();
-        String prefix = getPrefix(declaringClass);
-
-        if (prefix == null) {
-            return name;
-        } else {
-            return String.format("%s.%s", prefix, name);
-        }
+    protected String getNameFromChild(Field field) {
+        return getPrefix(field)
+                .map(prefix -> String.format("%s.%s", prefix, field.getName()))
+                .orElse(field.getName());
     }
 
     /**
      * 获取字段前缀
      *
-     * @param clazz 字段所在类
+     * @param field 属性字段
      * @return 前缀
      */
-    private String getPrefix(Class<?> clazz) {
-        if (clazz.isAnnotationPresent(Prefix.class)) {
-            return StringUtils.trimToNull(clazz.getAnnotation(Prefix.class).value());
+    private Optional<String> getPrefix(Field field) {
+        val clazz = field.getDeclaringClass();
+        if (clazz.isAnnotationPresent(FieldPrefix.class)) {
+            return Optional.ofNullable(StringUtils.trimToNull(clazz.getAnnotation(FieldPrefix.class).value()));
         } else {
-            return null;
+            return Optional.empty();
         }
+    }
+
+    @Override
+    public boolean isNested() {
+        return nested;
     }
 
     @Override
@@ -180,5 +189,16 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     @Override
     public boolean isTermsQuery() {
         return termsQuery;
+    }
+
+    @Override
+    public boolean isIdsQuery() {
+        return idsQuery;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("FieldMeta: name = %s, queryType = %s, nested = %s",
+                field.getName(), queryClauseAnnotationClass.getSimpleName(), nested);
     }
 }

@@ -17,7 +17,7 @@ public class RecentOrderModelScript implements IdProvider, ScriptProvider {
     private Long cargoId = 10124512292666L;
 
     @Override
-    public String getId() {
+    public String id() {
         return String.valueOf(cargoId);
     }
 

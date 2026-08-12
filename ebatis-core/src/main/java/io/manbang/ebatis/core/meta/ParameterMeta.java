@@ -21,4 +21,9 @@ public interface ParameterMeta extends AnnotatedMeta<Parameter>, ConditionMeta {
     Class<?> getType();
 
     Object getValue(Object[] args);
+
+    @SuppressWarnings("unchecked")
+    default <T> T getNarrowValue(Object[] args) {
+        return (T) getValue(args);
+    }
 }

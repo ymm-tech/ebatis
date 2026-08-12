@@ -7,7 +7,7 @@ import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.core.TimeValue;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -30,6 +30,7 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
                 .setWaitForActiveShards(ActiveShardCountUtils.getActiveShardCount(updateByQuery.waitForActiveShards()))
                 .setShouldStoreResult(updateByQuery.shouldStoreResult())
                 .setBatchSize(updateByQuery.batchSize())
+                .setPipeline(StringUtils.trimToNull(updateByQuery.pipeline()))
                 .setConflicts(updateByQuery.conflicts());
 
         SearchRequest searchRequest = request.getSearchRequest();
@@ -55,14 +56,14 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
 
         UpdateByQueryRequest request = new UpdateByQueryRequest();
         request.getSearchRequest().source(source);
-        request.indices(meta.getIndices());
+        request.indices(meta.getIndices(meta, args));
         Object condition = args[0];
 
         if (condition instanceof ScriptProvider) {
             request.setScript(((ScriptProvider) condition).getScript().toEsScript());
         }
         if (condition instanceof RoutingProvider) {
-            request.setRouting(((RoutingProvider) condition).getRouting());
+            request.setRouting(((RoutingProvider) condition).routing());
         }
         searchRequest.source(source);
         return request;

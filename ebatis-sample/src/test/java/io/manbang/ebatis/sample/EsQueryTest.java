@@ -2,22 +2,30 @@ package io.manbang.ebatis.sample;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
+import io.manbang.ebatis.core.domain.Coordinate;
+import io.manbang.ebatis.core.domain.GeoDistanceRange;
+import io.manbang.ebatis.core.domain.GeoShape;
+import io.manbang.ebatis.core.domain.Geometry;
 import io.manbang.ebatis.core.domain.Page;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.domain.Range;
 import io.manbang.ebatis.core.domain.Script;
 import io.manbang.ebatis.sample.condition.RecentOrderCondition;
 import io.manbang.ebatis.sample.condition.SampleRecentOrderCondition;
+import io.manbang.ebatis.sample.condition.base.Cargo;
+import io.manbang.ebatis.sample.condition.base.Load;
 import io.manbang.ebatis.sample.condition.base.Protocol;
 import io.manbang.ebatis.sample.condition.base.RateMode;
 import io.manbang.ebatis.sample.condition.base.SecurityTran;
 import io.manbang.ebatis.sample.condition.base.ShipperInfo;
+import io.manbang.ebatis.sample.condition.base.Truck;
 import io.manbang.ebatis.sample.entity.RecentOrder;
 import io.manbang.ebatis.sample.mapper.RecentOrderMultiSearchMapper;
 import io.manbang.ebatis.sample.mapper.RecentOrderSearchMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.common.geo.GeoDistance;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -387,6 +395,12 @@ public class EsQueryTest extends ESAbstractTest {
         condition.setShipperInfo(ShipperInfo.builder().shipperTelephone(18030000725L).shipperTelephoneMask(999725L).shipperUserId(123321L).build());
         condition.setShipperInfos(new Object[]{ShipperInfo.builder().shipperTelephone(18031111725L).shipperTelephoneMask(999726L).shipperUserId(456654L).build()});
         condition.setUnloadAddress("**沈阳市皇姑区**");
+
+        condition.setLoad(new Load());
+        condition.setTruck(new Truck());
+        condition.setCargo(new Cargo());
+        condition.setCargoGeo(GeoShape.geoShape("cargoPoint", Geometry.point(new Coordinate(119.380453, 32.361451))).contains());
+        condition.setGeoDistanceRange(new GeoDistanceRange(new Coordinate(26.297065d, 117.648705d), "150000m", GeoDistance.PLANE));
         return condition;
     }
 }

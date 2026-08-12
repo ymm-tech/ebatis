@@ -2,12 +2,14 @@ package io.manbang.ebatis.core.annotation;
 
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
 import io.manbang.ebatis.core.meta.FieldMeta;
+import lombok.Getter;
 import org.elasticsearch.index.query.QueryBuilder;
 
 /**
  * @author duoliang.zhang
  */
 
+@Getter
 public enum QueryType {
     /**
      * 自动匹配
@@ -24,12 +26,12 @@ public enum QueryType {
     /**
      * 常量积分组合查询
      */
-    CONSTANT_SCORE(QueryBuilderFactory.functionScore()),
+    CONSTANT_SCORE(QueryBuilderFactory.constantScore()),
     /**
      * Ids查询
      */
     BOOSTING(QueryBuilderFactory.boosting()),
-    DIS_MAX(null),
+    DIS_MAX(QueryBuilderFactory.disMax()),
     FIELD(null),
     FUZZY(QueryBuilderFactory.fuzzy()),
     GEO_SHAPE(QueryBuilderFactory.geoShape()),
@@ -40,13 +42,13 @@ public enum QueryType {
     HAS_PARENT(null),
     INDICES(null),
     MLT(null),
-    MULTI_MATCH(null),
-    NESTED(null),
-    PREFIX(null),
+    MULTI_MATCH(QueryBuilderFactory.multiMatch()),
+    NESTED(QueryBuilderFactory.nested()),
+    PREFIX(QueryBuilderFactory.prefix()),
     QUERY_STRING(null),
-    RANGE(null),
+    RANGE(QueryBuilderFactory.auto()),
     SCRIPT(null),
-    IDS(null),
+    IDS(QueryBuilderFactory.ids()),
     TERM(QueryBuilderFactory.term()),
     TERMS(QueryBuilderFactory.terms()),
     EXISTS(QueryBuilderFactory.exists()),
@@ -54,6 +56,7 @@ public enum QueryType {
     MATCH(QueryBuilderFactory.match()),
     MATCH_PHRASE(QueryBuilderFactory.matchPhrase()),
     MATCH_PHRASE_PREFIX(QueryBuilderFactory.matchPhrasePrefix()),
+    MATCH_BOOL_PREFIX(QueryBuilderFactory.matchBoolPrefix()),
     SPAN_CONTAINING(null),
     SPAN_FIRST(null),
     SPAN_NEAR(null),
@@ -67,10 +70,6 @@ public enum QueryType {
 
     QueryType(QueryBuilderFactory queryBuilderFactory) {
         this.queryBuilderFactory = queryBuilderFactory;
-    }
-
-    public QueryBuilderFactory getQueryBuilderFactory() {
-        return queryBuilderFactory;
     }
 
     public QueryBuilder createBuilder(FieldMeta fieldMeta, Object value) {

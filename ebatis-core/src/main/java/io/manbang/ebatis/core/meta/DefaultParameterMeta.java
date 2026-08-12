@@ -5,7 +5,6 @@ import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.response.ResponseExtractor;
 import lombok.ToString;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -58,9 +57,8 @@ class DefaultParameterMeta extends AbstractConditionMeta<Parameter> implements P
     }
 
     @Override
-    protected String getName(Parameter parameter) {
-        String n = super.getName(parameter);
-        return StringUtils.isBlank(n) ? parameter.getName() : n;
+    protected String getNameFromChild(Parameter parameter) {
+        return parameter.getName();
     }
 
     @Override

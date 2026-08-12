@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ebatis</artifactId>
         <groupId>io.manbang</groupId>
-        <version>7.5.1.2.RELEASE</version>
+        <version>7.15.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ebatis-core</artifactId>
@@ -52,7 +52,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -61,6 +60,10 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
         <dependency>

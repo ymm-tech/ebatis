@@ -1,24 +1,13 @@
 package io.manbang.ebatis.core.domain;
 
-import org.elasticsearch.search.SearchHit;
-
 /**
  * 元信息
  *
  * @author duoliang.zhang
  */
 public interface MetaSource {
-    /**
-     * 创建元信息
-     *
-     * @param hit 命中文档
-     * @return 元信息
-     */
-    static ResponseMeta of(SearchHit hit) {
-        return new SimpleResponseMeta()
-                .setId(hit.getId())
-                .setIndex(hit.getIndex())
-                .setType(hit.getType());
+    static MetaSource only(ResponseMeta meta) {
+        return OnlyMetaSource.only(meta);
     }
 
     /**
@@ -27,4 +16,8 @@ public interface MetaSource {
      * @param responseMeta 元信息
      */
     void setResponseMeta(ResponseMeta responseMeta);
+
+    default ResponseMeta getResponseMeta() {
+        throw new UnsupportedOperationException();
+    }
 }

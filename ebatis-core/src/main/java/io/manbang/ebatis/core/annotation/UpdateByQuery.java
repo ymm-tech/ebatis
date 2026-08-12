@@ -59,4 +59,9 @@ public @interface UpdateByQuery {
     boolean shouldStoreResult() default false;
 
     long scrollKeepAlive() default 0;
+
+    String pipeline() default "";
+
+    String finalPipeline() default "";
+
 }

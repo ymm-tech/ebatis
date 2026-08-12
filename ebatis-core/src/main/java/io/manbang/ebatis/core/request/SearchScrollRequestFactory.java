@@ -51,7 +51,7 @@ class SearchScrollRequestFactory extends AbstractRequestFactory<SearchScroll, Ac
             if (scrollId == null) {
                 SearchRequest request = RequestFactory.search().create(meta, args).scroll(scroll.initialKeepAlive());
                 if (condition instanceof RoutingProvider) {
-                    request.routing(((RoutingProvider) condition).getRouting());
+                    request.routing(((RoutingProvider) condition).routing());
                 }
                 return request;
             } else {

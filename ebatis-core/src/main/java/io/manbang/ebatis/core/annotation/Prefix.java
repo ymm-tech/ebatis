@@ -16,11 +16,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Prefix {
+    float boost() default 1.0f;
 
-    /**
-     * 条件映射前缀
-     *
-     * @return 前缀
-     */
-    String value() default "";
+    String rewrite() default "";
+
+    boolean caseInsensitive() default true;
 }

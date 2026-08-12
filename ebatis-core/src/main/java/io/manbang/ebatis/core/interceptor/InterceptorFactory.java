@@ -16,6 +16,10 @@ import java.util.ServiceLoader;
 public class InterceptorFactory {
     private static final LazyInitializer<Interceptor> INTERCEPTORS;
 
+    private InterceptorFactory() {
+
+    }
+
     static {
         INTERCEPTORS = new LazyInitializer<Interceptor>() {
             @Override

@@ -39,4 +39,6 @@ public @interface GeoDistance {
     GeoValidationMethod validationMethod() default GeoValidationMethod.STRICT;
 
     boolean ignoreUnmapped() default false;
+
+    float boost() default 1.0f;
 }

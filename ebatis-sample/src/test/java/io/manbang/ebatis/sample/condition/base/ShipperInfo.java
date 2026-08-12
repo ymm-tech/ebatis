@@ -1,6 +1,5 @@
 package io.manbang.ebatis.sample.condition.base;
 
-import io.manbang.ebatis.core.annotation.Prefix;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,7 +9,6 @@ import lombok.Data;
  */
 @Data
 @Builder
-@Prefix("shipper")
 public class ShipperInfo {
     private Long shipperUserId;
     private Long shipperTelephone;

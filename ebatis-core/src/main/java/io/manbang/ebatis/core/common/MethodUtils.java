@@ -103,10 +103,10 @@ public class MethodUtils {
 
     /**
      * Determine whether the given method is a "hashCode" method. Copy from Spring#ReflectionUtils
-     * @param method method
      *
-     * @see java.lang.Object#hashCode()
+     * @param method method
      * @return is hash method
+     * @see java.lang.Object#hashCode()
      */
     public static boolean isHashCodeMethod(Method method) {
         return (method != null && Objects.equals(method.getName(), HASH_CODE_METHOD_NAME) && method.getParameterTypes().length == 0);
@@ -114,9 +114,10 @@ public class MethodUtils {
 
     /**
      * Determine whether the given method is a "toString" method. Copy from Spring#ReflectionUtils
+     *
      * @param method method
-     * @see java.lang.Object#toString()
      * @return is toString method
+     * @see java.lang.Object#toString()
      */
     public static boolean isToStringMethod(Method method) {
         return (method != null && Objects.equals(method.getName(), TO_STRING_METHOD_NAME) && method.getParameterTypes().length == 0);

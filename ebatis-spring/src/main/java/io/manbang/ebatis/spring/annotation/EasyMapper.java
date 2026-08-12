@@ -1,6 +1,7 @@
 package io.manbang.ebatis.spring.annotation;
 
 import io.manbang.ebatis.core.annotation.Mapper;
+import io.manbang.ebatis.core.mapper.MappingRouter;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Repository;
 
@@ -43,4 +44,12 @@ public @interface EasyMapper {
      */
     @AliasFor(attribute = "clusterRouter", annotation = Mapper.class)
     String clusterRouter() default "";
+
+    /**
+     * 索引 type动态设置
+     *
+     * @return 索引 type动态设置器
+     */
+    @AliasFor(attribute = "mappingRouter", annotation = Mapper.class)
+    Class<? extends MappingRouter> mappingRouter() default MappingRouter.class;
 }

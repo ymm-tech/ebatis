@@ -83,6 +83,22 @@ public interface QueryBuilderFactory {
         return BoostingQueryBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory nested() {
+        return NestedQueryBuilderFactory.INSTANCE;
+    }
+
+    static QueryBuilderFactory disMax() {
+        return DisMaxBuilderFactory.INSTANCE;
+    }
+
+    static QueryBuilderFactory matchBoolPrefix() {
+        return MatchBoolPrefixQueryBuilderFactory.INSTANCE;
+    }
+
+    static QueryBuilderFactory prefix() {
+        return PrefixQueryBuilderFactory.INSTANCE;
+    }
+
     /**
      * 创建查询构建器
      *

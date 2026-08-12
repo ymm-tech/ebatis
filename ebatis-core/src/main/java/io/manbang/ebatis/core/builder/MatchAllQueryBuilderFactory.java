@@ -21,6 +21,11 @@ class MatchAllQueryBuilderFactory extends AbstractQueryBuilderFactory<MatchAllQu
     }
 
     @Override
+    protected void setAnnotationMeta(MatchAllQueryBuilder builder, MatchAll matchAll) {
+        builder.boost(matchAll.boost());
+    }
+
+    @Override
     protected MatchAllQueryBuilder doCreate(ConditionMeta meta, Object condition) {
         return QueryBuilders.matchAllQuery();
     }

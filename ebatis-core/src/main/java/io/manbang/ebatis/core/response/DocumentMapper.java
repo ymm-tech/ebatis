@@ -1,5 +1,6 @@
 package io.manbang.ebatis.core.response;
 
+import io.manbang.ebatis.core.domain.ResponseMeta;
 import org.elasticsearch.search.SearchHit;
 
 /**
@@ -16,6 +17,31 @@ public interface DocumentMapper<T> {
      */
     static <T> DocumentMapper<T> of(Class<T> entityClass) {
         return JacksonDocumentMapper.of(entityClass);
+    }
+
+    /**
+     * 创建元信息
+     *
+     * @param hit 命中文档
+     * @return 元信息
+     */
+    @SuppressWarnings("deprecation")
+    static ResponseMeta of(SearchHit hit) {
+        return SimpleResponseMeta.builder()
+                .id(hit.getId())
+                .index(hit.getIndex())
+                .type(hit.getType())
+                .score(hit.getScore())
+                .version(hit.getVersion())
+                .seqNo(hit.getSeqNo())
+                .primaryTerm(hit.getPrimaryTerm())
+                .sourceAsString(hit.getSourceAsString())
+                .sourceAsMap(hit.getSourceAsMap())
+                .sortValues(hit.getSortValues())
+                .rawSortValues(hit.getRawSortValues())
+                .clusterAlias(hit.getClusterAlias())
+                .matchedQueries(hit.getMatchedQueries())
+                .build();
     }
 
     /**

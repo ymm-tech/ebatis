@@ -19,7 +19,10 @@ abstract class AbstractQueryBuilderFactory<B extends QueryBuilder, A extends Ann
 
     @SuppressWarnings("unchecked")
     protected AbstractQueryBuilderFactory() {
-        attributeAnnotationClass = (Class<A>) GenericType.forType(getClass()).resolveGenericOptional(1).orElse(null);
+        attributeAnnotationClass = (Class<A>) GenericType.forType(getClass())
+                .as(AbstractQueryBuilderFactory.class)
+                .resolveGenericOptional(1)
+                .orElse(null);
     }
 
     @Override
@@ -31,9 +34,12 @@ abstract class AbstractQueryBuilderFactory<B extends QueryBuilder, A extends Ann
 
         B builder = doCreate(meta, condition);
 
-        if (meta != null) {
-            meta.findAttributeAnnotation(attributeAnnotationClass).ifPresent(attr -> setAnnotationMeta(builder, attr));
+        if (meta == null || builder == null || attributeAnnotationClass == null) {
+            return builder;
         }
+
+        meta.findAttributeAnnotation(attributeAnnotationClass)
+                .ifPresent(attr -> setAnnotationMeta(builder, attr));
 
         return builder;
     }
