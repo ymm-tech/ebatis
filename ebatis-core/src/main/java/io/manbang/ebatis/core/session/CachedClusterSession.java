@@ -12,6 +12,7 @@ import io.manbang.ebatis.core.interceptor.DefaultPreResponseInfo;
 import io.manbang.ebatis.core.interceptor.Interceptor;
 import io.manbang.ebatis.core.interceptor.InterceptorFactory;
 import io.manbang.ebatis.core.request.CatRequest;
+import io.manbang.ebatis.core.request.GetSourceActionRequest;
 import io.manbang.ebatis.core.response.ResponseExtractor;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.ActionRequest;
@@ -26,6 +27,9 @@ import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.action.search.ClosePointInTimeRequest;
+import org.elasticsearch.action.search.OpenPointInTimeRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
@@ -56,6 +60,31 @@ class CachedClusterSession implements ClusterSession {
     @Override
     public <T> CompletableFuture<T> getAsync(GetRequest request, ResponseExtractor<T> extractor) {
         return performRequestAsync(cluster::getAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> countAsync(CountRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::countAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> documentExistsAsync(GetRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::documentExistsAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> getSourceAsync(GetSourceActionRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::getSourceAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> openPointInTimeAsync(OpenPointInTimeRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::openPointInTimeAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> closePointInTimeAsync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::closePointInTimeAsync, request, extractor);
     }
 
     @Override

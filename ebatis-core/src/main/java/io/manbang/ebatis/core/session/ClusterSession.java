@@ -4,6 +4,7 @@ import io.manbang.ebatis.core.cluster.Cluster;
 import io.manbang.ebatis.core.domain.Page;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.request.CatRequest;
+import io.manbang.ebatis.core.request.GetSourceActionRequest;
 import io.manbang.ebatis.core.response.ResponseExtractor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -15,6 +16,9 @@ import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.action.search.ClosePointInTimeRequest;
+import org.elasticsearch.action.search.OpenPointInTimeRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
@@ -53,6 +57,36 @@ public interface ClusterSession extends Cloneable {
      */
     default <T> T getSync(GetRequest request, ResponseExtractor<T> extractor) {
         return getAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> countAsync(CountRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T countSync(CountRequest request, ResponseExtractor<T> extractor) {
+        return countAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> documentExistsAsync(GetRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T documentExistsSync(GetRequest request, ResponseExtractor<T> extractor) {
+        return documentExistsAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> getSourceAsync(GetSourceActionRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T getSourceSync(GetSourceActionRequest request, ResponseExtractor<T> extractor) {
+        return getSourceAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> openPointInTimeAsync(OpenPointInTimeRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T openPointInTimeSync(OpenPointInTimeRequest request, ResponseExtractor<T> extractor) {
+        return openPointInTimeAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> closePointInTimeAsync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T closePointInTimeSync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor) {
+        return closePointInTimeAsync(request, extractor).join();
     }
 
 

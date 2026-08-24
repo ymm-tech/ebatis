@@ -99,6 +99,46 @@ public interface QueryBuilderFactory {
         return PrefixQueryBuilderFactory.INSTANCE;
     }
 
+    static QueryBuilderFactory queryString() {
+        return NativeQueryBuilderFactories.QUERY_STRING;
+    }
+
+    static QueryBuilderFactory simpleQueryString() {
+        return NativeQueryBuilderFactories.SIMPLE_QUERY_STRING;
+    }
+
+    static QueryBuilderFactory regexp() {
+        return NativeQueryBuilderFactories.REGEXP;
+    }
+
+    static QueryBuilderFactory wrapper() {
+        return NativeQueryBuilderFactories.WRAPPER;
+    }
+
+    static QueryBuilderFactory script() {
+        return NativeQueryBuilderFactories.SCRIPT;
+    }
+
+    static QueryBuilderFactory moreLikeThis() {
+        return NativeQueryBuilderFactories.MORE_LIKE_THIS;
+    }
+
+    static QueryBuilderFactory hasChild() {
+        return NativeQueryBuilderFactories.HAS_CHILD;
+    }
+
+    static QueryBuilderFactory hasParent() {
+        return NativeQueryBuilderFactories.HAS_PARENT;
+    }
+
+    static QueryBuilderFactory geoBoundingBox() {
+        return NativeQueryBuilderFactories.GEO_BOUNDING_BOX;
+    }
+
+    static QueryBuilderFactory geoPolygon() {
+        return NativeQueryBuilderFactories.GEO_POLYGON;
+    }
+
     /**
      * 创建查询构建器
      *
