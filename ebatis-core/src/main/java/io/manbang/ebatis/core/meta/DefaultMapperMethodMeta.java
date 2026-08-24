@@ -71,12 +71,19 @@ class DefaultMapperMethodMeta implements MapperMethod {
         this.includeFields = getIncludeFields(unwrappedReturnType);
 
         validate();
+        validateResponseExtractor();
     }
 
     private void validate() {
         boolean validated = this.requestType.validate(this);
         if (!validated) {
             throw new UnsupportedOperationException(this.toString());
+        }
+    }
+
+    private void validateResponseExtractor() {
+        if (responseExtractorParameter == null) {
+            ResponseExtractorLoader.getResponseExtractor(this);
         }
     }
 

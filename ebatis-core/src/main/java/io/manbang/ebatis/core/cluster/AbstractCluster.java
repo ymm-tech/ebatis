@@ -114,7 +114,51 @@ public abstract class AbstractCluster implements Cluster {
                     .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
         }
 
+        detectServerVersion(restHighLevelClient.getLowLevelClient());
+
         return restHighLevelClient;
+    }
+
+    private void detectServerVersion(RestClient client) {
+        if (Env.isOfflineEnabled()) {
+            return;
+        }
+        client.performRequestAsync(new Request("GET", "/"), new ResponseListener() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public void onSuccess(Response response) {
+                try {
+                    Map<String, Object> body = ObjectMapperHolder.objectMapper()
+                            .readValue(response.getEntity().getContent(), Map.class);
+                    Object versionValue = ((Map<String, Object>) body.get("version")).get("number");
+                    logServerCompatibility(String.valueOf(versionValue));
+                } catch (Exception e) {
+                    log.warn("无法解析 Elasticsearch 服务端版本：{}", name, e);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                log.debug("暂时无法探测 Elasticsearch 服务端版本：{}", name, exception);
+            }
+        });
+    }
+
+    private void logServerCompatibility(String version) {
+        String[] parts = version.split("\\.");
+        try {
+            int major = Integer.parseInt(parts[0]);
+            int minor = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
+            if (major != 7 || minor < 15) {
+                log.error("Elasticsearch 客户端版本为 7.15.0，服务端版本为 {}，不在受支持基线内：{}", version, name);
+            } else if (minor == 15) {
+                log.info("Elasticsearch 客户端与服务端版本匹配：client=7.15.0, server={}, cluster={}", version, name);
+            } else {
+                log.warn("Elasticsearch 服务端版本高于客户端基线，请执行兼容性验证：client=7.15.0, server={}, cluster={}", version, name);
+            }
+        } catch (NumberFormatException e) {
+            log.warn("无法识别 Elasticsearch 服务端版本：{}, cluster={}", version, name);
+        }
     }
 
     private LazyInitializer<RestClient> createLowLevelClientInitializer() {

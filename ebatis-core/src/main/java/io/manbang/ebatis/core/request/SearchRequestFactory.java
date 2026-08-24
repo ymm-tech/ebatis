@@ -13,6 +13,7 @@ import io.manbang.ebatis.core.domain.ContextHolder;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.domain.ScriptField;
 import io.manbang.ebatis.core.domain.Sort;
+import io.manbang.ebatis.core.exception.ConditionNotSupportException;
 import io.manbang.ebatis.core.meta.MetaUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
@@ -157,7 +158,11 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
 
     private QueryBuilderFactory fromAnnotation(Annotation searchAnnotation) {
         Optional<QueryType> queryType = AnnotationUtils.findAttribute(searchAnnotation, "queryType");
-        return queryType.orElse(QueryType.AUTO).getQueryBuilderFactory();
+        QueryType type = queryType.orElse(QueryType.AUTO);
+        if (!type.isSupported()) {
+            throw new ConditionNotSupportException("QueryType " + type + " is not implemented");
+        }
+        return type.getQueryBuilderFactory();
     }
 
     private static void setSearchSourceProviderMeta(SearchSourceBuilder searchSource, MethodMeta meta, Object condition) {

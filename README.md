@@ -1,23 +1,23 @@
 # ebatis是什么
 [![GitHub Stars](https://img.shields.io/badge/stars-100%2B-blue)](https://github.com/ymm-tech/ebatis/stargazers) 
 [![JDK support](https://img.shields.io/badge/JDK-8+-green.svg)](https://github.com/ymm-tech/ebatis/releases)
-[![Maven Central](https://img.shields.io/badge/maven-7.5.1.4.RELEASE-green)](https://search.maven.org/search?q=ebatis)
+[![Maven Central](https://img.shields.io/badge/maven-7.15.0.3--SNAPSHOT-green)](https://search.maven.org/search?q=ebatis)
 [![License](https://img.shields.io/badge/License-MIT-yellowgreen)](https://choosealicense.com/licenses/mit/)  
 `ebatis`是一个声明式`Elasticsearch ORM`框架。只需要定义接口，便可轻松访问`Elasticsearch`。`ebatis`优雅地帮你隔离业务对`Elasticserach`底层驱动接口的直接调用，你不再需要自己手动去构建繁琐`DSL`
 语句。同时，当升级`Elastisearch`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级。  
-目前，支持`Elastisearch` `6.5.1`与`7.5.1`版本。
+当前维护线面向 `Elasticsearch 7.15.0`，使用 Java 8 兼容字节码。
 
 # ebatis现状
 
 `ebatis`已经在满帮业务系统上稳定运行近一年，承载着每日近十亿次搜索服务。
 
 # QUICK START
-`POM`依赖（目前也支持`6.5.1.2.RELEASE`）
+`POM`依赖
 ```xml
 <dependency>
      <groupId>io.manbang</groupId>
      <artifactId>ebatis-core</artifactId>
-     <version>7.5.1.4.RELEASE</version>
+     <version>7.15.0.3-SNAPSHOT</version>
 </dependency>
 ```
 创建集群连接如下:
@@ -119,15 +119,15 @@ public class OrderRepositoryTest {
   }
 }
 ```
-`ebatis`版本使用`xx.xx.xx.xx.RELEASE`表示，前三位代表`Elasticsearch`适配集群的驱动版本，后一位代表`ebatis`在此版本上的迭代。例如`7.5.1.3.RELEASE`表示`ebatis`在`Elasticsearch 7.5.1`版本上迭代的第三次版本。
+`ebatis` 版本前三位表示 Elasticsearch 客户端基线，最后一位表示 Ebatis 迭代版本；开发版本使用 `-SNAPSHOT` 后缀，例如 `7.15.0.3-SNAPSHOT`。
 
 # quick start
-POM依赖（目前也支持6.5.1.2.RELEASE）
+POM依赖
 ```xml
 <dependency>
      <groupId>io.manbang</groupId>
      <artifactId>ebatis-core</artifactId>
-     <version>7.5.1.4.RELEASE</version>
+     <version>7.15.0.3-SNAPSHOT</version>
 </dependency>
 ```
 创建集群连接
@@ -229,7 +229,19 @@ public class OrderRepositoryTest {
   }
 }
 ```
-ebatis版本使用xx.xx.xx.xx.RELEASE表示，前三位代表Elasticsearch适配集群的驱动版本，后一位代表ebatis在此版本上的迭代。例如7.5.1.3.RELEASE表示ebatis在Elasticsearch 7.5.1版本上迭代的第三次版本。
+默认测试不依赖本地 Elasticsearch：
+
+```bash
+mvn clean verify
+```
+
+连接 Elasticsearch 7.15 后可运行集成测试：
+
+```bash
+mvn clean verify -Pintegration
+```
+
+完整能力状态见 [能力矩阵](docs/CAPABILITIES.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。
 
 # ebatis入门及相关文章
 

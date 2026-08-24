@@ -4,8 +4,8 @@ import com.google.auto.service.AutoService;
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.RequestType;
-import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.action.update.UpdateResponse;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.BulkByScrollTask;
 
 /**
  * @author 章多亮
@@ -20,16 +20,26 @@ public class UpdateByQueryResponseExtractorProvider extends AbstractResponseExtr
     @Override
     protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
         Class<?> resultClass = genericType.resolve();
-        if (UpdateResponse.class == resultClass) {
+        if (BulkByScrollResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
+        } else if (BulkByScrollTask.Status.class == resultClass) {
+            return response -> ((BulkByScrollResponse) response).getStatus();
+        } else if (ByQueryResponse.class == resultClass) {
+            return response -> ByQueryResponse.from((BulkByScrollResponse) response);
         } else if (void.class == resultClass || Void.class == resultClass) {
             return response -> null;
-        } else if (DocWriteResponse.Result.class == resultClass) {
-            return response -> ((UpdateResponse) response).getResult();
+        } else if (Long.class == resultClass || long.class == resultClass) {
+            return response -> ((BulkByScrollResponse) response).getUpdated();
         } else if (Boolean.class == resultClass || boolean.class == resultClass) {
-            return response -> ((UpdateResponse) response).getResult() == DocWriteResponse.Result.UPDATED;
+            return response -> successful((BulkByScrollResponse) response);
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Unsupported UpdateByQuery return type: " + genericType);
         }
+    }
+
+    private static boolean successful(BulkByScrollResponse response) {
+        return !response.isTimedOut()
+                && response.getBulkFailures().isEmpty()
+                && response.getSearchFailures().isEmpty();
     }
 }
