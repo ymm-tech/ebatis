@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.15.0.3-SNAPSHOT
+## 7.15.0.3
 
 - 修复 DeleteByQuery、UpdateByQuery 响应类型与实际 `BulkByScrollResponse` 不一致的问题。
 - 修复 Index pipeline/final pipeline 配置混用问题。
