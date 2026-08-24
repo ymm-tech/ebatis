@@ -2,8 +2,12 @@ package io.manbang.ebatis.core.cluster;
 
 import io.manbang.ebatis.core.request.CatRequest;
 import io.manbang.ebatis.core.request.GetSourceActionRequest;
+import io.manbang.ebatis.core.request.ReindexActionRequest;
+import io.manbang.ebatis.core.request.TaskResultActionRequest;
+import io.manbang.ebatis.core.request.ManagedBulkRequest;
 import io.manbang.ebatis.core.response.CatResponse;
 import io.manbang.ebatis.core.response.DocumentExistsResponse;
+import io.manbang.ebatis.core.response.ReindexResponse;
 import io.manbang.ebatis.core.response.ValueResponse;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
@@ -38,9 +42,12 @@ import org.elasticsearch.action.search.OpenPointInTimeRequest;
 import org.elasticsearch.action.search.OpenPointInTimeResponse;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.ReindexRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
 import java.io.Closeable;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * @author 章多亮
@@ -252,6 +259,10 @@ public interface Cluster extends Closeable {
      * @param listener 响应监听器
      */
     default void bulkAsync(BulkRequest request, ActionListener<BulkResponse> listener) {
+        if (request instanceof ManagedBulkRequest) {
+            ManagedBulkDispatcher.execute(highLevelClient(), (ManagedBulkRequest) request, listener);
+            return;
+        }
         highLevelClient().bulkAsync(request, RequestOptions.DEFAULT, listener);
     }
 
@@ -344,6 +355,27 @@ public interface Cluster extends Closeable {
 
     default void closePointInTimeAsync(ClosePointInTimeRequest request, ActionListener<ClosePointInTimeResponse> listener) {
         highLevelClient().closePointInTimeAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    default void reindexAsync(ReindexActionRequest request, ActionListener<ReindexResponse> listener) {
+        ReindexRequest reindex = request.getRequest();
+        if (request.isWaitForCompletion()) {
+            highLevelClient().reindexAsync(reindex, RequestOptions.DEFAULT,
+                    ActionListener.wrap(response -> listener.onResponse(new ReindexResponse(response)), listener::onFailure));
+            return;
+        }
+        try {
+            listener.onResponse(new ReindexResponse(
+                    highLevelClient().submitReindexTask(reindex, RequestOptions.DEFAULT).getTask()));
+        } catch (IOException exception) {
+            listener.onFailure(exception);
+        }
+    }
+
+    default void taskResultAsync(TaskResultActionRequest request,
+                                 ActionListener<ValueResponse<Optional<org.elasticsearch.client.tasks.GetTaskResponse>>> listener) {
+        highLevelClient().tasks().getAsync(request.getRequest(), RequestOptions.DEFAULT,
+                ActionListener.wrap(response -> listener.onResponse(new ValueResponse<>(response)), listener::onFailure));
     }
 
     /**

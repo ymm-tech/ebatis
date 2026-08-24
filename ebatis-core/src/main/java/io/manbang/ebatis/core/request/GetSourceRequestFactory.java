@@ -5,6 +5,7 @@ import io.manbang.ebatis.core.meta.MethodMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.client.core.GetSourceRequest;
+import org.elasticsearch.search.fetch.subphase.FetchSourceContext;
 
 class GetSourceRequestFactory extends AbstractRequestFactory<GetSource, GetSourceActionRequest> {
     static final GetSourceRequestFactory INSTANCE = new GetSourceRequestFactory();
@@ -23,6 +24,7 @@ class GetSourceRequestFactory extends AbstractRequestFactory<GetSource, GetSourc
     @Override
     protected GetSourceActionRequest doCreate(MethodMeta meta, Object[] args) {
         GetRequest getRequest = RequestFactory.get().create(meta, args);
-        return new GetSourceActionRequest(GetSourceRequest.from(getRequest));
+        return new GetSourceActionRequest(GetSourceRequest.from(getRequest)
+                .fetchSourceContext(FetchSourceContext.FETCH_SOURCE));
     }
 }

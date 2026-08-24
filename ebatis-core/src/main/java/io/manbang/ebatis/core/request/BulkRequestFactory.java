@@ -12,7 +12,9 @@ import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.client.Requests;
+import org.elasticsearch.core.TimeValue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,24 +37,38 @@ public class BulkRequestFactory extends AbstractRequestFactory<Bulk, BulkRequest
                 .timeout(bulk.timeout())
                 .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(bulk.waitForActiveShards()));
         BulkType type = bulk.bulkType();
+        ManagedBulkRequest managed = (ManagedBulkRequest) request;
+        managed.setBatchSize(bulk.batchSize())
+                .setConcurrentRequests(bulk.concurrentRequests())
+                .setMaxRetries(bulk.maxRetries())
+                .setRetryBackoff(TimeValue.parseTimeValue(bulk.retryBackoff(), "Bulk.retryBackoff"));
 
         switch (type) {
             case INDEX:
                 MetaUtils.findFirstElement(bulk.index()).ifPresent(index -> request.requests().stream()
                         .map(IndexRequest.class::cast)
-                        .forEach(req -> IndexRequestFactory.INSTANCE.setAnnotationMeta(req, index)));
+                        .forEach(req -> {
+                            IndexRequestFactory.INSTANCE.setAnnotationMeta(req, index);
+                            req.setRefreshPolicy(WriteRequest.RefreshPolicy.NONE);
+                        }));
 
                 break;
             case DELETE:
                 MetaUtils.findFirstElement(bulk.delete()).ifPresent(delete -> request.requests().stream()
                         .map(DeleteRequest.class::cast)
-                        .forEach(req -> DeleteRequestFactory.INSTANCE.setAnnotationMeta(req, delete)));
+                        .forEach(req -> {
+                            DeleteRequestFactory.INSTANCE.setAnnotationMeta(req, delete);
+                            req.setRefreshPolicy(WriteRequest.RefreshPolicy.NONE);
+                        }));
 
                 break;
             case UPDATE:
                 MetaUtils.findFirstElement(bulk.update()).ifPresent(update -> request.requests().stream()
                         .map(UpdateRequest.class::cast)
-                        .forEach(req -> UpdateRequestFactory.INSTANCE.setAnnotationMeta(req, update)));
+                        .forEach(req -> {
+                            UpdateRequestFactory.INSTANCE.setAnnotationMeta(req, update);
+                            req.setRefreshPolicy(WriteRequest.RefreshPolicy.NONE);
+                        }));
                 break;
             default:
                 // do nothing
@@ -68,7 +84,7 @@ public class BulkRequestFactory extends AbstractRequestFactory<Bulk, BulkRequest
         Collection<?> documents = getAllDocuments(meta, args);
 
         DocWriteRequest<?>[] requests = buildRequests(meta, bulk, documents);
-        BulkRequest request = Requests.bulkRequest();
+        BulkRequest request = new ManagedBulkRequest();
         request.add(requests);
         return request;
     }

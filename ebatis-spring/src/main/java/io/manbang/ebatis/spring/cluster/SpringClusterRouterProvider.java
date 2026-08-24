@@ -8,6 +8,8 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.Map;
+
 /**
  * @author 章多亮
  * @since 2020/6/3 10:37
@@ -21,7 +23,9 @@ public class SpringClusterRouterProvider implements ClusterRouterProvider, Appli
         try {
             return ApplicationContextDelegate.getBean(name, ClusterRouter.class);
         } catch (NoSuchBeanDefinitionException ignore) {
-            return null;
+            Map<?, ?> routers = ApplicationContextDelegate.getBean("ebatisClusterRouters", Map.class);
+            Object router = routers == null ? null : routers.get(name);
+            return router instanceof ClusterRouter ? (ClusterRouter) router : null;
         } catch (Exception e) {
             log.error("创建集群路由失败：{}", name, e);
             throw e;

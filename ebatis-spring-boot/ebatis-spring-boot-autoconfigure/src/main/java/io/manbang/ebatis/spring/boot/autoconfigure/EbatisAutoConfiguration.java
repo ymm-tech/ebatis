@@ -25,6 +25,8 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.stream.Stream;
 
 
@@ -46,21 +48,25 @@ public class EbatisAutoConfiguration {
         this.properties = properties;
     }
 
-    private static HttpHost[] toHttpHosts(String hosts) {
+    private static HttpHost[] toHttpHosts(String hosts, EbatisProperties.ClusterProperties properties) {
         return Stream.of(hosts.split(","))
                 .filter(StringUtils::isNotBlank)
                 .map(host -> host.split(":"))
-                .map(endpoint -> new EsHost(endpoint[0].trim(), Integer.parseInt(endpoint[1].trim())))
+                .map(endpoint -> new EsHost(endpoint[0].trim(), Integer.parseInt(endpoint[1].trim()), properties.getScheme()))
                 .map(EsHost::toHttpHost)
                 .toArray(HttpHost[]::new);
     }
 
-    private static WeightedCluster toWeightedClusters(String weightedHosts) {
+    private static WeightedCluster toWeightedClusters(String weightedHosts, EbatisProperties.ClusterProperties properties) {
         String[] strings = weightedHosts.split("@");
         int weight = Integer.parseInt(strings[0]);
 
-        HttpHost[] httpHosts = toHttpHosts(strings[1]);
-        return Cluster.weighted(weight, httpHosts);
+        HttpHost[] httpHosts = toHttpHosts(strings[1], properties);
+        return new ConfiguredWeightedCluster(weight, httpHosts, properties);
+    }
+
+    private static Cluster configuredCluster(String hosts, EbatisProperties.ClusterProperties properties) {
+        return new ConfiguredCluster(toHttpHosts(hosts, properties), properties);
     }
 
 
@@ -68,8 +74,7 @@ public class EbatisAutoConfiguration {
     @ConditionalOnMissingBean(ClusterRouter.class)
     @ConditionalOnProperty(prefix = EBATIS_CLUSTER_PREFIX, name = "single")
     public ClusterRouter singleClusterRouter() {
-        HttpHost[] httpHosts = toHttpHosts(properties.getCluster().getSingle());
-        Cluster cluster = Cluster.simple(httpHosts);
+        Cluster cluster = configuredCluster(properties.getCluster().getSingle(), properties.getCluster());
         return ClusterRouter.single(cluster);
     }
 
@@ -78,8 +83,7 @@ public class EbatisAutoConfiguration {
     @ConditionalOnProperty(prefix = EBATIS_CLUSTER_PREFIX, name = "random[0]")
     public ClusterRouter randomClusterRouter() {
         Cluster[] clusters = Stream.of(properties.getCluster().getRandom())
-                .map(EbatisAutoConfiguration::toHttpHosts)
-                .map(Cluster::simple)
+                .map(hosts -> configuredCluster(hosts, properties.getCluster()))
                 .toArray(Cluster[]::new);
         return ClusterRouter.random(clusters);
     }
@@ -90,8 +94,7 @@ public class EbatisAutoConfiguration {
     @ConditionalOnProperty(prefix = EBATIS_CLUSTER_PREFIX, name = "round-robbin[0]")
     public ClusterRouter roundRobbinClusterRouter() {
         Cluster[] clusters = Stream.of(properties.getCluster().getRoundRobbin())
-                .map(EbatisAutoConfiguration::toHttpHosts)
-                .map(Cluster::simple)
+                .map(hosts -> configuredCluster(hosts, properties.getCluster()))
                 .toArray(Cluster[]::new);
         return ClusterRouter.roundRobbin(clusters);
     }
@@ -101,9 +104,35 @@ public class EbatisAutoConfiguration {
     @ConditionalOnProperty(prefix = EBATIS_CLUSTER_PREFIX, name = "weighted[0]")
     public ClusterRouter weightedClusterRouter() {
         WeightedCluster[] clusters = Stream.of(properties.getCluster().getWeighted())
-                .map(EbatisAutoConfiguration::toWeightedClusters)
+                .map(hosts -> toWeightedClusters(hosts, properties.getCluster()))
                 .toArray(WeightedCluster[]::new);
         return ClusterRouter.weighted(clusters);
+    }
+
+    @Bean(name = "ebatisClusterRouters", destroyMethod = "close")
+    public NamedClusterRouters namedClusterRouters() {
+        NamedClusterRouters routers = new NamedClusterRouters();
+        properties.getClusters().forEach((name, cluster) -> routers.put(name, createRouter(cluster)));
+        return routers;
+    }
+
+    private ClusterRouter createRouter(EbatisProperties.ClusterProperties cluster) {
+        if (StringUtils.isNotBlank(cluster.getSingle())) {
+            return ClusterRouter.single(configuredCluster(cluster.getSingle(), cluster));
+        }
+        if (cluster.getRandom() != null && cluster.getRandom().length > 0) {
+            return ClusterRouter.random(Stream.of(cluster.getRandom())
+                    .map(hosts -> configuredCluster(hosts, cluster)).toArray(Cluster[]::new));
+        }
+        if (cluster.getRoundRobbin() != null && cluster.getRoundRobbin().length > 0) {
+            return ClusterRouter.roundRobbin(Stream.of(cluster.getRoundRobbin())
+                    .map(hosts -> configuredCluster(hosts, cluster)).toArray(Cluster[]::new));
+        }
+        if (cluster.getWeighted() != null && cluster.getWeighted().length > 0) {
+            return ClusterRouter.weighted(Stream.of(cluster.getWeighted())
+                    .map(hosts -> toWeightedClusters(hosts, cluster)).toArray(WeightedCluster[]::new));
+        }
+        throw new IllegalArgumentException("Named Ebatis cluster requires single, random or round-robbin hosts");
     }
 
     @Data
@@ -116,9 +145,24 @@ public class EbatisAutoConfiguration {
          * 端口号
          */
         private final int port;
+        private final String scheme;
 
         public HttpHost toHttpHost() {
-            return new HttpHost(hostname, port <= 0 ? DEFAULT_PORT : port);
+            return new HttpHost(hostname, port <= 0 ? DEFAULT_PORT : port,
+                    StringUtils.defaultIfBlank(scheme, "http"));
+        }
+    }
+
+    public static class NamedClusterRouters extends LinkedHashMap<String, ClusterRouter> implements java.io.Closeable {
+        @Override
+        public void close() {
+            values().forEach(router -> {
+                try {
+                    router.close();
+                } catch (java.io.IOException exception) {
+                    log.warn("关闭命名 Elasticsearch 集群失败", exception);
+                }
+            });
         }
     }
 

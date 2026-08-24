@@ -5,6 +5,8 @@ import io.manbang.ebatis.core.domain.Page;
 import io.manbang.ebatis.core.domain.Pageable;
 import io.manbang.ebatis.core.request.CatRequest;
 import io.manbang.ebatis.core.request.GetSourceActionRequest;
+import io.manbang.ebatis.core.request.ReindexActionRequest;
+import io.manbang.ebatis.core.request.TaskResultActionRequest;
 import io.manbang.ebatis.core.response.ResponseExtractor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -87,6 +89,18 @@ public interface ClusterSession extends Cloneable {
 
     default <T> T closePointInTimeSync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor) {
         return closePointInTimeAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> reindexAsync(ReindexActionRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T reindexSync(ReindexActionRequest request, ResponseExtractor<T> extractor) {
+        return reindexAsync(request, extractor).join();
+    }
+
+    <T> CompletableFuture<T> taskResultAsync(TaskResultActionRequest request, ResponseExtractor<T> extractor);
+
+    default <T> T taskResultSync(TaskResultActionRequest request, ResponseExtractor<T> extractor) {
+        return taskResultAsync(request, extractor).join();
     }
 
 
