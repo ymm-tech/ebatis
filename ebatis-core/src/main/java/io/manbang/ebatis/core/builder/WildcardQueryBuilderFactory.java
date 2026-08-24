@@ -23,8 +23,9 @@ class WildcardQueryBuilderFactory extends AbstractQueryBuilderFactory<WildcardQu
 
     @Override
     protected WildcardQueryBuilder doCreate(ConditionMeta meta, Object condition) {
-        val wildcard = meta.getAttributeAnnotation(Wildcard.class);
-        val query = wildcard.matchType().wrap(condition);
+        val query = meta.findAttributeAnnotation(Wildcard.class)
+                .map(wildcard -> wildcard.matchType().wrap(condition))
+                .orElseGet(condition::toString);
         return QueryBuilders.wildcardQuery(meta.getName(), query);
     }
 }

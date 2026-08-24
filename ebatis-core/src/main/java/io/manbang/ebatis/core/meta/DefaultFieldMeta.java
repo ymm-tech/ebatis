@@ -71,6 +71,9 @@ class DefaultFieldMeta extends AbstractConditionMeta<Field> implements FieldMeta
     }
 
     private void validate() {
+        if (!queryType.isSupported()) {
+            throw new ConditionNotSupportException(field + ": QueryType " + queryType + " is not implemented");
+        }
         boolean isExists = queryType == QueryType.EXISTS;
         boolean isBoolean = Boolean.TYPE == field.getType() || Boolean.class == field.getType();
         if (isExists && !isBoolean) {

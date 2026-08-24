@@ -3,6 +3,7 @@ package io.manbang.ebatis.core.request;
 import io.manbang.ebatis.core.annotation.DeleteByQuery;
 import io.manbang.ebatis.core.common.ActiveShardCountUtils;
 import io.manbang.ebatis.core.meta.MethodMeta;
+import io.manbang.ebatis.core.provider.RoutingProvider;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -50,6 +51,10 @@ class DeleteByQueryRequestFactory extends AbstractRequestFactory<DeleteByQuery, 
 
         DeleteByQueryRequest request = new DeleteByQueryRequest(meta.getIndices(meta, args));
         request.setQuery(source.query());
+        Object condition = meta.findConditionParameter().map(parameter -> parameter.getValue(args)).orElse(null);
+        if (condition instanceof RoutingProvider) {
+            request.setRouting(((RoutingProvider) condition).routing());
+        }
 
         return request;
     }

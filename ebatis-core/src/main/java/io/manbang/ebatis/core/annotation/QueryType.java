@@ -1,6 +1,7 @@
 package io.manbang.ebatis.core.annotation;
 
 import io.manbang.ebatis.core.builder.QueryBuilderFactory;
+import io.manbang.ebatis.core.exception.ConditionNotSupportException;
 import io.manbang.ebatis.core.meta.FieldMeta;
 import lombok.Getter;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -73,6 +74,13 @@ public enum QueryType {
     }
 
     public QueryBuilder createBuilder(FieldMeta fieldMeta, Object value) {
+        if (queryBuilderFactory == null) {
+            throw new ConditionNotSupportException("QueryType " + name() + " is not implemented");
+        }
         return queryBuilderFactory.create(fieldMeta, value);
+    }
+
+    public boolean isSupported() {
+        return queryBuilderFactory != null;
     }
 }

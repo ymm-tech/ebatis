@@ -6,7 +6,7 @@
 
     <groupId>io.manbang</groupId>
     <artifactId>ebatis</artifactId>
-    <version>7.15.0.2</version>
+    <version>7.15.0.3</version>
     <packaging>pom</packaging>
     <name>ebatis</name>
     <description>Elasticsearch ORM Framework</description>
@@ -22,7 +22,7 @@
     <properties>
         <java.version>1.8</java.version>
         <slf4j.version>1.7.25</slf4j.version>
-        <lombok.version>1.18.10</lombok.version>
+        <lombok.version>1.18.30</lombok.version>
         <logback.version>1.2.3</logback.version>
         <log4j2.version>2.12.1</log4j2.version>
         <disruptor.version>3.4.2</disruptor.version>
@@ -47,6 +47,8 @@
         <commons-configuration2.version>2.6</commons-configuration2.version>
         <auto-service-annotations.version>1.0-rc5</auto-service-annotations.version>
         <auto-service.version>1.0-rc7</auto-service.version>
+        <core.integration.exclude>**/search/SearchTest.java</core.integration.exclude>
+        <sample.integration.skip>true</sample.integration.skip>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
@@ -232,6 +234,16 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <excludes>
+                        <exclude>${core.integration.exclude}</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
                 <version>2.3</version>
@@ -272,6 +284,16 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>integration</id>
+            <properties>
+                <core.integration.exclude>**/__no_excluded_integration_test__.java</core.integration.exclude>
+                <sample.integration.skip>false</sample.integration.skip>
+            </properties>
+        </profile>
+    </profiles>
 
     <licenses>
         <license>

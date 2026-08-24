@@ -4,9 +4,8 @@ import com.google.auto.service.AutoService;
 import io.manbang.ebatis.core.generic.GenericType;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.RequestType;
-import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.rest.RestStatus;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.BulkByScrollTask;
 
 /**
  * @author 章多亮
@@ -22,18 +21,26 @@ public class DeleteByQueryResponseExtractorProvider extends AbstractResponseExtr
     protected ResponseExtractor<?> getResponseExtractor(MethodMeta meta, GenericType genericType) {
         Class<?> resultClass = genericType.resolve();
 
-        if (DeleteResponse.class == resultClass) {
+        if (BulkByScrollResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
-        } else if (RestStatus.class == resultClass) {
-            return response -> ((DeleteResponse) response).status();
+        } else if (BulkByScrollTask.Status.class == resultClass) {
+            return response -> ((BulkByScrollResponse) response).getStatus();
+        } else if (ByQueryResponse.class == resultClass) {
+            return response -> ByQueryResponse.from((BulkByScrollResponse) response);
         } else if (void.class == resultClass || Void.class == resultClass) {
             return response -> null;
-        } else if (DocWriteResponse.Result.class == resultClass) {
-            return response -> ((DeleteResponse) response).getResult();
+        } else if (Long.class == resultClass || long.class == resultClass) {
+            return response -> ((BulkByScrollResponse) response).getDeleted();
         } else if (Boolean.class == resultClass || boolean.class == resultClass) {
-            return response -> ((DeleteResponse) response).getResult() == DocWriteResponse.Result.DELETED;
+            return response -> successful((BulkByScrollResponse) response);
         } else {
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException("Unsupported DeleteByQuery return type: " + genericType);
         }
+    }
+
+    private static boolean successful(BulkByScrollResponse response) {
+        return !response.isTimedOut()
+                && response.getBulkFailures().isEmpty()
+                && response.getSearchFailures().isEmpty();
     }
 }

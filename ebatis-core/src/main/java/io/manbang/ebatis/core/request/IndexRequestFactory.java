@@ -44,7 +44,8 @@ class IndexRequestFactory extends AbstractRequestFactory<Index, IndexRequest> {
                 .waitForActiveShards(ActiveShardCountUtils.getActiveShardCount(index.waitForActiveShards()))
                 .timeout(index.timeout())
                 .opType(DocWriteRequest.OpType.valueOf(index.opType().name()))
-                .setPipeline(StringUtils.trimToNull(index.finalPipeline()))
+                .setRequireAlias(index.requireAlias())
+                .setPipeline(StringUtils.trimToNull(index.pipeline()))
                 .setFinalPipeline(StringUtils.trimToNull(index.finalPipeline()));
     }
 
