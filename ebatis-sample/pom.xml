@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ebatis</artifactId>
         <groupId>io.manbang</groupId>
-        <version>7.15.0.4</version>
+        <version>7.15.0.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>io.manbang</groupId>
             <artifactId>ebatis-spring</artifactId>
-            <version>7.15.0.4</version>
+            <version>7.15.0.5</version>
         </dependency>
 
         <dependency>
@@ -63,6 +63,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>${sample.integration.skip}</skipTests>
+                    <includes>
+                        <include>**/*IntegrationTest.java</include>
+                    </includes>
                 </configuration>
             </plugin>
             <plugin>

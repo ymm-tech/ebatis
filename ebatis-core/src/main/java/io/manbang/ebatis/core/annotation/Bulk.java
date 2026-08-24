@@ -27,4 +27,12 @@ public @interface Bulk {
     Delete[] delete() default {};
 
     Update[] update() default {};
+
+    int batchSize() default 1000;
+
+    int concurrentRequests() default 1;
+
+    int maxRetries() default 3;
+
+    String retryBackoff() default "100ms";
 }

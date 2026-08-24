@@ -66,6 +66,9 @@ public abstract class AbstractCluster implements Cluster {
     private Sniffer highLevelSniffer;
     private Sniffer lowLevelSniffer;
     private String name;
+    private Boolean sniffEnabled;
+    private int sniffIntervalMillis = DEFAULT_SNIFF_INTERVAL;
+    private int sniffAfterFailureDelayMillis = DEFAULT_SNIFF_AFTER_FAILURE_DELAY;
 
     protected AbstractCluster(String hostname, int port) {
         this(new HttpHost[]{new HttpHost(hostname, port)}, null);
@@ -109,9 +112,9 @@ public abstract class AbstractCluster implements Cluster {
     private RestHighLevelClient buildRestHighLevelClient() {
         val restHighLevelClient = new RestHighLevelClient(builder);
 
-        if (Env.isSniffEnabled()) {
-            highLevelSniffer = Sniffer.builder(restHighLevelClient.getLowLevelClient()).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
-                    .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+        if (isSniffEnabled()) {
+            highLevelSniffer = Sniffer.builder(restHighLevelClient.getLowLevelClient()).setSniffIntervalMillis(sniffIntervalMillis)
+                    .setSniffAfterFailureDelayMillis(sniffAfterFailureDelayMillis).build();
         }
 
         detectServerVersion(restHighLevelClient.getLowLevelClient());
@@ -176,15 +179,29 @@ public abstract class AbstractCluster implements Cluster {
     private RestClient buildRestClient() {
         val client = builder.build();
 
-        if (Env.isSniffEnabled()) {
-            lowLevelSniffer = Sniffer.builder(client).setSniffIntervalMillis(DEFAULT_SNIFF_INTERVAL)
-                    .setSniffAfterFailureDelayMillis(DEFAULT_SNIFF_AFTER_FAILURE_DELAY).build();
+        if (isSniffEnabled()) {
+            lowLevelSniffer = Sniffer.builder(client).setSniffIntervalMillis(sniffIntervalMillis)
+                    .setSniffAfterFailureDelayMillis(sniffAfterFailureDelayMillis).build();
         }
         return client;
     }
 
     protected HttpHost[] getHosts() {
         return hosts;
+    }
+
+    private boolean isSniffEnabled() {
+        return sniffEnabled == null ? Env.isSniffEnabled() : sniffEnabled;
+    }
+
+    public AbstractCluster sniff(boolean enabled, int intervalMillis, int afterFailureDelayMillis) {
+        if (highLevelClientInitialized.get() || lowLevelClientInitialized.get()) {
+            throw new IllegalStateException("sniff options must be configured before client initialization");
+        }
+        this.sniffEnabled = enabled;
+        this.sniffIntervalMillis = intervalMillis;
+        this.sniffAfterFailureDelayMillis = afterFailureDelayMillis;
+        return this;
     }
 
     @Override

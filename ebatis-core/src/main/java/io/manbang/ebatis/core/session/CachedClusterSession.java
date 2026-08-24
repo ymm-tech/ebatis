@@ -13,6 +13,8 @@ import io.manbang.ebatis.core.interceptor.Interceptor;
 import io.manbang.ebatis.core.interceptor.InterceptorFactory;
 import io.manbang.ebatis.core.request.CatRequest;
 import io.manbang.ebatis.core.request.GetSourceActionRequest;
+import io.manbang.ebatis.core.request.ReindexActionRequest;
+import io.manbang.ebatis.core.request.TaskResultActionRequest;
 import io.manbang.ebatis.core.response.ResponseExtractor;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.ActionRequest;
@@ -85,6 +87,16 @@ class CachedClusterSession implements ClusterSession {
     @Override
     public <T> CompletableFuture<T> closePointInTimeAsync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor) {
         return performRequestAsync(cluster::closePointInTimeAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> reindexAsync(ReindexActionRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::reindexAsync, request, extractor);
+    }
+
+    @Override
+    public <T> CompletableFuture<T> taskResultAsync(TaskResultActionRequest request, ResponseExtractor<T> extractor) {
+        return performRequestAsync(cluster::taskResultAsync, request, extractor);
     }
 
     @Override

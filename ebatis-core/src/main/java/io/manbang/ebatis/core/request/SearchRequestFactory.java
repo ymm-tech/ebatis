@@ -5,6 +5,7 @@ import io.manbang.ebatis.core.annotation.DeleteByQuery;
 import io.manbang.ebatis.core.annotation.Count;
 import io.manbang.ebatis.core.annotation.MultiSearch;
 import io.manbang.ebatis.core.annotation.QueryType;
+import io.manbang.ebatis.core.annotation.Reindex;
 import io.manbang.ebatis.core.annotation.Search;
 import io.manbang.ebatis.core.annotation.SearchScroll;
 import io.manbang.ebatis.core.annotation.UpdateByQuery;
@@ -70,6 +71,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         annotationClasses.add(DeleteByQuery.class);
         annotationClasses.add(Agg.class);
         annotationClasses.add(Count.class);
+        annotationClasses.add(Reindex.class);
 
         SEARCH_ANNOTATION_CLASSES = Collections.unmodifiableList(annotationClasses);
     }
@@ -208,7 +210,10 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
             searchSource.collapse(collapse.toCollapseBuilder());
         }
         if (condition instanceof SearchAfterProvider) {
-            searchSource.searchAfter(((SearchAfterProvider) condition).sortValues());
+            Object[] sortValues = ((SearchAfterProvider) condition).sortValues();
+            if (ArrayUtils.isNotEmpty(sortValues)) {
+                searchSource.searchAfter(sortValues);
+            }
         }
 
         if (condition instanceof PointTimeProvider) {

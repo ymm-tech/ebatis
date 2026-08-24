@@ -13,11 +13,14 @@ import io.manbang.ebatis.core.annotation.GetSource;
 import io.manbang.ebatis.core.annotation.Index;
 import io.manbang.ebatis.core.annotation.MultiGet;
 import io.manbang.ebatis.core.annotation.MultiSearch;
+import io.manbang.ebatis.core.annotation.NativeOperation;
 import io.manbang.ebatis.core.annotation.OpenPointInTime;
+import io.manbang.ebatis.core.annotation.Reindex;
 import io.manbang.ebatis.core.annotation.Search;
 import io.manbang.ebatis.core.annotation.SearchScroll;
 import io.manbang.ebatis.core.annotation.Update;
 import io.manbang.ebatis.core.annotation.UpdateByQuery;
+import io.manbang.ebatis.core.annotation.TaskResult;
 import io.manbang.ebatis.core.domain.ScrollResponse;
 import io.manbang.ebatis.core.executor.RequestExecutor;
 import io.manbang.ebatis.core.generic.GenericType;
@@ -153,6 +156,9 @@ public enum RequestType {
     },
     OPEN_POINT_IN_TIME(OpenPointInTime.class, RequestExecutor.openPointInTime()),
     CLOSE_POINT_IN_TIME(ClosePointInTime.class, RequestExecutor.closePointInTime()),
+    REINDEX(Reindex.class, RequestExecutor.reindex()),
+    TASK_RESULT(TaskResult.class, RequestExecutor.taskResult()),
+    NATIVE_OPERATION(NativeOperation.class, RequestExecutor.nativeOperation()),
     /**
      * 索引请求
      */

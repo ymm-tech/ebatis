@@ -1,5 +1,16 @@
 # Changelog
 
+## 7.15.0.5
+
+- 新增 Reindex Mapper，支持限速、切片、冲突策略、批大小、最大文档数、目标 pipeline/version/op type/alias 校验。
+- Reindex 支持等待完成或返回异步任务 ID，并新增 `@TaskResult` 查询任务状态与结果。
+- Bulk 支持客户端分批、受控并发、指数退避以及 429/502/503/504 逐项重试；新增 `BulkResult` 逐项失败明细。
+- 修复 Bulk 子请求携带 refresh policy 被 ES 拒绝的问题。
+- 新增 `@NativeOperation`、`OperationExtension` 和注册中心，统一开放注解、RequestFactory、Executor、ResponseExtractor 扩展链路。
+- Spring Boot 配置新增 scheme、认证、SSL trust store、主机名校验、连接池、三类超时、默认请求头、sniff 参数和命名多集群。
+- `ebatis-web` 继续保留二进制兼容，明确标记为空壳模块。
+- 新增隔离的 ES 7.15 发布集成测试，覆盖 CRUD、Count、PIT、聚合、by-query、Bulk、同步/异步 Reindex 和任务结果。
+
 ## 7.15.0.4
 
 - 新增真正的 Count API，同时保留 `@Cat(count = ...)` 兼容入口。

@@ -118,6 +118,18 @@ public interface RequestExecutor {
         return ClosePointInTimeRequestExecutor.INSTANCE;
     }
 
+    static RequestExecutor reindex() {
+        return ReindexRequestExecutor.INSTANCE;
+    }
+
+    static RequestExecutor taskResult() {
+        return TaskResultRequestExecutor.INSTANCE;
+    }
+
+    static RequestExecutor nativeOperation() {
+        return NativeOperationRequestExecutor.INSTANCE;
+    }
+
     static RequestExecutor searchScroll() {
         return SearchScrollRequestExecutor.INSTANCE;
     }

@@ -27,6 +27,8 @@ public class BulkResponseExtractorProvider extends AbstractResponseExtractorProv
             return BooleanBulkResponseExtractor.INSTANCE;
         } else if (BulkResponse.class == resultClass) {
             return RawResponseExtractor.INSTANCE;
+        } else if (BulkResult.class == resultClass) {
+            return response -> BulkResult.from((BulkResponse) response);
         } else if (List.class.isAssignableFrom(resultClass)) {
             return response -> Lists.newArrayList(((BulkResponse) response).getItems());
         } else if (resultClass.isArray()) {

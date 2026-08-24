@@ -3,6 +3,9 @@ package io.manbang.ebatis.spring.boot.autoconfigure;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Ebatis配置
  *
@@ -24,6 +27,8 @@ public class EbatisProperties {
      * 调试模式
      */
     private boolean debugEnabled;
+    /** Named cluster routers, addressable by @EasyMapper(clusterRouter = "name"). */
+    private Map<String, ClusterProperties> clusters = new LinkedHashMap<>();
 
     @Data
     public static class ClusterProperties {
@@ -70,5 +75,27 @@ public class EbatisProperties {
          * </pre>
          */
         private String[] weighted;
+
+        private String scheme = "http";
+        private String username;
+        private String password;
+        private int connectTimeout = 1000;
+        private int socketTimeout = 30000;
+        private int connectionRequestTimeout = 500;
+        private int maxConnTotal = 100;
+        private int maxConnPerRoute = 100;
+        private Map<String, String> defaultHeaders = new LinkedHashMap<>();
+        private boolean sniff;
+        private int sniffInterval = 10000;
+        private int sniffAfterFailureDelay = 10000;
+        private SslProperties ssl = new SslProperties();
+    }
+
+    @Data
+    public static class SslProperties {
+        private boolean enabled;
+        private String trustStore;
+        private String trustStorePassword;
+        private boolean verifyHostname = true;
     }
 }
