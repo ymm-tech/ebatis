@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ebatis-spring-boot</artifactId>
         <groupId>io.manbang</groupId>
-        <version>7.15.0.5</version>
+        <version>7.15.0.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -35,6 +35,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

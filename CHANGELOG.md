@@ -1,5 +1,14 @@
 # Changelog
 
+## 7.15.0.6-SNAPSHOT
+
+- 恢复 `ClusterSession` 扩展兼容性：新增异步操作改为默认方法，已有自定义 Session 实现无需立即补齐新接口。
+- 修复 Spring 路由未配置命名集群时的兼容回退，继续允许其他 `ClusterRouterProvider` 接管路由。
+- 修复脚本方式 Update By Query 错误关闭 `_source`，避免 Elasticsearch 返回 `didn't store _source`。
+- Spring Boot 默认初始化单集群配置，兼容仅使用旧版 `ebatis.cluster.*` 配置或直接构造属性对象的应用。
+- 新增旧接口联网回归，覆盖 Mapper 注册、CRUD、Bulk、Search、Multi Get、Multi Search、聚合、Scroll、by-query、`@Cat(count=...)`、pipeline 以及同步/异步返回类型。
+- 新增 Spring Boot 单集群、命名多集群、路由权重、HTTPS 参数和 Elasticsearch 7.15 Basic Auth 连接回归。
+
 ## 7.15.0.5
 
 - 新增 Reindex Mapper，支持限速、切片、冲突策略、批大小、最大文档数、目标 pipeline/version/op type/alias 校验。

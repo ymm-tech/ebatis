@@ -39,7 +39,8 @@ public @interface Index {
     String pipeline() default "";
 
     /**
-     * 最后一个管道名称
+     * 最后一个管道名称。Elasticsearch REST API 不接受单次写入级别的 final_pipeline 参数；
+     * 使用 REST High Level Client 时仍需在目标索引配置 index.final_pipeline。
      *
      * @return 管道名称
      */

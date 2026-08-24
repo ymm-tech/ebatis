@@ -61,43 +61,57 @@ public interface ClusterSession extends Cloneable {
         return getAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> countAsync(CountRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> countAsync(CountRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("count is not supported by this ClusterSession implementation");
+    }
 
     default <T> T countSync(CountRequest request, ResponseExtractor<T> extractor) {
         return countAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> documentExistsAsync(GetRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> documentExistsAsync(GetRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("documentExists is not supported by this ClusterSession implementation");
+    }
 
     default <T> T documentExistsSync(GetRequest request, ResponseExtractor<T> extractor) {
         return documentExistsAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> getSourceAsync(GetSourceActionRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> getSourceAsync(GetSourceActionRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("getSource is not supported by this ClusterSession implementation");
+    }
 
     default <T> T getSourceSync(GetSourceActionRequest request, ResponseExtractor<T> extractor) {
         return getSourceAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> openPointInTimeAsync(OpenPointInTimeRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> openPointInTimeAsync(OpenPointInTimeRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("openPointInTime is not supported by this ClusterSession implementation");
+    }
 
     default <T> T openPointInTimeSync(OpenPointInTimeRequest request, ResponseExtractor<T> extractor) {
         return openPointInTimeAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> closePointInTimeAsync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> closePointInTimeAsync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("closePointInTime is not supported by this ClusterSession implementation");
+    }
 
     default <T> T closePointInTimeSync(ClosePointInTimeRequest request, ResponseExtractor<T> extractor) {
         return closePointInTimeAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> reindexAsync(ReindexActionRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> reindexAsync(ReindexActionRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("reindex is not supported by this ClusterSession implementation");
+    }
 
     default <T> T reindexSync(ReindexActionRequest request, ResponseExtractor<T> extractor) {
         return reindexAsync(request, extractor).join();
     }
 
-    <T> CompletableFuture<T> taskResultAsync(TaskResultActionRequest request, ResponseExtractor<T> extractor);
+    default <T> CompletableFuture<T> taskResultAsync(TaskResultActionRequest request, ResponseExtractor<T> extractor) {
+        throw new UnsupportedOperationException("taskResult is not supported by this ClusterSession implementation");
+    }
 
     default <T> T taskResultSync(TaskResultActionRequest request, ResponseExtractor<T> extractor) {
         return taskResultAsync(request, extractor).join();

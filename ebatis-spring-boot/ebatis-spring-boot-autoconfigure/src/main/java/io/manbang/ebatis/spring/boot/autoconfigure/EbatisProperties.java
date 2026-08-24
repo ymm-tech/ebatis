@@ -18,7 +18,7 @@ public class EbatisProperties {
     /**
      * 集群主机配置
      */
-    private ClusterProperties cluster;
+    private ClusterProperties cluster = new ClusterProperties();
     /**
      * 离线模式，不会实际去连接ES
      */

@@ -60,6 +60,7 @@ class UpdateByQueryRequestFactory extends AbstractRequestFactory<UpdateByQuery, 
         Object condition = args[0];
 
         if (condition instanceof ScriptProvider) {
+            source.fetchSource(true);
             request.setScript(((ScriptProvider) condition).getScript().toEsScript());
         }
         if (condition instanceof RoutingProvider) {

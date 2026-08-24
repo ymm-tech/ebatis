@@ -23,9 +23,13 @@ public class SpringClusterRouterProvider implements ClusterRouterProvider, Appli
         try {
             return ApplicationContextDelegate.getBean(name, ClusterRouter.class);
         } catch (NoSuchBeanDefinitionException ignore) {
-            Map<?, ?> routers = ApplicationContextDelegate.getBean("ebatisClusterRouters", Map.class);
-            Object router = routers == null ? null : routers.get(name);
-            return router instanceof ClusterRouter ? (ClusterRouter) router : null;
+            try {
+                Map<?, ?> routers = ApplicationContextDelegate.getBean("ebatisClusterRouters", Map.class);
+                Object router = routers == null ? null : routers.get(name);
+                return router instanceof ClusterRouter ? (ClusterRouter) router : null;
+            } catch (NoSuchBeanDefinitionException missingNamedRouters) {
+                return null;
+            }
         } catch (Exception e) {
             log.error("创建集群路由失败：{}", name, e);
             throw e;
