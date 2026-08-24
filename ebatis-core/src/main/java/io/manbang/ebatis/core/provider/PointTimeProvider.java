@@ -7,4 +7,11 @@ public interface PointTimeProvider extends Provider {
      * @return point time id
      */
     String pitId();
+
+    /**
+     * 每次搜索对 PIT 续期；空值时沿用服务端当前值。
+     */
+    default String keepAlive() {
+        return "";
+    }
 }

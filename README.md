@@ -1,7 +1,7 @@
 # ebatis是什么
 [![GitHub Stars](https://img.shields.io/badge/stars-100%2B-blue)](https://github.com/ymm-tech/ebatis/stargazers) 
 [![JDK support](https://img.shields.io/badge/JDK-8+-green.svg)](https://github.com/ymm-tech/ebatis/releases)
-[![Maven Central](https://img.shields.io/badge/maven-7.15.0.3-green)](https://search.maven.org/search?q=ebatis)
+[![Maven Central](https://img.shields.io/badge/maven-7.15.0.4-green)](https://search.maven.org/search?q=ebatis)
 [![License](https://img.shields.io/badge/License-MIT-yellowgreen)](https://choosealicense.com/licenses/mit/)  
 `ebatis`是一个声明式`Elasticsearch ORM`框架。只需要定义接口，便可轻松访问`Elasticsearch`。`ebatis`优雅地帮你隔离业务对`Elasticserach`底层驱动接口的直接调用，你不再需要自己手动去构建繁琐`DSL`
 语句。同时，当升级`Elastisearch`版本的时候，业务可以完全不用关心底层接口的变动，平滑升级。  
@@ -17,7 +17,7 @@
 <dependency>
      <groupId>io.manbang</groupId>
      <artifactId>ebatis-core</artifactId>
-     <version>7.15.0.3</version>
+     <version>7.15.0.4</version>
 </dependency>
 ```
 创建集群连接如下:
@@ -127,7 +127,7 @@ POM依赖
 <dependency>
      <groupId>io.manbang</groupId>
      <artifactId>ebatis-core</artifactId>
-     <version>7.15.0.3</version>
+     <version>7.15.0.4</version>
 </dependency>
 ```
 创建集群连接
@@ -242,6 +242,16 @@ mvn clean verify -Pintegration
 ```
 
 完整能力状态见 [能力矩阵](docs/CAPABILITIES.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。
+
+### 原生扩展口
+
+当注解 DSL 不足以描述 Elasticsearch 请求时，条件对象可以实现以下接口，继续复用 Mapper 路由、拦截器、同步/异步适配和响应提取链路：
+
+- `QueryBuilderProvider`：提供原生 `QueryBuilder`。
+- `AggregationBuilderProvider`：提供一个或多个原生 `AggregationBuilder`。
+- `SearchSourceBuilderProvider`：配置 post filter、suggest、rescore 等 `SearchSourceBuilder` 能力。
+
+PIT 深分页条件同时实现 `PointTimeProvider` 和 `SearchAfterProvider`；每次响应返回的新 PIT ID 应传入下一页请求，`keepAlive()` 用于逐页续期。
 
 # ebatis入门及相关文章
 

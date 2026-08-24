@@ -7,9 +7,12 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.ClosePointInTimeRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.OpenPointInTimeRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.core.CountRequest;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
 
@@ -78,6 +81,26 @@ public interface RequestFactory<R extends ActionRequest> {
 
     static RequestFactory<MultiGetRequest> multiGet() {
         return MultiGetRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<CountRequest> count() {
+        return CountRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<GetRequest> documentExists() {
+        return DocumentExistsRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<GetSourceActionRequest> getSource() {
+        return GetSourceRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<OpenPointInTimeRequest> openPointInTime() {
+        return OpenPointInTimeRequestFactory.INSTANCE;
+    }
+
+    static RequestFactory<ClosePointInTimeRequest> closePointInTime() {
+        return ClosePointInTimeRequestFactory.INSTANCE;
     }
 
     /**

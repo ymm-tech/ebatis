@@ -63,4 +63,16 @@ public @interface Search {
     String requestCache() default "";
 
     String scrollKeepAlive() default "";
+
+    float minScore() default -Float.MAX_VALUE;
+
+    boolean trackScores() default false;
+
+    boolean explain() default false;
+
+    boolean profile() default false;
+
+    String[] storedFields() default {};
+
+    String[] docValueFields() default {};
 }

@@ -98,6 +98,26 @@ public interface RequestExecutor {
         return GetRequestExecutor.INSTANCE;
     }
 
+    static RequestExecutor count() {
+        return CountRequestExecutor.INSTANCE;
+    }
+
+    static RequestExecutor documentExists() {
+        return DocumentExistsRequestExecutor.INSTANCE;
+    }
+
+    static RequestExecutor getSource() {
+        return GetSourceRequestExecutor.INSTANCE;
+    }
+
+    static RequestExecutor openPointInTime() {
+        return OpenPointInTimeRequestExecutor.INSTANCE;
+    }
+
+    static RequestExecutor closePointInTime() {
+        return ClosePointInTimeRequestExecutor.INSTANCE;
+    }
+
     static RequestExecutor searchScroll() {
         return SearchScrollRequestExecutor.INSTANCE;
     }

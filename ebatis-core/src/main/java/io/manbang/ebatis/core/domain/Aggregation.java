@@ -1,9 +1,60 @@
 package io.manbang.ebatis.core.domain;
 
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.composite.CompositeValuesSourceBuilder;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+
+import java.util.List;
+
 /**
  * @author weilong.hu
  */
 public interface Aggregation {
+    static NativeAggregation histogram(String name, String field, double interval) {
+        return new NativeAggregation(AggregationBuilders.histogram(name).field(field).interval(interval));
+    }
+
+    static NativeAggregation dateHistogram(String name, String field, String calendarInterval) {
+        return new NativeAggregation(AggregationBuilders.dateHistogram(name).field(field)
+                .calendarInterval(new DateHistogramInterval(calendarInterval)));
+    }
+
+    static NativeAggregation range(String name, String field, double... bounds) {
+        org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder builder =
+                AggregationBuilders.range(name).field(field);
+        if (bounds != null && bounds.length > 0) {
+            builder.addUnboundedTo(bounds[0]);
+            for (int i = 0; i + 1 < bounds.length; i++) {
+                builder.addRange(bounds[i], bounds[i + 1]);
+            }
+            builder.addUnboundedFrom(bounds[bounds.length - 1]);
+        }
+        return new NativeAggregation(builder);
+    }
+
+    static NativeAggregation filter(String name, org.elasticsearch.index.query.QueryBuilder filter) {
+        return new NativeAggregation(AggregationBuilders.filter(name, filter));
+    }
+
+    static NativeAggregation nested(String name, String path) {
+        return new NativeAggregation(AggregationBuilders.nested(name, path));
+    }
+
+    static NativeAggregation cardinality(String name, String field) {
+        return new NativeAggregation(AggregationBuilders.cardinality(name).field(field));
+    }
+
+    static NativeAggregation stats(String name, String field) {
+        return new NativeAggregation(AggregationBuilders.stats(name).field(field));
+    }
+
+    static NativeAggregation topHits(String name, int size) {
+        return new NativeAggregation(AggregationBuilders.topHits(name).size(size));
+    }
+
+    static NativeAggregation composite(String name, List<CompositeValuesSourceBuilder<?>> sources, int size) {
+        return new NativeAggregation(AggregationBuilders.composite(name, sources).size(size));
+    }
     /**
      * Create a new Terms aggregation with the given name.
      *

@@ -3,12 +3,17 @@ package io.manbang.ebatis.core.meta;
 import io.manbang.ebatis.core.annotation.Agg;
 import io.manbang.ebatis.core.annotation.Bulk;
 import io.manbang.ebatis.core.annotation.Cat;
+import io.manbang.ebatis.core.annotation.ClosePointInTime;
+import io.manbang.ebatis.core.annotation.Count;
 import io.manbang.ebatis.core.annotation.Delete;
 import io.manbang.ebatis.core.annotation.DeleteByQuery;
+import io.manbang.ebatis.core.annotation.DocumentExists;
 import io.manbang.ebatis.core.annotation.Get;
+import io.manbang.ebatis.core.annotation.GetSource;
 import io.manbang.ebatis.core.annotation.Index;
 import io.manbang.ebatis.core.annotation.MultiGet;
 import io.manbang.ebatis.core.annotation.MultiSearch;
+import io.manbang.ebatis.core.annotation.OpenPointInTime;
 import io.manbang.ebatis.core.annotation.Search;
 import io.manbang.ebatis.core.annotation.SearchScroll;
 import io.manbang.ebatis.core.annotation.Update;
@@ -23,6 +28,7 @@ import org.elasticsearch.action.get.MultiGetItemResponse;
 import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.MultiSearchResponse;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.core.GetSourceResponse;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -133,6 +139,20 @@ public enum RequestType {
             return Optional.ofNullable(genericType.resolve());
         }
     },
+    COUNT(Count.class, RequestExecutor.count()),
+    DOCUMENT_EXISTS(DocumentExists.class, RequestExecutor.documentExists()),
+    GET_SOURCE(GetSource.class, RequestExecutor.getSource()) {
+        @Override
+        public Optional<Class<?>> getEntityClass(MethodMeta meta) {
+            GenericType genericType = RequestType.getReturnGenericType(meta);
+            if (genericType.is(GetSourceResponse.class) || genericType.is(Map.class)) {
+                return super.getEntityClass(meta);
+            }
+            return Optional.ofNullable(genericType.resolve());
+        }
+    },
+    OPEN_POINT_IN_TIME(OpenPointInTime.class, RequestExecutor.openPointInTime()),
+    CLOSE_POINT_IN_TIME(ClosePointInTime.class, RequestExecutor.closePointInTime()),
     /**
      * 索引请求
      */

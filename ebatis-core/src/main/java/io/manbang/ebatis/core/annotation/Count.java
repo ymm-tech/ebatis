@@ -10,7 +10,15 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Count {
+    QueryType queryType() default QueryType.AUTO;
+
     String index() default "";
 
     String format() default "json";
+
+    String preference() default "";
+
+    float minScore() default Float.NaN;
+
+    int terminateAfter() default 0;
 }

@@ -1,7 +1,10 @@
 package io.manbang.ebatis.core.cluster;
 
 import io.manbang.ebatis.core.request.CatRequest;
+import io.manbang.ebatis.core.request.GetSourceActionRequest;
 import io.manbang.ebatis.core.response.CatResponse;
+import io.manbang.ebatis.core.response.DocumentExistsResponse;
+import io.manbang.ebatis.core.response.ValueResponse;
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.bulk.BulkRequest;
@@ -26,6 +29,13 @@ import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.core.CountRequest;
+import org.elasticsearch.client.core.CountResponse;
+import org.elasticsearch.client.core.GetSourceResponse;
+import org.elasticsearch.action.search.ClosePointInTimeRequest;
+import org.elasticsearch.action.search.ClosePointInTimeResponse;
+import org.elasticsearch.action.search.OpenPointInTimeRequest;
+import org.elasticsearch.action.search.OpenPointInTimeResponse;
 import org.elasticsearch.index.reindex.BulkByScrollResponse;
 import org.elasticsearch.index.reindex.DeleteByQueryRequest;
 import org.elasticsearch.index.reindex.UpdateByQueryRequest;
@@ -311,6 +321,29 @@ public interface Cluster extends Closeable {
      */
     default void getAsync(GetRequest request, ActionListener<GetResponse> listener) {
         highLevelClient().getAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    default void countAsync(CountRequest request, ActionListener<ValueResponse<CountResponse>> listener) {
+        highLevelClient().countAsync(request, RequestOptions.DEFAULT,
+                ActionListener.wrap(response -> listener.onResponse(new ValueResponse<>(response)), listener::onFailure));
+    }
+
+    default void documentExistsAsync(GetRequest request, ActionListener<DocumentExistsResponse> listener) {
+        highLevelClient().existsAsync(request, RequestOptions.DEFAULT,
+                ActionListener.wrap(response -> listener.onResponse(new DocumentExistsResponse(response)), listener::onFailure));
+    }
+
+    default void getSourceAsync(GetSourceActionRequest request, ActionListener<ValueResponse<GetSourceResponse>> listener) {
+        highLevelClient().getSourceAsync(request.getRequest(), RequestOptions.DEFAULT,
+                ActionListener.wrap(response -> listener.onResponse(new ValueResponse<>(response)), listener::onFailure));
+    }
+
+    default void openPointInTimeAsync(OpenPointInTimeRequest request, ActionListener<OpenPointInTimeResponse> listener) {
+        highLevelClient().openPointInTimeAsync(request, RequestOptions.DEFAULT, listener);
+    }
+
+    default void closePointInTimeAsync(ClosePointInTimeRequest request, ActionListener<ClosePointInTimeResponse> listener) {
+        highLevelClient().closePointInTimeAsync(request, RequestOptions.DEFAULT, listener);
     }
 
     /**

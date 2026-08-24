@@ -6,11 +6,12 @@
 |---|---:|---|
 | Index/Get/Update/Delete | ✅ | 支持同步、异步 Mapper 和常用版本/路由参数 |
 | Bulk/Multi Get/Multi Search | ✅ | Bulk 高级批处理能力将在 7.15.0.5 补充 |
-| Search/Scroll/Search After | ✅ | PIT 生命周期将在 7.15.0.4 补齐 |
+| Search/Scroll/Search After/PIT | ✅ | PIT 生命周期、keep-alive、最新 PIT ID 和 search_after 已支持 |
 | Delete By Query/Update By Query | ✅ | 7.15.0.3 修复响应提取 |
-| Count API | 🟡 | 7.15.0.4 实现；当前仅有 Search countOnly 和 CAT count |
-| Query DSL | 🟡 | 已支持 Bool、Term(s)、Match、Wildcard、Range、Nested、Geo 等常用查询 |
-| Aggregation DSL | 🟡 | 已支持部分指标和 Terms/Filters；常用聚合在 7.15.0.4 补充 |
+| Count/Exists/Get Source | ✅ | 原生 Count API、文档存在性和仅取 `_source` 均支持同步/异步 Mapper |
+| Query DSL | ✅ | 常用查询已补齐，长尾查询可通过 `QueryBuilderProvider` 接入原生 builder |
+| Search Source | ✅ | 支持分页、过滤、计分/诊断/字段选取；suggest/rescore 等可通过原生扩展口配置 |
+| Aggregation DSL | ✅ | 常用桶、指标及 composite 已支持，其他聚合可通过 `AggregationBuilderProvider` 接入 |
 | Reindex | 🟡 | 7.15.0.5 实现 |
 | Index 管理 | 🟡 | 目前支持 create/delete/refresh，不作为本轮主范围 |
 | Cluster/Snapshot/Ingest/ML | ➖ | 可通过底层客户端访问，不做 Mapper 注解全覆盖 |

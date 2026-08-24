@@ -2,6 +2,7 @@ package io.manbang.ebatis.core.request;
 
 import io.manbang.ebatis.core.annotation.Agg;
 import io.manbang.ebatis.core.annotation.DeleteByQuery;
+import io.manbang.ebatis.core.annotation.Count;
 import io.manbang.ebatis.core.annotation.MultiSearch;
 import io.manbang.ebatis.core.annotation.QueryType;
 import io.manbang.ebatis.core.annotation.Search;
@@ -20,9 +21,11 @@ import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.CollapseProvider;
 import io.manbang.ebatis.core.provider.HighlighterProvider;
 import io.manbang.ebatis.core.provider.PointTimeProvider;
+import io.manbang.ebatis.core.provider.QueryBuilderProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import io.manbang.ebatis.core.provider.ScriptFieldProvider;
 import io.manbang.ebatis.core.provider.SearchAfterProvider;
+import io.manbang.ebatis.core.provider.SearchSourceBuilderProvider;
 import io.manbang.ebatis.core.provider.SortProvider;
 import io.manbang.ebatis.core.provider.SourceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -66,6 +69,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         annotationClasses.add(UpdateByQuery.class);
         annotationClasses.add(DeleteByQuery.class);
         annotationClasses.add(Agg.class);
+        annotationClasses.add(Count.class);
 
         SEARCH_ANNOTATION_CLASSES = Collections.unmodifiableList(annotationClasses);
     }
@@ -75,8 +79,10 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
 
     @Override
     protected void setAnnotationMeta(SearchRequest request, Search search) {
-        request.preference(StringUtils.trimToNull(search.preference()))
-                .searchType(search.searchType());
+        if (request.source().pointInTimeBuilder() == null) {
+            request.preference(StringUtils.trimToNull(search.preference()));
+        }
+        request.searchType(search.searchType());
 
         val allowPartialSearchResults = StringUtils.trimToNull(search.allowPartialSearchResults());
         if (allowPartialSearchResults != null) {
@@ -102,6 +108,16 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         if (search.trackTotalHits()) {
             source.trackTotalHits(true);
         }
+        if (search.minScore() != -Float.MAX_VALUE) {
+            source.minScore(search.minScore());
+        }
+        source.trackScores(search.trackScores()).explain(search.explain()).profile(search.profile());
+        for (String storedField : search.storedFields()) {
+            source.storedField(storedField);
+        }
+        for (String docValueField : search.docValueFields()) {
+            source.docValueField(docValueField);
+        }
     }
 
     @Override
@@ -112,13 +128,18 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         Object condition = conditionMeta.map(p -> p.getValue(args)).orElse(null);
 
         // 1. 如果是一个入参
-        SearchRequest request = Requests.searchRequest(meta.getIndices(meta, args));
+        SearchRequest request = condition instanceof PointTimeProvider
+                ? new SearchRequest()
+                : Requests.searchRequest(meta.getIndices(meta, args));
 
         // 获取语句构建器，不能的查询语句是不一样的
-        QueryBuilderFactory factory = getQueryBuilderFactory(meta);
-
-        // 创建查询语句
-        QueryBuilder queryBuilder = factory.create(conditionMeta.orElse(null), condition);
+        QueryBuilder queryBuilder;
+        if (condition instanceof QueryBuilderProvider) {
+            queryBuilder = ((QueryBuilderProvider) condition).queryBuilder();
+        } else {
+            QueryBuilderFactory factory = getQueryBuilderFactory(meta);
+            queryBuilder = factory.create(conditionMeta.orElse(null), condition);
+        }
 
         SearchSourceBuilder searchSource = new SearchSourceBuilder();
         searchSource.query(queryBuilder);
@@ -131,7 +152,7 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         setSearchSourceProviderMeta(searchSource, meta, condition);
 
         request.source(searchSource);
-        if (condition instanceof RoutingProvider) {
+        if (condition instanceof RoutingProvider && !(condition instanceof PointTimeProvider)) {
             request.routing(((RoutingProvider) condition).routing());
         }
 
@@ -191,8 +212,17 @@ class SearchRequestFactory extends AbstractRequestFactory<Search, SearchRequest>
         }
 
         if (condition instanceof PointTimeProvider) {
-            val builder = new PointInTimeBuilder(((PointTimeProvider) condition).pitId());
+            PointTimeProvider provider = (PointTimeProvider) condition;
+            val builder = new PointInTimeBuilder(provider.pitId());
+            String keepAlive = StringUtils.trimToNull(provider.keepAlive());
+            if (keepAlive != null) {
+                builder.setKeepAlive(keepAlive);
+            }
             searchSource.pointInTimeBuilder(builder);
+        }
+
+        if (condition instanceof SearchSourceBuilderProvider) {
+            ((SearchSourceBuilderProvider) condition).customize(searchSource);
         }
 
         if (condition instanceof HighlighterProvider) {

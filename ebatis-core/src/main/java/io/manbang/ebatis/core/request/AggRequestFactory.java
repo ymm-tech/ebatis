@@ -5,6 +5,7 @@ import io.manbang.ebatis.core.domain.Aggregation;
 import io.manbang.ebatis.core.meta.MethodMeta;
 import io.manbang.ebatis.core.meta.ParameterMeta;
 import io.manbang.ebatis.core.provider.AggProvider;
+import io.manbang.ebatis.core.provider.AggregationBuilderProvider;
 import io.manbang.ebatis.core.provider.BuildProvider;
 import io.manbang.ebatis.core.provider.RoutingProvider;
 import org.apache.commons.lang3.ArrayUtils;
@@ -54,6 +55,13 @@ class AggRequestFactory extends AbstractRequestFactory<Agg, SearchRequest> {
                 for (Aggregation agg : aggProvider.getAggregations()) {
                     final AggregationBuilder build = ((BuildProvider) agg).build();
                     request.source().aggregation(build);
+                }
+            }
+        }
+        if (condition instanceof AggregationBuilderProvider) {
+            for (AggregationBuilder aggregation : ((AggregationBuilderProvider) condition).aggregationBuilders()) {
+                if (aggregation != null) {
+                    request.source().aggregation(aggregation);
                 }
             }
         }
