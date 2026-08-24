@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.15.0.4-SNAPSHOT
+## 7.15.0.4
 
 - 新增真正的 Count API，同时保留 `@Cat(count = ...)` 兼容入口。
 - 新增 Document Exists、Get Source、Open PIT、Close PIT Mapper 操作及同步/异步响应提取。
