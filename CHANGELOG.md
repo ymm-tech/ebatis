@@ -1,6 +1,6 @@
 # Changelog
 
-## 7.15.0.5-SNAPSHOT
+## 7.15.0.5
 
 - 新增 Reindex Mapper，支持限速、切片、冲突策略、批大小、最大文档数、目标 pipeline/version/op type/alias 校验。
 - Reindex 支持等待完成或返回异步任务 ID，并新增 `@TaskResult` 查询任务状态与结果。
